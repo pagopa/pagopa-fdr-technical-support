@@ -1,6 +1,5 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
-import it.gov.pagopa.fdrtechsupport.Config;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.DateRequest;
@@ -22,11 +21,6 @@ public class WorkerService {
   private static String outcomeKO = "KO";
 
   @Inject Logger log;
-
-  @Inject
-  Config configObject;
-
-//  @Inject EventMapper eventsMapper;
 
   @Inject
   CosmosReEventClient fdrReClient;
