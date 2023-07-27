@@ -62,14 +62,13 @@ public class FdrTableRepository {
     return ee;
   }
 
-  public List<FdrEventEntity> findReByCiAndNN(
-      LocalDate datefrom, LocalDate dateTo, String creditorInstitution, String noticeNumber) {
+  public List<FdrEventEntity> findByPspId(
+      LocalDate datefrom, LocalDate dateTo, String pspId) {
 
     String filter =
         String.format(
-            "PartitionKey ge '%s' and PartitionKey le '%s' and idDominio eq '%s' and noticeNumber"
-                + " eq '%s' and esito eq 'CAMBIO_STATO'",
-            Util.format(datefrom), Util.format(dateTo), creditorInstitution, noticeNumber);
+            "PartitionKey ge '%s' and PartitionKey le '%s' and pspId eq '%s'",
+            Util.format(datefrom), Util.format(dateTo), pspId);
     ListEntitiesOptions options =
         new ListEntitiesOptions().setFilter(filter).setSelect(propertiesToSelect);
     return getTableClient().listEntities(options, null, null).stream()

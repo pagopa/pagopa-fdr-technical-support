@@ -38,19 +38,15 @@ public class FdrEventEntity extends PanacheMongoEntity {
             .and("to", DateTimeFormatter.ISO_DATE.format(dateTo)+"T23");
   }
 
-  public static PanacheQuery<FdrEventEntity> findReByCiAndNN(
-          String creditorInstitution,
-          String nav,
+  public static PanacheQuery<FdrEventEntity> findByPspId(
           LocalDate dateFrom,
-          LocalDate dateTo) {
+          LocalDate dateTo,
+          String pspId) {
     return find(
             dateFilter +
-                    " and idDominio = :idDominio and noticeNumber = :noticeNumber and esito = 'CAMBIO_STATO'"
-                    + " and status like 'payment_'",
+                    " and pspId = :pspId",
             dateParams(dateFrom,dateTo)
-                    .and("idDominio", creditorInstitution)
-                    .and("noticeNumber", nav)
-    )
-            .project(FdrEventEntity.class);
+                    .and("pspId", pspId)
+    ).project(FdrEventEntity.class);
   }
 }

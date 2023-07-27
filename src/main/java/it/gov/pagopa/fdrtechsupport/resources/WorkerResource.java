@@ -1,8 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
-import it.gov.pagopa.fdrtechsupport.models.Fr01Response;
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.resources.model.SearchRequest;
+import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -53,7 +53,7 @@ public class WorkerResource implements Serializable {
   public Response frO1(@PathParam("pspId") @NotNull String pspId, SearchRequest body,
                        @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                        @NotNull @QueryParam("dateTo") LocalDate dateTo) {
-      workerService.getFdr01(pspId,dateFrom,dateTo,body);
+      workerService.getFdr01(pspId,body,dateFrom,dateTo);
     return Response.ok().build();
   }
 

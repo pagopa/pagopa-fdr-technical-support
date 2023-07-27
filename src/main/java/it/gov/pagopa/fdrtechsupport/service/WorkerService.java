@@ -6,6 +6,7 @@ import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.models.FdrInfo;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
+import it.gov.pagopa.fdrtechsupport.resources.model.SearchRequest;
 import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -42,8 +43,8 @@ public class WorkerService {
   }
 
 
-  public Fr01Response getInfoByNoticeNumber(
-          String organizationFiscalCode, String noticeNumber, LocalDate dateFrom, LocalDate dateTo) {
+  public Fr01Response getFdr01(
+          String pspId, SearchRequest body, LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
 
@@ -52,20 +53,20 @@ public class WorkerService {
     if(reDates.getLeft()!=null){
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
-              fdrTableRepository.findReByCiAndNN(
-                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), organizationFiscalCode, noticeNumber)
+        fdrTableRepository.findByPspId(
+                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId
+        )
       );
       log.infof("Done querying re table storage");
     }
     if(reDates.getRight()!=null){
       log.infof("Querying re cosmos");
       reStorageEvents.addAll(
-              FdrEventEntity.findReByCiAndNN(
-                      organizationFiscalCode,
-                      noticeNumber,
-                      reDates.getRight().getFrom(),
-                      reDates.getRight().getTo()
-              ).stream().toList()
+        FdrEventEntity.findByPspId(
+          reDates.getRight().getFrom(),
+          reDates.getRight().getTo(),
+          pspId
+        ).stream().toList()
       );
       log.infof("Done querying re cosmos");
     }
