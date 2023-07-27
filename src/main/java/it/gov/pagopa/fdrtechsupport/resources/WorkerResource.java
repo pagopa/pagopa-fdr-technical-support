@@ -1,8 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
+import it.gov.pagopa.fdrtechsupport.models.Fr01Response;
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.resources.model.SearchRequest;
-import it.gov.pagopa.fdrtechsupport.resources.response.TransactionResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +32,7 @@ public class WorkerResource implements Serializable {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = TransactionResponse.class))),
+                    schema = @Schema(implementation = Fr01Response.class))),
         @APIResponse(
             responseCode = "400",
             description = "Bad Request",
