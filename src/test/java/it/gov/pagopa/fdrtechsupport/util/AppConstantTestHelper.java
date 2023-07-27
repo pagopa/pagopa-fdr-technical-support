@@ -2,12 +2,9 @@ package it.gov.pagopa.fdrtechsupport.util;
 
 import com.azure.data.tables.models.TableEntity;
 import io.restassured.http.Header;
-import it.gov.pagopa.nodetsworker.repository.model.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Optional;
-import java.util.UUID;
 
 public class AppConstantTestHelper {
 
@@ -43,40 +40,6 @@ public class AppConstantTestHelper {
     return entity;
   }
 
-  public static final PositiveBizEvent newPositiveBiz(String pa, String noticeNumber, String iuv) {
-    PositiveBizEvent p =
-        PositiveBizEvent.builder()
-            .id(UUID.randomUUID().toString())
-            .timestamp(Util.toMillis(LocalDateTime.now()))
-            .psp(Psp.builder().psp("pspTest").idChannel("canaleTest").build())
-            .creditor(Creditor.builder().idPA(pa).build())
-            .debtorPosition(
-                DebtorPosition.builder().modelType("1").iuv(iuv).noticeNumber(noticeNumber).build())
-            .paymentInfo(
-                PaymentInfo.builder()
-                    .paymentToken(noticeNumber != null ? "pt_" + noticeNumber : "ccp_" + iuv)
-                    .paymentDateTime(LocalDateTime.now())
-                    .build())
-            .build();
-    return p;
-  }
 
-  public static final NegativeBizEvent newNegBiz(
-      String pa, String noticeNumber, String iuv, boolean reawakable) {
-    NegativeBizEvent p =
-        NegativeBizEvent.builder()
-            .id(UUID.randomUUID().toString())
-            .timestamp(Util.toMillis(LocalDateTime.now()))
-            .creditor(Creditor.builder().idPA(pa).build())
-            .debtorPosition(
-                DebtorPosition.builder().iuv(iuv).noticeNumber(noticeNumber).modelType("1").build())
-            .paymentInfo(
-                NegativePaymentInfo.builder()
-                    .paymentToken(noticeNumber != null ? "pt_" + noticeNumber : "ccp_" + iuv)
-                    .paymentDateTime(LocalDateTime.now())
-                    .build())
-            .reAwakable(reawakable)
-            .build();
-    return p;
-  }
+
 }

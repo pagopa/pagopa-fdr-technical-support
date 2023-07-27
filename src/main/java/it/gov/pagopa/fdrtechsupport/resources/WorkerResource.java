@@ -53,8 +53,7 @@ public class WorkerResource implements Serializable {
   public Response frO1(@PathParam("pspId") @NotNull String pspId, SearchRequest body,
                        @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                        @NotNull @QueryParam("dateTo") LocalDate dateTo) {
-      workerService.getFdr01(pspId,body,dateFrom,dateTo);
-    return Response.ok().build();
+    return Response.ok(workerService.getFdr01(pspId,body,dateFrom,dateTo)).build();
   }
 
 }

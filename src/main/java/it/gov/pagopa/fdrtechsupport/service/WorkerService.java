@@ -1,6 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.models.FdrInfo;
@@ -102,11 +103,11 @@ public class WorkerService {
   private DateRequest verifyDate(LocalDate dateFrom, LocalDate dateTo) {
     if (dateFrom == null && dateTo != null || dateFrom != null && dateTo == null) {
       throw new AppException(
-              it.gov.pagopa.nodetsworker.exceptions.AppErrorCodeMessageEnum.POSITION_SERVICE_DATE_BAD_REQUEST,
+              AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from and date to must be both defined");
     } else if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
       throw new AppException(
-              it.gov.pagopa.nodetsworker.exceptions.AppErrorCodeMessageEnum.POSITION_SERVICE_DATE_BAD_REQUEST,
+              AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from must be before date to");
     }
     if (dateFrom == null && dateTo == null) {
@@ -115,7 +116,7 @@ public class WorkerService {
     }
     if(ChronoUnit.DAYS.between(dateFrom, dateTo)>dateRangeLimit){
       throw new AppException(
-              it.gov.pagopa.nodetsworker.exceptions.AppErrorCodeMessageEnum.INTERVAL_TOO_LARGE,
+              AppErrorCodeMessageEnum.INTERVAL_TOO_LARGE,
               dateRangeLimit);
     }
     return DateRequest.builder().from(dateFrom).to(dateTo).build();

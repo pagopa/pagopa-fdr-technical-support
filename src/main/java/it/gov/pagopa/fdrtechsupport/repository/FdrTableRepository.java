@@ -20,10 +20,10 @@ import java.util.stream.Collectors;
 // @UnlessBuildProfile("test")
 public class FdrTableRepository {
 
-  @ConfigProperty(name = "re-table-storage.connection-string")
+  @ConfigProperty(name = "fdr-re-table-storage.connection-string")
   String connString;
 
-  @ConfigProperty(name = "re-table-storage.table-name")
+  @ConfigProperty(name = "fdr-re-table-storage.table-name")
   String tableName;
 
   private TableServiceClient tableServiceClient = null;

@@ -1,5 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
+import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.resources.response.InfoResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppMessageUtil;
 import jakarta.inject.Inject;
@@ -56,7 +57,7 @@ public class InfoResource {
         .environment(environment)
         .description(AppMessageUtil.getMessage("app.description"))
         .errorCodes(
-            Arrays.stream(it.gov.pagopa.nodetsworker.exceptions.AppErrorCodeMessageEnum.values())
+            Arrays.stream(AppErrorCodeMessageEnum.values())
                 .map(
                     errorCode ->
                         InfoResponse.ErrorCode.builder()
