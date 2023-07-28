@@ -6,10 +6,10 @@ import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.panache.common.Parameters;
 import lombok.Data;
-import org.bson.codecs.pojo.annotations.BsonProperty;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 @Data
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -31,7 +31,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
 //  private String header;
   private String flowPhisicalDelete;
   private String flowStatus;
-//  private String revision;
+  private Long revision;
 
   private static String dateFilter = "created >= :from and created <= :to";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
@@ -42,14 +42,31 @@ public class FdrEventEntity extends PanacheMongoEntity {
   public static PanacheQuery<FdrEventEntity> findByPspId(
           LocalDate dateFrom,
           LocalDate dateTo,
-          String pspId) {
-    return find(
-            dateFilter +
-                    " and flowName != :flowName " +
-                    " and pspId = :pspId",
-            dateParams(dateFrom,dateTo)
-                    .and("pspId", pspId)
-                    .and("flowName", null)
-    ).project(FdrEventEntity.class);
+          String pspId,
+          Optional<String> flowName) {
+    Parameters params = dateParams(dateFrom, dateTo)
+            .and("pspId", pspId);
+    String filter = dateFilter + " and pspId = :pspId";
+    if(flowName.isPresent()){
+      filter += " and flowName like :flowName";
+      params = params.and("flowName", flowName.get());
+    }else{
+      filter += " and flowName != :flowName";
+      params = params.and("flowName", null);
+    }
+    return find(filter,params).project(FdrEventEntity.class);
   }
+
+  public static PanacheQuery<FdrEventEntity> findByOrganizationIdAndFlowName(
+          LocalDate dateFrom,
+          LocalDate dateTo,
+          String organizationId,
+          String flowName) {
+    Parameters params = dateParams(dateFrom, dateTo).and("organizationId", organizationId);
+    String filter = dateFilter + " and organizationId = :organizationId";
+    filter += " and flowName like :flowName";
+    params = params.and("flowName", flowName);
+    return find(filter,params).project(FdrEventEntity.class);
+  }
+
 }

@@ -5,10 +5,11 @@ import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.models.FdrInfo;
+import it.gov.pagopa.fdrtechsupport.models.FdrRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.model.SearchRequest;
 import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
+import it.gov.pagopa.fdrtechsupport.resources.response.Fr04Response;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -19,6 +20,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -40,12 +42,21 @@ public class WorkerService {
 
   private FdrInfo eventTFdrInfo(FdrEventEntity ee) {
     return FdrInfo.builder()
+            .flowName(ee.getFlowName())
+            .created(ee.getCreated())
         .build();
+  }
+  private FdrRevisionInfo eventTFdrRevisionInfo(FdrEventEntity ee) {
+    return FdrRevisionInfo.builder()
+            .flowName(ee.getFlowName())
+            .created(ee.getCreated())
+            .revision(ee.getRevision())
+            .build();
   }
 
 
   public Fr01Response getFdr01(
-          String pspId, SearchRequest body, LocalDate dateFrom, LocalDate dateTo) {
+          String pspId, Optional<String> flowName, LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
 
@@ -55,7 +66,7 @@ public class WorkerService {
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
         fdrTableRepository.findByPspId(
-                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId
+                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName
         )
       );
       log.infof("Done querying re table storage");
@@ -66,7 +77,8 @@ public class WorkerService {
         FdrEventEntity.findByPspId(
           reDates.getRight().getFrom(),
           reDates.getRight().getTo(),
-          pspId
+          pspId,
+          flowName
         ).stream().toList()
       );
       log.infof("Done querying re cosmos");
@@ -80,14 +92,59 @@ public class WorkerService {
     List<FdrInfo> collect =
             reGroups.keySet().stream()
                     .map(
-                            flowName -> {
-                              List<FdrEventEntity> events = reGroups.get(flowName);
+                            fn -> {
+                              List<FdrEventEntity> events = reGroups.get(fn);
                               FdrEventEntity firstEvent = events.get(0);
                               return eventTFdrInfo(firstEvent);
                             })
                     .collect(Collectors.toList());
 
     return Fr01Response.builder()
+            .dateFrom(dateRequest.getFrom())
+            .dateTo(dateRequest.getTo())
+            .data(collect)
+            .build();
+  }
+
+
+  public Fr04Response getFdr04(
+          String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
+
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
+    if(reDates.getLeft()!=null){
+      log.infof("Querying re table storage");
+      reStorageEvents.addAll(
+              fdrTableRepository.findByOrganizationIdAndFlowName(
+                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), organizationId, flowName
+              )
+      );
+      log.infof("Done querying re table storage");
+    }
+    if(reDates.getRight()!=null){
+      log.infof("Querying re cosmos");
+      reStorageEvents.addAll(
+              FdrEventEntity.findByOrganizationIdAndFlowName(
+                      reDates.getRight().getFrom(),
+                      reDates.getRight().getTo(),
+                      organizationId,
+                      flowName
+              ).stream().toList()
+      );
+      log.infof("Done querying re cosmos");
+    }
+
+
+    log.infof("found %d different revisions", reStorageEvents.size());
+
+    List<FdrRevisionInfo> collect =
+            reStorageEvents.stream()
+                    .map(fn -> eventTFdrRevisionInfo(fn))
+                    .collect(Collectors.toList());
+
+    return Fr04Response.builder()
             .dateFrom(dateRequest.getFrom())
             .dateTo(dateRequest.getTo())
             .data(collect)

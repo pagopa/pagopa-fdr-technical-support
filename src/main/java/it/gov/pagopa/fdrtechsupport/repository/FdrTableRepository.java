@@ -13,6 +13,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 // @Startup
@@ -63,12 +64,15 @@ public class FdrTableRepository {
   }
 
   public List<FdrEventEntity> findByPspId(
-      LocalDate datefrom, LocalDate dateTo, String pspId) {
+          LocalDate datefrom, LocalDate dateTo, String pspId, Optional<String> flowName) {
 
     String filter =
         String.format(
             "PartitionKey ge '%s' and PartitionKey le '%s' and pspId eq '%s'",
             Util.format(datefrom), Util.format(dateTo), pspId);
+    if(flowName.isPresent()){
+      filter+= String.format(" and flowName like '%s'",flowName.get());
+    }
     ListEntitiesOptions options =
         new ListEntitiesOptions().setFilter(filter).setSelect(propertiesToSelect);
     return getTableClient().listEntities(options, null, null).stream()
@@ -77,6 +81,23 @@ public class FdrTableRepository {
               return tableEntityToEventEntity(e);
             })
         .collect(Collectors.toList());
+  }
+
+  public List<FdrEventEntity> findByOrganizationIdAndFlowName(
+          LocalDate datefrom, LocalDate dateTo, String organizationId, String flowName) {
+
+    String filter =
+            String.format(
+                    "PartitionKey ge '%s' and PartitionKey le '%s' and organizationId eq '%s' and flowName = '%s'",
+                    Util.format(datefrom), Util.format(dateTo), organizationId,flowName);
+    ListEntitiesOptions options =
+            new ListEntitiesOptions().setFilter(filter).setSelect(propertiesToSelect);
+    return getTableClient().listEntities(options, null, null).stream()
+            .map(
+                    e -> {
+                      return tableEntityToEventEntity(e);
+                    })
+            .collect(Collectors.toList());
   }
 
   private String getString(Object o) {

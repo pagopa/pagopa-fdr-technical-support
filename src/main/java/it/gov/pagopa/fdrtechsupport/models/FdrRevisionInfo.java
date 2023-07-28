@@ -7,7 +7,8 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FdrInfo {
+public class FdrRevisionInfo {
     private String flowName;
     private String created;
+    private Long revision;
 }
