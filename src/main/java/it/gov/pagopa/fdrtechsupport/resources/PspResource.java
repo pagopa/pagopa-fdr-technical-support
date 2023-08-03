@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
-import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
+import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -32,7 +32,7 @@ public class PspResource implements Serializable {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Fr01Response.class))),
+                    schema = @Schema(implementation = FrResponse.class))),
         @APIResponse(
             responseCode = "400",
             description = "Bad Request",
@@ -53,8 +53,42 @@ public class PspResource implements Serializable {
   public Response frO1(@PathParam("pspId") @NotNull String pspId,
                        @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                        @NotNull @QueryParam("dateTo") LocalDate dateTo,
-                       @QueryParam("flowName") Optional<String> flowName) {
-    return Response.ok(workerService.getFdr01(pspId,flowName,dateFrom,dateTo)).build();
+                       @QueryParam("flowName") Optional<String> flowName,
+                       @QueryParam("organizationId") Optional<String> organizationId) {
+    return Response.ok(workerService.getFdrListByPsp(pspId,flowName,organizationId,dateFrom,dateTo)).build();
   }
+
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = FrResponse.class))),
+                    @APIResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "500",
+                            description = "Service unavailable.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @GET
+    @Path("/{pspId}/flows/{flowName}")
+    public Response frO1(@PathParam("pspId") @NotNull String pspId,
+                         @PathParam("flowName") String flowName,
+                         @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrDetail(pspId,flowName,dateFrom,dateTo)).build();
+    }
 
 }

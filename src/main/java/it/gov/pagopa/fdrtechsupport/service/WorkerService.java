@@ -1,26 +1,26 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
 import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
+import it.gov.pagopa.fdrtechsupport.clients.FdrOldRestClient;
+import it.gov.pagopa.fdrtechsupport.clients.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.DateRequest;
-import it.gov.pagopa.fdrtechsupport.models.FdrInfo;
+import it.gov.pagopa.fdrtechsupport.models.FdrActionInfo;
+import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
 import it.gov.pagopa.fdrtechsupport.models.FdrRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
-import it.gov.pagopa.fdrtechsupport.resources.response.Fr04Response;
+import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @ApplicationScoped
@@ -40,23 +40,19 @@ public class WorkerService {
   @Inject
   FdrTableRepository fdrTableRepository;
 
-  private FdrInfo eventTFdrInfo(FdrEventEntity ee) {
-    return FdrInfo.builder()
-            .flowName(ee.getFlowName())
-            .created(ee.getCreated())
-        .build();
-  }
-  private FdrRevisionInfo eventTFdrRevisionInfo(FdrEventEntity ee) {
+  @RestClient
+  FdrOldRestClient fdrOldRestClient;
+
+  @RestClient
+  FdrRestClient fdrRestClient;
+
+  private FdrRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
     return FdrRevisionInfo.builder()
-            .flowName(ee.getFlowName())
-            .created(ee.getCreated())
-            .revision(ee.getRevision())
             .build();
   }
 
 
-  public Fr01Response getFdr01(
-          String pspId, Optional<String> flowName, LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrListByPsp(String pspId, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
 
@@ -66,7 +62,7 @@ public class WorkerService {
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
         fdrTableRepository.findByPspId(
-                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName
+                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName, organizationId
         )
       );
       log.infof("Done querying re table storage");
@@ -78,7 +74,8 @@ public class WorkerService {
           reDates.getRight().getFrom(),
           reDates.getRight().getTo(),
           pspId,
-          flowName
+          flowName,
+          organizationId
         ).stream().toList()
       );
       log.infof("Done querying re cosmos");
@@ -89,25 +86,84 @@ public class WorkerService {
 
     log.infof("found %d different flowNames", reGroups.size());
 
-    List<FdrInfo> collect =
-            reGroups.keySet().stream()
-                    .map(
-                            fn -> {
-                              List<FdrEventEntity> events = reGroups.get(fn);
-                              FdrEventEntity firstEvent = events.get(0);
-                              return eventTFdrInfo(firstEvent);
-                            })
-                    .collect(Collectors.toList());
+    List<FdrBaseInfo> collect =
+      reGroups.keySet().stream()
+        .map(
+          fn -> {
+            List<FdrEventEntity> events = reGroups.get(fn);
+            FdrBaseInfo fdrInfo = new FdrBaseInfo();
+              List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+              fdrInfo.setFlowName(ordered.get(0).getFlowName());
+              fdrInfo.setCreated(ordered.get(0).getCreated());
+            return fdrInfo;
+          })
+        .collect(Collectors.toList());
 
-    return Fr01Response.builder()
+    return FrResponse.builder()
             .dateFrom(dateRequest.getFrom())
             .dateTo(dateRequest.getTo())
             .data(collect)
             .build();
   }
 
+  public FrResponse getFdrDetail(String pspId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
 
-  public Fr04Response getFdr04(
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
+    if(reDates.getLeft()!=null){
+      log.infof("Querying re table storage");
+      reStorageEvents.addAll(
+              fdrTableRepository.findByPspId(
+                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, Optional.of(flowName), Optional.empty()
+              )
+      );
+      log.infof("Done querying re table storage");
+    }
+    if(reDates.getRight()!=null){
+      log.infof("Querying re cosmos");
+      reStorageEvents.addAll(
+              FdrEventEntity.findByPspId(
+                      reDates.getRight().getFrom(),
+                      reDates.getRight().getTo(),
+                      pspId,
+                      Optional.of(flowName),
+                      Optional.empty()
+              ).stream().toList()
+      );
+      log.infof("Done querying re cosmos");
+    }
+
+    Map<String, List<FdrEventEntity>> reGroups =
+            reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
+
+    log.infof("found %d different flowNames", reGroups.size());
+
+    List<FdrBaseInfo> collect =
+            reGroups.keySet().stream()
+                    .map(
+                            fn -> {
+                              List<FdrEventEntity> events = reGroups.get(fn);
+                              FdrActionInfo fdrInfo = new FdrActionInfo();
+                              List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+                              fdrInfo.setFlowName(ordered.get(0).getFlowName());
+                              fdrInfo.setCreated(ordered.get(0).getCreated());
+                              fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
+                              fdrInfo.setAppVersion(ordered.get(0).getAppVersion());
+                              return fdrInfo;
+                            })
+                    .collect(Collectors.toList());
+
+    return FrResponse.builder()
+            .dateFrom(dateRequest.getFrom())
+            .dateTo(dateRequest.getTo())
+            .data(collect.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+            .build();
+  }
+
+
+  public FrResponse getFdr04(
           String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
@@ -139,12 +195,12 @@ public class WorkerService {
 
     log.infof("found %d different revisions", reStorageEvents.size());
 
-    List<FdrRevisionInfo> collect =
+    List<FdrBaseInfo> collect =
             reStorageEvents.stream()
                     .map(fn -> eventTFdrRevisionInfo(fn))
                     .collect(Collectors.toList());
 
-    return Fr04Response.builder()
+    return FrResponse.builder()
             .dateFrom(dateRequest.getFrom())
             .dateTo(dateRequest.getTo())
             .data(collect)
@@ -171,7 +227,7 @@ public class WorkerService {
       dateTo = LocalDate.now();
       dateFrom = dateTo.minusDays(dateRangeLimit);
     }
-    if(ChronoUnit.DAYS.between(dateFrom, dateTo)>dateRangeLimit){
+    if (ChronoUnit.DAYS.between(dateFrom, dateTo) > dateRangeLimit - 1) {
       throw new AppException(
               AppErrorCodeMessageEnum.INTERVAL_TOO_LARGE,
               dateRangeLimit);
@@ -203,6 +259,16 @@ public class WorkerService {
               null,
               DateRequest.builder().from(dateRequest.getFrom()).to(dateRequest.getTo()).build()
       );
+    }
+  }
+
+
+  public String getFlow(String flowId){
+    String body = "";
+    if(true){
+      return fdrRestClient.getFlow("","");
+    }else {
+      return fdrOldRestClient.nodoChiediFlussoRendicontazione(body);
     }
   }
 }

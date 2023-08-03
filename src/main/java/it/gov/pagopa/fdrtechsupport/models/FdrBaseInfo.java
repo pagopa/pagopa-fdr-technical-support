@@ -1,6 +1,9 @@
 package it.gov.pagopa.fdrtechsupport.models;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
 @Getter
@@ -8,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FdrRevisionInfo extends FdrBaseInfo{
+public class FdrBaseInfo {
     private String flowName;
     private String created;
 }

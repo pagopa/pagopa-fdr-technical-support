@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
-import it.gov.pagopa.fdrtechsupport.resources.response.Fr01Response;
+import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -31,7 +31,7 @@ public class OrgResource implements Serializable {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = Fr01Response.class))),
+                    schema = @Schema(implementation = FrResponse.class))),
         @APIResponse(
             responseCode = "400",
             description = "Bad Request",

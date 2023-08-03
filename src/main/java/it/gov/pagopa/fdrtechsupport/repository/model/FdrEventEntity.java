@@ -31,7 +31,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
 //  private String header;
   private String flowPhisicalDelete;
   private String flowStatus;
-  private Long revision;
+  private Integer revision;
 
   private static String dateFilter = "created >= :from and created <= :to";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
@@ -43,16 +43,21 @@ public class FdrEventEntity extends PanacheMongoEntity {
           LocalDate dateFrom,
           LocalDate dateTo,
           String pspId,
-          Optional<String> flowName) {
+          Optional<String> flowName,
+          Optional<String> organizationId) {
     Parameters params = dateParams(dateFrom, dateTo)
             .and("pspId", pspId);
     String filter = dateFilter + " and pspId = :pspId";
     if(flowName.isPresent()){
-      filter += " and flowName like :flowName";
+      filter += " and flowName eq :flowName";
       params = params.and("flowName", flowName.get());
     }else{
       filter += " and flowName != :flowName";
       params = params.and("flowName", null);
+    }
+    if(organizationId.isPresent()){
+      filter += " and organizationId = :organizationId";
+      params = params.and("organizationId", organizationId.get());
     }
     return find(filter,params).project(FdrEventEntity.class);
   }
@@ -64,7 +69,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
           String flowName) {
     Parameters params = dateParams(dateFrom, dateTo).and("organizationId", organizationId);
     String filter = dateFilter + " and organizationId = :organizationId";
-    filter += " and flowName like :flowName";
+    filter += " and flowName eq :flowName";
     params = params.and("flowName", flowName);
     return find(filter,params).project(FdrEventEntity.class);
   }
