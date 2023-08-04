@@ -35,8 +35,8 @@ public class FdrEventEntity extends PanacheMongoEntity {
 
   private static String dateFilter = " 'PartitionKey': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
-    return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom)+"T00")
-            .and("to", DateTimeFormatter.ISO_DATE.format(dateTo)+"T23");
+    return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom))
+            .and("to", DateTimeFormatter.ISO_DATE.format(dateTo.plusDays(1)));
   }
 
   public static PanacheQuery<FdrEventEntity> findWithParams(
