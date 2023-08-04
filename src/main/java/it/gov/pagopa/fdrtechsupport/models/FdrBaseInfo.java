@@ -14,4 +14,5 @@ import lombok.experimental.SuperBuilder;
 public class FdrBaseInfo {
     private String flowName;
     private String created;
+    private String organizationId;
 }

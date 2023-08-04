@@ -33,44 +33,35 @@ public class FdrEventEntity extends PanacheMongoEntity {
   private String flowStatus;
   private Integer revision;
 
-  private static String dateFilter = "created >= :from and created <= :to";
+  private static String dateFilter = " 'PartitionKey': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
     return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom)+"T00")
             .and("to", DateTimeFormatter.ISO_DATE.format(dateTo)+"T23");
   }
 
-  public static PanacheQuery<FdrEventEntity> findByPspId(
+  public static PanacheQuery<FdrEventEntity> findWithParams(
           LocalDate dateFrom,
           LocalDate dateTo,
-          String pspId,
+          Optional<String> pspId,
           Optional<String> flowName,
           Optional<String> organizationId) {
-    Parameters params = dateParams(dateFrom, dateTo)
-            .and("pspId", pspId);
-    String filter = dateFilter + " and pspId = :pspId";
+    final Parameters params = dateParams(dateFrom, dateTo);
+    StringBuilder filterBuilder = new StringBuilder(dateFilter);
+    pspId.ifPresent(psp->{
+      filterBuilder.append(",'pspId': :pspId");
+      params.and("pspId", psp);
+    });
     if(flowName.isPresent()){
-      filter += " and flowName eq :flowName";
-      params = params.and("flowName", flowName.get());
+      filterBuilder.append(",'flowName': :flowName");
+      params.and("flowName", flowName.get());
     }else{
-      filter += " and flowName != :flowName";
-      params = params.and("flowName", null);
+      filterBuilder.append(",'flowName': { '$ne' : null }");
     }
     if(organizationId.isPresent()){
-      filter += " and organizationId = :organizationId";
-      params = params.and("organizationId", organizationId.get());
+      filterBuilder.append(",'organizationId': :organizationId");
+      params.and("organizationId", organizationId.get());
     }
-    return find(filter,params).project(FdrEventEntity.class);
-  }
-
-  public static PanacheQuery<FdrEventEntity> findByOrganizationIdAndFlowName(
-          LocalDate dateFrom,
-          LocalDate dateTo,
-          String organizationId,
-          String flowName) {
-    Parameters params = dateParams(dateFrom, dateTo).and("organizationId", organizationId);
-    String filter = dateFilter + " and organizationId = :organizationId";
-    filter += " and flowName eq :flowName";
-    params = params.and("flowName", flowName);
+    String filter = "{"+filterBuilder.toString()+"}";
     return find(filter,params).project(FdrEventEntity.class);
   }
 

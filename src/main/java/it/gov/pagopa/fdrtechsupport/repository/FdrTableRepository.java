@@ -28,7 +28,11 @@ public class FdrTableRepository {
     String tableName;
 
     private TableServiceClient tableServiceClient = null;
-    private String dateFilter = "PartitionKey ge '%s' and PartitionKey le '%s'";
+    private String dateFilterString = "PartitionKey ge '%s' and PartitionKey le '%s'";
+    private String dateFilter(LocalDate datefrom,LocalDate dateTo){
+        return String.format(dateFilterString, Util.format(datefrom), Util.format(dateTo));
+    }
+
     private List<String> propertiesToSelect =
             Arrays.asList(
                     "appVersion",
@@ -79,30 +83,18 @@ public class FdrTableRepository {
         return ee;
     }
 
-    public List<FdrEventEntity> findByPspId(
-            LocalDate datefrom, LocalDate dateTo, String pspId, Optional<String> flowName, Optional<String> organizationFiscalCode) {
+    public List<FdrEventEntity> findWithParams(
+            LocalDate datefrom, LocalDate dateTo,  Optional<String> pspId, Optional<String> flowName, Optional<String> organizationFiscalCode) {
 
-        String filter =
-                String.format(dateFilter + " and pspId eq '%s'", Util.format(datefrom), Util.format(dateTo), pspId);
-        if (flowName.isPresent()) {
-            filter += String.format(" and flowName eq '%s'", flowName.get());
-        }else{
-            filter += " and flowName ne ''";
-        }
-        if (organizationFiscalCode.isPresent()) {
-            filter += String.format(" and organizationId eq '%s'", organizationFiscalCode.get());
-        }
-        return runQuery(filter);
-    }
+        StringBuilder filterBuilder = new StringBuilder(dateFilter(datefrom,dateTo));
 
-    public List<FdrEventEntity> findByOrganizationIdAndFlowName(
-            LocalDate datefrom, LocalDate dateTo, String organizationId, String flowName) {
+        pspId.map(psp->filterBuilder.append(String.format(" and pspId eq '%s'", psp)));
+        organizationFiscalCode.map(orgId->filterBuilder.append(String.format(" and organizationId eq '%s'", orgId)));
 
-        String filter =
-                String.format(
-                        dateFilter + " and organizationId eq '%s' and flowName eq '%s'",
-                        Util.format(datefrom), Util.format(dateTo), organizationId, flowName);
-        return runQuery(filter);
+        flowName.ifPresentOrElse(
+                fn->filterBuilder.append(String.format(" and flowName eq '%s'", fn)),
+                ()->filterBuilder.append(" and flowName ne ''"));
+        return runQuery(filterBuilder.toString());
     }
 
     private String getString(Object o) {

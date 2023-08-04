@@ -15,6 +15,7 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Path("/organizations")
 @Produces(value = MediaType.APPLICATION_JSON)
@@ -48,13 +49,13 @@ public class OrgResource implements Serializable {
                     schema = @Schema(implementation = ProblemJson.class)))
       })
   @GET
-  @Path("/{organizationId}/flowName/{flowName}")
+  @Path("/{organizationId}/flows/{flowName}")
   public Response frO1(@PathParam("organizationId") @NotNull String organizationId,
                        @PathParam("flowName") @NotNull String flowName,
                        @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                        @NotNull @QueryParam("dateTo") LocalDate dateTo
                        ) {
-    return Response.ok(workerService.getFdr04(organizationId,flowName,dateFrom,dateTo)).build();
+    return Response.ok(workerService.getFdrByParams(Optional.empty(),Optional.of(flowName),Optional.of(organizationId),dateFrom,dateTo)).build();
   }
 
 }
