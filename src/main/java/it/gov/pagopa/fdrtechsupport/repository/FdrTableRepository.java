@@ -28,9 +28,9 @@ public class FdrTableRepository {
     String tableName;
 
     private TableServiceClient tableServiceClient = null;
-    private String dateFilterString = "PartitionKey ge '%s' and PartitionKey le '%s'";
+    private String dateFilterString = "PartitionKey ge '%s' and PartitionKey lt '%s'";
     private String dateFilter(LocalDate datefrom,LocalDate dateTo){
-        return String.format(dateFilterString, Util.format(datefrom), Util.format(dateTo));
+        return String.format(dateFilterString, Util.format(datefrom), Util.format(dateTo.plusDays(1)));
     }
 
     private List<String> propertiesToSelect =

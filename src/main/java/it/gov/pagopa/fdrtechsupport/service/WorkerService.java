@@ -107,7 +107,7 @@ public class WorkerService {
             .build();
   }
 
-  public FrResponse getFdrDetail(String pspId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrDetail(String pspId, String flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
 
@@ -117,7 +117,7 @@ public class WorkerService {
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
               fdrTableRepository.findWithParams(
-                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), Optional.of(pspId), Optional.of(flowName), Optional.empty()
+                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), Optional.of(pspId), Optional.of(flowName), organizationId
               )
       );
       log.infof("Done querying re table storage");
@@ -194,30 +194,29 @@ public class WorkerService {
   }
 
   private Pair<DateRequest, DateRequest> getHistoryDates(DateRequest dateRequest) {
-
-
     LocalDate dateLimit = LocalDate.now().minusDays(reCosmosDayLimit);
     LocalDate historyDateFrom = null;
     LocalDate historyDateTo = null;
     LocalDate actualDateFrom = null;
     LocalDate actualDateTo = null;
 
-    if(dateRequest.getFrom().isBefore(dateLimit) && dateRequest.getTo().isBefore(dateLimit)){
-      return Pair.of(
-              DateRequest.builder().from(dateRequest.getFrom()).to(dateRequest.getTo()).build(),
-              null
-      );
-    }else if(dateRequest.getFrom().isBefore(dateLimit) && dateRequest.getTo().isAfter(dateLimit)){
-      return Pair.of(
-              DateRequest.builder().from(dateRequest.getFrom()).to(dateLimit).build(),
-              DateRequest.builder().from(dateLimit).to(dateRequest.getTo()).build()
-      );
-    }else{
-      return Pair.of(
-              null,
-              DateRequest.builder().from(dateRequest.getFrom()).to(dateRequest.getTo()).build()
-      );
+    if(dateRequest.getFrom().isBefore(dateLimit)){
+      historyDateFrom = dateRequest.getFrom();
+      historyDateTo = Arrays.asList(dateLimit,dateRequest.getTo()).stream().min(LocalDate::compareTo).get();
     }
+
+    if(dateRequest.getTo().isAfter(dateLimit)){
+      actualDateFrom = Arrays.asList(dateLimit,dateRequest.getFrom()).stream().max(LocalDate::compareTo).get();
+      if(historyDateTo!=null){
+        actualDateFrom = actualDateFrom.plusDays(1);
+      }
+      actualDateTo = dateRequest.getTo();
+    }
+
+    return Pair.of(
+                historyDateFrom!=null? DateRequest.builder().from(historyDateFrom).to(historyDateTo).build():null,
+                actualDateFrom!=null? DateRequest.builder().from(actualDateFrom).to(actualDateTo).build():null
+    );
   }
 
 
