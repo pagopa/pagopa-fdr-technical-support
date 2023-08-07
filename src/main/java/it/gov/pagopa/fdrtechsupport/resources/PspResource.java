@@ -83,9 +83,9 @@ public class PspResource implements Serializable {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @GET
-    @Path("/{pspId}/flows/{flowName}")
+    @Path("/{pspId}/flows")
     public Response frO1(@PathParam("pspId") @NotNull String pspId,
-                         @PathParam("flowName") String flowName,
+                         @QueryParam("flowName") Optional<String> flowName,
                          @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                          @NotNull @QueryParam("dateTo") LocalDate dateTo,
                          @QueryParam("organizationId") Optional<String> organizationId) {

@@ -12,6 +12,7 @@ import it.gov.pagopa.fdrtechsupport.models.FdrRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+import jakarta.ejb.Local;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -51,35 +52,39 @@ public class WorkerService {
             .build();
   }
 
-
-  public FrResponse getFdrByParams(Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
-
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-
-    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+  private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId){
     List<FdrEventEntity> reStorageEvents = new ArrayList<>();
     if(reDates.getLeft()!=null){
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
-        fdrTableRepository.findWithParams(
-                reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName, organizationId
-        )
+              fdrTableRepository.findWithParams(
+                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName, organizationId
+              )
       );
       log.infof("Done querying re table storage");
     }
     if(reDates.getRight()!=null){
       log.infof("Querying re cosmos");
       reStorageEvents.addAll(
-        FdrEventEntity.findWithParams(
-          reDates.getRight().getFrom(),
-          reDates.getRight().getTo(),
-          pspId,
-          flowName,
-          organizationId
-        ).stream().toList()
+              FdrEventEntity.findWithParams(
+                      reDates.getRight().getFrom(),
+                      reDates.getRight().getTo(),
+                      pspId,
+                      flowName,
+                      organizationId
+              ).stream().toList()
       );
       log.infof("Done querying re cosmos");
     }
+    return reStorageEvents;
+  }
+
+
+  public FrResponse getFdrByParams(Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
+
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+    List<FdrEventEntity> reStorageEvents = find(reDates,pspId, flowName, organizationId);
 
     Map<String, List<FdrEventEntity>> reGroups =
             reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getFlowName));
@@ -107,34 +112,11 @@ public class WorkerService {
             .build();
   }
 
-  public FrResponse getFdrDetail(String pspId, String flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrDetail(String pspId, Optional<String> flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
-    if(reDates.getLeft()!=null){
-      log.infof("Querying re table storage");
-      reStorageEvents.addAll(
-              fdrTableRepository.findWithParams(
-                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), Optional.of(pspId), Optional.of(flowName), organizationId
-              )
-      );
-      log.infof("Done querying re table storage");
-    }
-    if(reDates.getRight()!=null){
-      log.infof("Querying re cosmos");
-      reStorageEvents.addAll(
-              FdrEventEntity.findWithParams(
-                      reDates.getRight().getFrom(),
-                      reDates.getRight().getTo(),
-                      Optional.of(pspId),
-                      Optional.of(flowName),
-                      Optional.empty()
-              ).stream().toList()
-      );
-      log.infof("Done querying re cosmos");
-    }
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), flowName, organizationId);
 
     Map<String, List<FdrEventEntity>> reGroups =
             reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
@@ -220,11 +202,25 @@ public class WorkerService {
   }
 
 
-  public String getFlow(String flowId){
-    String body = "";
-    if(true){
-      return fdrRestClient.getFlow("","");
+  public String getFlow(String organizationId,String flowName,LocalDate dateFrom, LocalDate dateTo){
+
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId));
+
+    if(reStorageEvents.isEmpty()){
+      throw new AppException(
+              AppErrorCodeMessageEnum.FLOW_NOT_FOUND
+      );
+    }
+
+    boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
+
+    if(isNew){
+      Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));
+      return fdrRestClient.getFlow(organizationId,flowName);
     }else {
+      String body = "";
       return fdrOldRestClient.nodoChiediFlussoRendicontazione(body);
     }
   }
