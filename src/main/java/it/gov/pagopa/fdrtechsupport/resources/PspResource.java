@@ -83,13 +83,12 @@ public class PspResource implements Serializable {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @GET
-    @Path("/{pspId}/flows")
+    @Path("/{pspId}/flows/{flowName}")
     public Response frO1(@PathParam("pspId") @NotNull String pspId,
-                         @QueryParam("flowName") Optional<String> flowName,
+                         @PathParam("flowName")  @NotNull String flowName,
                          @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-                         @NotNull @QueryParam("dateTo") LocalDate dateTo,
-                         @QueryParam("organizationId") Optional<String> organizationId) {
-        return Response.ok(workerService.getFdrDetail(pspId,flowName,organizationId,dateFrom,dateTo)).build();
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrDetail(pspId,flowName,Optional.empty(),dateFrom,dateTo)).build();
     }
 
 }

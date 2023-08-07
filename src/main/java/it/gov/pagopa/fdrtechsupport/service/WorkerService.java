@@ -12,7 +12,6 @@ import it.gov.pagopa.fdrtechsupport.models.FdrRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
-import jakarta.ejb.Local;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -112,11 +111,11 @@ public class WorkerService {
             .build();
   }
 
-  public FrResponse getFdrDetail(String pspId, Optional<String> flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrDetail(String pspId, String flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), flowName, organizationId);
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), Optional.of(flowName), organizationId);
 
     Map<String, List<FdrEventEntity>> reGroups =
             reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
@@ -215,6 +214,7 @@ public class WorkerService {
     }
 
     boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
+
 
     if(isNew){
       Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));
