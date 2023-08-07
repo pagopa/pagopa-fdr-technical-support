@@ -117,6 +117,12 @@ public class WorkerService {
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
     List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), Optional.of(flowName), organizationId);
 
+    if(reStorageEvents.isEmpty()){
+      throw new AppException(
+              AppErrorCodeMessageEnum.FLOW_NOT_FOUND
+      );
+    }
+
     Map<String, List<FdrEventEntity>> reGroups =
             reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
 
