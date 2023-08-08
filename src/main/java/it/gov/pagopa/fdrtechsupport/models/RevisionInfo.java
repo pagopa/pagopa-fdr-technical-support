@@ -6,14 +6,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 
-import java.util.List;
-
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FdrRevisionInfo extends FdrBaseInfo{
-    private String pspId;
-    private List<RevisionInfo> revisions;
+public class RevisionInfo{
+    private String revision;
+    private String created;
 }

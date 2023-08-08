@@ -5,10 +5,7 @@ import it.gov.pagopa.fdrtechsupport.clients.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.clients.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
-import it.gov.pagopa.fdrtechsupport.models.DateRequest;
-import it.gov.pagopa.fdrtechsupport.models.FdrActionInfo;
-import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
-import it.gov.pagopa.fdrtechsupport.models.FdrRevisionInfo;
+import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
@@ -206,8 +203,7 @@ public class WorkerService {
     );
   }
 
-
-  public String getFlow(String organizationId,String flowName,LocalDate dateFrom, LocalDate dateTo){
+  public FdrRevisionInfo getRevisions(String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
@@ -221,6 +217,51 @@ public class WorkerService {
 
     boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
 
+    List<FdrEventEntity> flowEvents;
+    if(isNew){
+      flowEvents = reStorageEvents.stream()
+              .filter(s->s.getRevision()!=null && s.getFlowName()!=null && "CREATE_FLOW".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+    } else{
+      flowEvents = reStorageEvents.stream()
+              .filter(s->"REQ".equals(s.getHttpType()) && s.getFlowName()!=null && "nodoInviaFlussoRendicontazione".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+    }
+
+    FdrRevisionInfo fdrs = new FdrRevisionInfo();
+    fdrs.setFlowName(flowName);
+    fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
+    fdrs.setPspId(flowEvents.get(0).getPspId());
+    fdrs.setCreated(flowEvents.get(0).getCreated());
+    fdrs.setRevisions(new ArrayList<RevisionInfo>());
+
+    if(isNew){
+      flowEvents.forEach(creation->{
+        fdrs.getRevisions().add(
+                new RevisionInfo(creation.getRevision().toString(), creation.getCreated())
+        );
+      });
+    }else {
+      flowEvents.forEach(creation->{
+        fdrs.getRevisions().add(
+                new RevisionInfo(creation.getCreated(), creation.getCreated())
+        );
+      });
+    }
+    return fdrs;
+  }
+
+  public String getFlow(String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo){
+
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId));
+
+    if(reStorageEvents.isEmpty()){
+      throw new AppException(
+              AppErrorCodeMessageEnum.FLOW_NOT_FOUND
+      );
+    }
+
+    boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
 
     if(isNew){
       Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));

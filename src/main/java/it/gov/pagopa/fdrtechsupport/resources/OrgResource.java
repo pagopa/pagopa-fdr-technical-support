@@ -40,6 +40,13 @@ public class OrgResource implements Serializable {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ProblemJson.class))),
         @APIResponse(
+            responseCode = "404",
+            description = "Not Found",
+            content =
+            @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @APIResponse(
             responseCode = "500",
             description = "Service unavailable.",
             content =
@@ -49,13 +56,57 @@ public class OrgResource implements Serializable {
       })
   @GET
   @Path("/{organizationId}/flows/{flowName}")
-  public Response frO1(
+  public Response getRevisions(
           @PathParam("organizationId") @NotNull String organizationId,
           @PathParam("flowName") @NotNull String flowName,
           @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
           @NotNull @QueryParam("dateTo") LocalDate dateTo
   ) {
-    return Response.ok(workerService.getFlow(organizationId,flowName,dateFrom,dateTo)).build();
+    return Response.ok(workerService.getRevisions(organizationId,flowName,dateFrom,dateTo)).build();
   }
+
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = FrResponse.class))),
+                    @APIResponse(
+                            responseCode = "400",
+                            description = "Bad Request",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "404",
+                            description = "Not Found",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "500",
+                            description = "Service unavailable.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @GET
+    @Path("/{organizationId}/flows/{flowName}/psps/{psp}/revisions/{revision}")
+    public Response getFlow(
+            @PathParam("organizationId") @NotNull String organizationId,
+            @PathParam("flowName") @NotNull String flowName,
+            @PathParam("psp") @NotNull String psp,
+            @PathParam("revision") @NotNull String revision,
+            @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+            @NotNull @QueryParam("dateTo") LocalDate dateTo
+    ) {
+        return Response.ok(workerService.getFlow(organizationId,flowName,dateFrom,dateTo)).build();
+    }
 
 }
