@@ -81,3 +81,10 @@ pagopa-tech-support-api:
     create: true
     host: "weudev.techsupport.internal.dev.platform.pagopa.it"
     path: /pagopa-fdr-technical-support-service(/|$)(.*)
+microservice-chart:
+  image:
+    tag: 0.0.1-3-NOD-223_implementing
+  canaryDelivery:
+    deployment:
+      image:
+        tag: 0.0.1-3-NOD-223_implementing
