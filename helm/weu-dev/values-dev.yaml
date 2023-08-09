@@ -29,8 +29,8 @@ pagopa-tech-support-api:
   secretProvider:
     create: true
     envSecrets:
-      FDR_SUBSCRIPTION_KEY: ""
-      FDR_NODO_SUBSCRIPTION_KEY: ""
+      FDR_SUBSCRIPTION_KEY: "fdr-subscription-key-string"
+      FDR_NODO_SUBSCRIPTION_KEY: "fdr-legacy-subscription-key-string"
       FDR_RE_COSMOS_CONNECTION_STRING: "mongodb-re-connection-string"
       FDR_RE_TABLE_STORAGE_CONN_STRING: "fdr-re-sa-connection-string"
     keyvault:
