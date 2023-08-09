@@ -83,8 +83,8 @@ microservice-chart:
     path: /pagopa-fdr-technical-support-service(/|$)(.*)
 microservice-chart:
   image:
-    tag: 0.0.1-4-NOD-223_implementing
+    tag: 0.0.1-5-NOD-223_implementing
   canaryDelivery:
     deployment:
       image:
-        tag: 0.0.1-4-NOD-223_implementing
+        tag: 0.0.1-5-NOD-223_implementing
