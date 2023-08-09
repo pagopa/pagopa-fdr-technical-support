@@ -1,7 +1,7 @@
 <policies>
   <inbound>
     <base />
-    <set-backend-service base-url="https://${hostname}/pagopa-nodo-technical-support-service" />
+    <set-backend-service base-url="https://${hostname}/pagopa-fdr-technical-support-service" />
   </inbound>
   <outbound>
     <base />

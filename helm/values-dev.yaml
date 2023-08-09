@@ -34,7 +34,7 @@ pagopa-tech-support-api:
       FDR_RE_COSMOS_CONNECTION_STRING: "mongodb-re-connection-string"
       FDR_RE_TABLE_STORAGE_CONN_STRING: "fdr-re-sa-connection-string"
     keyvault:
-      name: "pagopa-d-nodo-kv"
+      name: "pagopa-d-fdr-kv"
       tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
   tmpVolumeMount:
     create: true

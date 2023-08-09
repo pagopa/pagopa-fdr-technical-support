@@ -13,4 +13,4 @@ tags = {
 
 apim_dns_zone_prefix               = "dev.platform"
 external_domain                    = "pagopa.it"
-hostname = "weudev.nodo.internal.dev.platform.pagopa.it"
+hostname = "weudev.fdr.internal.dev.platform.pagopa.it"
