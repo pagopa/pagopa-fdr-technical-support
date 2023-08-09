@@ -1,4 +1,4 @@
-pagopa-tech-support-api:
+microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
