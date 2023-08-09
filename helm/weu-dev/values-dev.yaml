@@ -82,4 +82,4 @@ pagopa-tech-support-api:
   ingress:
     create: true
     host: "weudev.techsupport.internal.dev.platform.pagopa.it"
-    path: /pagopa-tech-support(/|$)(.*)
+    path: /pagopa-fdr-technical-support-service(/|$)(.*)
