@@ -1,6 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
 import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.resources.response.InfoResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppMessageUtil;
 import jakarta.inject.Inject;
@@ -37,7 +38,13 @@ public class InfoResource {
   @Operation(summary = "Get info of FDR")
   @APIResponses(
       value = {
-        @APIResponse(ref = "#/components/responses/InternalServerError"),
+              @APIResponse(
+                      responseCode = "500",
+                      description = "Service unavailable.",
+                      content =
+                      @Content(
+                              mediaType = MediaType.APPLICATION_JSON,
+                              schema = @Schema(implementation = ProblemJson.class))),
         @APIResponse(
             responseCode = "200",
             description = "Success",
