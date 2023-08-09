@@ -79,7 +79,7 @@ microservice-chart:
     create: true
   ingress:
     create: true
-    host: "weudev.techsupport.internal.dev.platform.pagopa.it"
+    host: "weudev.fdr.internal.dev.platform.pagopa.it"
     path: /pagopa-fdr-technical-support-service(/|$)(.*)
   canaryDelivery:
     deployment:
