@@ -13,14 +13,6 @@ locals {
 
 }
 
-resource "azurerm_api_management_group" "api_group" {
-  name                = local.apim.product_id
-  resource_group_name = local.apim.rg
-  api_management_name = local.apim.name
-  display_name        = local.display_name
-  description         = local.description
-}
-
 resource "azurerm_api_management_api_version_set" "api_version_set" {
   name                = format("%s-technical-support-api", local.project)
   resource_group_name = local.apim.rg
