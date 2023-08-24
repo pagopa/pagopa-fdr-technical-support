@@ -2,6 +2,7 @@ package it.gov.pagopa.fdrtechsupport.resources;
 
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.resources.response.FrSingleDateResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;
@@ -121,11 +122,12 @@ public class OrgResource implements Serializable {
             @PathParam("psp") @NotNull String psp,
             @NotNull @QueryParam("date") LocalDate date
     ) {
-        return Response.ok(workerService.getFdrActions(psp,
+        FrResponse fdrActions = workerService.getFdrActions(psp,
                 Optional.empty(),
                 Optional.of(organizationId),
-                Optional.of(Arrays.asList("nodoChiediFlussoRendicontazione","GET_FDR","GET_FDR_PAYMENT")),
-                date,date)).build();
+                Optional.of(Arrays.asList("nodoChiediFlussoRendicontazione", "GET_FDR", "GET_FDR_PAYMENT")),
+                date, date);
+        return Response.ok(FrSingleDateResponse.builder().data(fdrActions.getData()).date(fdrActions.getDateFrom()).build()).build();
     }
 
     @GET

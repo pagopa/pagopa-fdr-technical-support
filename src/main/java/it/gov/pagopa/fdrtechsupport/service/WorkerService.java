@@ -136,8 +136,8 @@ public class WorkerService {
                               fdrInfo.setCreated(ordered.get(0).getCreated());
                               fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
                               fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
-//                              fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
-//                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
+                              fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
+                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
                               return fdrInfo;
                             })
                     .collect(Collectors.toList());
