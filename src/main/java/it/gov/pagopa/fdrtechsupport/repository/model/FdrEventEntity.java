@@ -9,6 +9,7 @@ import lombok.Data;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 import java.util.Optional;
 
 @Data
@@ -44,7 +45,8 @@ public class FdrEventEntity extends PanacheMongoEntity {
           LocalDate dateTo,
           Optional<String> pspId,
           Optional<String> flowName,
-          Optional<String> organizationId) {
+          Optional<String> organizationId,
+          Optional<List<String>> actions) {
     final Parameters params = dateParams(dateFrom, dateTo);
     StringBuilder filterBuilder = new StringBuilder(dateFilter);
     pspId.ifPresent(psp->{
@@ -60,6 +62,10 @@ public class FdrEventEntity extends PanacheMongoEntity {
     if(organizationId.isPresent()){
       filterBuilder.append(",'organizationId': :organizationId");
       params.and("organizationId", organizationId.get());
+    }
+    if(actions.isPresent()){
+      filterBuilder.append(",'flowAction' : { '$in': [:actions] }");
+      params.and("actions", actions.get());
     }
     String filter = "{"+filterBuilder.toString()+"}";
     return find(filter,params).project(FdrEventEntity.class);

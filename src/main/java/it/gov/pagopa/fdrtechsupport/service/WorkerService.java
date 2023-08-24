@@ -67,7 +67,8 @@ public class WorkerService {
                       reDates.getRight().getTo(),
                       pspId,
                       flowName,
-                      organizationId
+                      organizationId,
+                      actions
               ).stream().toList()
       );
       log.infof("Done querying re cosmos");
