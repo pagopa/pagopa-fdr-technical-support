@@ -16,7 +16,7 @@ import java.util.Optional;
 @MongoEntity(collection = "events")
 public class FdrEventEntity extends PanacheMongoEntity {
 
-  private String appVersion;
+  private String serviceIdentifier;
   private String created;
   private String sessionId;
   private String eventType;

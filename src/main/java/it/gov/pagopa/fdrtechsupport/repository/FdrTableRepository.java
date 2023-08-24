@@ -64,7 +64,7 @@ public class FdrTableRepository {
 
     private FdrEventEntity tableEntityToEventEntity(TableEntity e) {
         FdrEventEntity ee = new FdrEventEntity();
-        ee.setAppVersion(getString(e.getProperty("appVersion")));
+        ee.setServiceIdentifier(getString(e.getProperty("appVersion")));
         ee.setCreated(getString(e.getProperty("created")));
         ee.setSessionId(getString(e.getProperty("sessionId")));
         ee.setEventType(getString(e.getProperty("eventType")));
@@ -84,12 +84,18 @@ public class FdrTableRepository {
     }
 
     public List<FdrEventEntity> findWithParams(
-            LocalDate datefrom, LocalDate dateTo,  Optional<String> pspId, Optional<String> flowName, Optional<String> organizationFiscalCode) {
+            LocalDate datefrom, LocalDate dateTo,  Optional<String> pspId, Optional<String> flowName, Optional<String> organizationFiscalCode,
+            Optional<List<String>> actions) {
 
         StringBuilder filterBuilder = new StringBuilder(dateFilter(datefrom,dateTo));
 
         pspId.map(psp->filterBuilder.append(String.format(" and pspId eq '%s'", psp)));
         organizationFiscalCode.map(orgId->filterBuilder.append(String.format(" and organizationId eq '%s'", orgId)));
+        actions.ifPresent(act->{
+            filterBuilder.append(" and ( ");
+            filterBuilder.append(String.join(" or ",act.stream().map(a->String.format(" flowAction eq '%s' ",a)).toList()));
+            filterBuilder.append(" )");
+        });
 
         flowName.ifPresentOrElse(
                 fn->filterBuilder.append(String.format(" and flowName eq '%s'", fn)),

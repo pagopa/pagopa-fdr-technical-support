@@ -15,6 +15,8 @@ import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.Arrays;
+import java.util.Optional;
 
 @Path("/organizations")
 @Produces(value = MediaType.APPLICATION_JSON)
@@ -56,6 +58,7 @@ public class OrgResource implements Serializable {
       })
   @GET
   @Path("/{organizationId}/flows/{flowName}")
+  //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-4---Get-all-revision-of-a-FdR-by-Organization-and-Flow-Name-%5BFR_02%5D
   public Response getRevisions(
           @PathParam("organizationId") @NotNull String organizationId,
           @PathParam("flowName") @NotNull String flowName,
@@ -97,7 +100,8 @@ public class OrgResource implements Serializable {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @GET
-    @Path("/{organizationId}/flows/{flowName}/psps/{psp}/revisions/{revision}")
+    @Path("/{organizationId}/psps/{psp}/flows/{flowName}/revisions/{revision}")
+    //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-5---Get-a-specific-FdR-by-Organization%2C-Flow-Name%2C-PSP-and-revision
     public Response getFlow(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("flowName") @NotNull String flowName,
@@ -106,7 +110,37 @@ public class OrgResource implements Serializable {
             @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
             @NotNull @QueryParam("dateTo") LocalDate dateTo
     ) {
-        return Response.ok(workerService.getFlow(organizationId,flowName,dateFrom,dateTo)).build();
+        return Response.ok(workerService.getFlow(organizationId,psp,flowName,revision,dateFrom,dateTo)).build();
+    }
+
+    @GET
+    @Path("/{organizationId}/psps/{psp}/download")
+    //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-5---Get-a-specific-FdR-by-Organization%2C-Flow-Name%2C-PSP-and-revision
+    public Response getDownloads(
+            @PathParam("organizationId") @NotNull String organizationId,
+            @PathParam("psp") @NotNull String psp,
+            @NotNull @QueryParam("date") LocalDate date
+    ) {
+        return Response.ok(workerService.getFdrActions(psp,
+                Optional.empty(),
+                Optional.of(organizationId),
+                Optional.of(Arrays.asList("nodoChiediFlussoRendicontazione","GET_FDR","GET_FDR_PAYMENT")),
+                date,date)).build();
+    }
+
+    @GET
+    @Path("/{organizationId}/psps/{psp}/upload")
+    //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-7---Get-list-of-upload-tentative-of-FdRs-%5BFR_01_03%5D
+    public Response getUploads(
+            @PathParam("organizationId") @NotNull String organizationId,
+            @PathParam("psp") @NotNull String psp,
+            @NotNull @QueryParam("date") LocalDate date
+    ) {
+        return Response.ok(workerService.getFdrActions(psp,
+                Optional.empty(),
+                Optional.of(organizationId),
+                Optional.of(Arrays.asList("nodoInviaFlussoRendicontazione","PUBLISH","ADD_PAYMENT","CREATE_FLOW","DELETE_FLOW","DELETE_PAYMENT")),
+                date,date)).build();
     }
 
 }

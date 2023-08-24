@@ -48,13 +48,13 @@ public class WorkerService {
             .build();
   }
 
-  private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId){
+  private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
     List<FdrEventEntity> reStorageEvents = new ArrayList<>();
     if(reDates.getLeft()!=null){
       log.infof("Querying re table storage");
       reStorageEvents.addAll(
               fdrTableRepository.findWithParams(
-                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName, organizationId
+                      reDates.getLeft().getFrom(), reDates.getLeft().getTo(), pspId, flowName, organizationId,actions
               )
       );
       log.infof("Done querying re table storage");
@@ -80,7 +80,7 @@ public class WorkerService {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,pspId, flowName, organizationId);
+    List<FdrEventEntity> reStorageEvents = find(reDates,pspId, flowName, organizationId,Optional.empty());
 
     Map<String, List<FdrEventEntity>> reGroups =
             reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getFlowName));
@@ -108,11 +108,11 @@ public class WorkerService {
             .build();
   }
 
-  public FrResponse getFdrDetail(String pspId, String flowName, Optional<String> organizationId,LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrActions(String pspId, Optional<String> flowName, Optional<String> organizationId, Optional<List<String>> actions,LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), Optional.of(flowName), organizationId);
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.of(pspId), flowName, organizationId,actions);
 
     if(reStorageEvents.isEmpty()){
       throw new AppException(
@@ -135,8 +135,9 @@ public class WorkerService {
                               fdrInfo.setFlowName(ordered.get(0).getFlowName());
                               fdrInfo.setCreated(ordered.get(0).getCreated());
                               fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
-                              fdrInfo.setAppVersion(ordered.get(0).getAppVersion());
-                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
+                              fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
+//                              fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
+//                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
                               return fdrInfo;
                             })
                     .collect(Collectors.toList());
@@ -203,11 +204,11 @@ public class WorkerService {
     );
   }
 
-  public FdrRevisionInfo getRevisions(String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo){
+  public FrResponse getRevisions(String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId));
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId),Optional.empty());
 
     if(reStorageEvents.isEmpty()){
       throw new AppException(
@@ -215,7 +216,7 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
+    boolean isNew = reStorageEvents.stream().filter(s -> s.getServiceIdentifier().equals("FDR003")).findAny().isPresent();
 
     List<FdrEventEntity> flowEvents;
     if(isNew){
@@ -246,14 +247,16 @@ public class WorkerService {
         );
       });
     }
-    return fdrs;
+
+
+    return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(Arrays.asList(fdrs)).build();
   }
 
-  public String getFlow(String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo){
+  public String getFlow(String organizationId,String psp, String flowName,String revision, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId));
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId),Optional.empty());
 
     if(reStorageEvents.isEmpty()){
       throw new AppException(
@@ -261,7 +264,7 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().filter(s -> s.getAppVersion().equals("FDR003")).findAny().isPresent();
+    boolean isNew = reStorageEvents.stream().filter(s -> s.getServiceIdentifier().equals("FDR003")).findAny().isPresent();
 
     if(isNew){
       Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));

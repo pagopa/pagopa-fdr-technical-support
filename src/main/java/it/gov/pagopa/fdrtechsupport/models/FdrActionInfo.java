@@ -10,5 +10,5 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder
 public class FdrActionInfo extends FdrBaseInfo{
     private String flowAction;
-    private String appVersion;
+    private String serviceIdentifier;
 }
