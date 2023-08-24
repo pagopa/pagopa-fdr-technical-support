@@ -1,8 +1,8 @@
 locals {
   repo_name = "pagopa-fdr-technical-support"
 
-  display_name          = "Fdr Technical Support"
-  description           = "API Assistenza de Flussi Rendicontazione"
+  display_name          = "FdR Technical Support"
+  description           = "API Assistenza dei Flussi di Rendicontazione"
   path                  = "technical-support/fdr/api"
 
   host         = "api.${var.apim_dns_zone_prefix}.${var.external_domain}"
@@ -11,14 +11,6 @@ locals {
   subscription_required = true
   service_url           = null
 
-}
-
-resource "azurerm_api_management_group" "api_group" {
-  name                = local.apim.product_id
-  resource_group_name = local.apim.rg
-  api_management_name = local.apim.name
-  display_name        = local.display_name
-  description         = local.description
 }
 
 resource "azurerm_api_management_api_version_set" "api_version_set" {
@@ -30,7 +22,7 @@ resource "azurerm_api_management_api_version_set" "api_version_set" {
 }
 
 module "api_v1" {
-  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v6.7.0"
+  source = "git::https://github.com/pagopa/terraform-azurerm-v3.git//api_management_api?ref=v6.20.1"
 
   name                  = format("%s-technical-support-api", local.project)
   api_management_name   = local.apim.name
