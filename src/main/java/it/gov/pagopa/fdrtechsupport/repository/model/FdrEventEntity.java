@@ -53,22 +53,49 @@ public class FdrEventEntity extends PanacheMongoEntity {
       filterBuilder.append(",'pspId': :pspId");
       params.and("pspId", psp);
     });
-    if(flowName.isPresent()){
-      filterBuilder.append(",'flowName': :flowName");
-      params.and("flowName", flowName.get());
-    }else{
-      filterBuilder.append(",'flowName': { '$ne' : null }");
-    }
-    if(organizationId.isPresent()){
-      filterBuilder.append(",'organizationId': :organizationId");
-      params.and("organizationId", organizationId.get());
-    }
+    areParametersPresent(flowName, organizationId, params, filterBuilder);
     if(actions.isPresent()){
       filterBuilder.append(",'flowAction' : { '$in': [:actions] }");
       params.and("actions", actions.get());
     }
     String filter = "{"+filterBuilder.toString()+"}";
     return find(filter,params).project(FdrEventEntity.class);
+  }
+
+  public static PanacheQuery<FdrEventEntity> findSpecificWithParams(LocalDate dateFrom, LocalDate dateTo, Optional<String> pspId, Optional<String> iuv, Optional<String> flowName, Optional<String> organizationId) {
+
+    final Parameters params = dateParams(dateFrom, dateTo);
+    StringBuilder filterBuilder = new StringBuilder(dateFilter);
+
+    pspId.ifPresent(psp -> {
+      filterBuilder.append(",'pspId': :pspId");
+      params.and("pspId", psp);
+    });
+
+    iuv.ifPresent(i -> {
+      filterBuilder.append(",'iuv': :iuv");
+      params.and("iuv", i);
+    });
+
+    areParametersPresent(flowName, organizationId, params, filterBuilder);
+
+    String filter = "{" + filterBuilder + "}";
+    return find(filter, params).project(FdrEventEntity.class);
+  }
+
+  private static void areParametersPresent(Optional<String> flowName, Optional<String> organizationId, Parameters params, StringBuilder filterBuilder) {
+
+    if (flowName.isPresent()) {
+      filterBuilder.append(",'flowName': :flowName");
+      params.and("flowName", flowName.get());
+    } else {
+      filterBuilder.append(",'flowName': { '$ne' : null }");
+    }
+
+    if (organizationId.isPresent()) {
+      filterBuilder.append(",'organizationId': :organizationId");
+      params.and("organizationId", organizationId.get());
+    }
   }
 
 }
