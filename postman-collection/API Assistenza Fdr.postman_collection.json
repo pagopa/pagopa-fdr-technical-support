@@ -1,0 +1,177 @@
+{
+	"info": {
+		"_postman_id": "4b1662d0-3a25-446e-b811-8957f1bdc9dd",
+		"name": "API Assistenza Fdr",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "11518494",
+		"_collection_link": "https://speeding-station-482612.postman.co/workspace/Nodo-doc~ec880f84-0a42-4ca9-bbd1-454d00bbe20c/collection/11518494-4b1662d0-3a25-446e-b811-8957f1bdc9dd?action=share&creator=11518494&source=collection_link"
+	},
+	"item": [
+		{
+			"name": "Info",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/info",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"info"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API 1 - all FdR by PSP",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/psps/:psp?dateFrom=2023-07-22&dateTo=2023-07-27",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"psps",
+						":psp"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-07-22"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-07-27"
+						}
+					],
+					"variable": [
+						{
+							"key": "psp",
+							"value": "nodo-doc-dev"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API 6 - by psp and flowName",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/psps/:psp/flows/:flowName?dateFrom=2023-07-22&dateTo=2023-07-27",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"psps",
+						":psp",
+						"flows",
+						":flowName"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-07-22"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-07-27"
+						}
+					],
+					"variable": [
+						{
+							"key": "psp",
+							"value": "nodo-doc-dev"
+						},
+						{
+							"key": "flowName",
+							"value": "2023-07-25nodo-doc-dev-16902929234"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api 4 - by orgId and flowName",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/organizations/:organization/flows/:flowName?dateFrom=2023-07-19&dateTo=2023-07-19",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"organizations",
+						":organization",
+						"flows",
+						":flowName"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-07-19"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-07-19"
+						}
+					],
+					"variable": [
+						{
+							"key": "organization",
+							"value": "00000000099"
+						},
+						{
+							"key": "flowName",
+							"value": "2023-07-25nodo-doc-dev-16902903874"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "apikey",
+		"apikey": [
+			{
+				"key": "value",
+				"value": "{{subscription-key}}",
+				"type": "string"
+			},
+			{
+				"key": "key",
+				"value": "Ocp-Apim-Subscription-Key",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

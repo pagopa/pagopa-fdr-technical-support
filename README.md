@@ -1,29 +1,35 @@
-# Template for Quarkus Microservice project
+# FdR tech support API
 
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=TODO-set-your-id&metric=alert_status)](https://sonarcloud.io/dashboard?id=TODO-set-your-id)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-fdr-technical-support&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-fdr-technical-support)
 
-## TODO List
-- Add a description 
-- Generate an index with this tool: https://ecotrust-canada.github.io/markdown-toc/
-- Find and solve all the TODOs in this template (e.g. in `.github` folder, `pom.xml` and so on)
 
 ---
 ## API Documentation 📖
-See the [OpenAPI 3 here.](https://raw.githubusercontent.com/pagopa/pagopa-quarkus-template/openapi/openapi.json)
+See the [OpenAPI 3 here.](https://raw.githubusercontent.com/pagopa/pagopa-fdr-technical-support/openapi/openapi.json)
 
 ---
 
 ## Technology Stack
-- Java 11
+- Maven
+- Java 17
 - Quarkus
-- other...
----
 
 ## Running the infrastructure 🚀
 
 ### Prerequisites
-- docker
-- docker-compose
+- git
+- maven
+- jdk
+
+### Setup
+With skdman,in terminal:
+
+`sdk install java 17.0.7-graal`
+
+`sdk use java 17.0.7-graal`
+
+or download **java 17.0.7-graal** and set as java home
+
 
 ### Run docker container
 The docker compose runs:
@@ -59,17 +65,18 @@ From `./docker` directory
 
 ### Run the project
 
-Start the springboot application with this command:
+Run in development mode with command
+`quarkus dev`
 
-`mvn spring-boot:run -Dspring-boot.run.profiles=local`
+### Quarkus Profiles
 
+`dev` active in development
 
+`test` active in tests
 
-### Spring Profiles
+`openapi` active only for openapi generation
 
-- **local**: to develop locally.
-- _default (no profile set)_: The application gets the properties from the environment (for Azure).
-
+`prod` default for run
 
 ### Testing 🧪
 
@@ -78,12 +85,6 @@ Start the springboot application with this command:
 To run the **Junit** tests:
 
 `mvn clean verify`
-
-#### Integration testing
-Add integration test in `.integration-test` and write here how to execute them
-
-#### Performance testing
-Add performance test using [k6](https://k6.io/) in `.performance-test` and write here how to execute them (e.g. `k6 run --env VARS=local.environment.json --env TEST_TYPE=./test-types/load.json main_scenario.js`)
 
 
 ---

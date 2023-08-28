@@ -1,0 +1,10 @@
+apiVersion: v2
+name: pagopa-fdr-tech-support-api
+description: Technical support api
+type: application
+version: "0.10.0"
+appVersion: "0.0.1-10-NOD-223_implementing"
+dependencies:
+  - name: microservice-chart
+    version: 3.0.0
+    repository: "https://pagopa.github.io/aks-microservice-chart-blueprint"
