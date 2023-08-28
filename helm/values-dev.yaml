@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '0.0.1-9-NOD-223_implementing'
+    tag: '0.0.1-10-NOD-223_implementing'
   readinessProbe:
     httpGet:
       path: /q/health/ready
@@ -84,4 +84,4 @@ microservice-chart:
   canaryDelivery:
     deployment:
       image:
-        tag: 0.0.1-9-NOD-223_implementing
+        tag: 0.0.1-10-NOD-223_implementing
