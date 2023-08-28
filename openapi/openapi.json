@@ -3,7 +3,7 @@
   "info": {
     "title": "Fdr technical support - Api (local) ${service}",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "0.0.1-8-NOD-223_implementing"
+    "version": "0.0.1-9-NOD-223_implementing"
   },
   "servers": [
     {
