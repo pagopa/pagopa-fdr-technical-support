@@ -23,6 +23,7 @@ import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 @ApplicationScoped
@@ -132,10 +133,9 @@ public class WorkerService {
 
     List<FdrInfo> data = reStorageEvents.getData();
 
-    for (int i = 2; i <= totPages; i++) {
-      reStorageEvents = fdrRestClient.getFlowByPspAndIuv(pspId, iuv, i, from, to);
-      data.addAll(reStorageEvents.getData());
-    }
+    IntStream.rangeClosed(2, totPages)
+            .mapToObj(i -> fdrRestClient.getFlowByPspAndIuv(pspId, iuv, i, from, to).getData())
+            .forEach(data::addAll);
 
     List<FdrBaseInfo> dataResponse = data.stream()
             .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated(), fn.getOrganizationId())).toList();
