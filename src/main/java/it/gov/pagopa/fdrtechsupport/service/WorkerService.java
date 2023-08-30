@@ -8,12 +8,16 @@ import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
+import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
+import org.openapi.quarkus.fdr_internal_json.model.GetPaymentResponse;
+import org.openapi.quarkus.fdr_internal_json.model.GetResponse;
+import org.openapi.quarkus.fdr_internal_json.model.Payment;
 
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
@@ -253,7 +257,7 @@ public class WorkerService {
     return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(Arrays.asList(fdrs)).build();
   }
 
-  public String getFlow(String organizationId,String psp, String flowName,String revision, LocalDate dateFrom, LocalDate dateTo){
+  public FdrFullInfoResponse getFlow(String organizationId, String psp, String flowName, String revision, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
@@ -268,11 +272,22 @@ public class WorkerService {
     boolean isNew = reStorageEvents.stream().filter(s -> s.getServiceIdentifier().equals("FDR003")).findAny().isPresent();
 
     if(isNew){
-      Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));
-      return fdrRestClient.getFlow(organizationId,flowName);
+      GetPaymentResponse flow = fdrRestClient.getFlow(1,organizationId, flowName, revision, psp);
+      List<Payment> payments = flow.getData();
+
+      Integer totPage = flow.getMetadata().getTotPage();
+      for(int i=2;i<=totPage;i++){
+        GetPaymentResponse flowpage = fdrRestClient.getFlow(i,organizationId, flowName, revision, psp);
+        payments.addAll(flowpage.getData());
+      }
+
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(payments).build();
     }else {
       String body = "";
-      return fdrOldRestClient.nodoChiediFlussoRendicontazione(body);
+      String s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(s).build();
     }
   }
 }
