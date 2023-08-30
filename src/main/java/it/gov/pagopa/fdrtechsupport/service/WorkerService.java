@@ -14,8 +14,12 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspAndIuvResponse;
+import org.openapi.quarkus.api_fdr_json.model.FdrInfo;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -48,43 +52,6 @@ public class WorkerService {
     return FdrRevisionInfo.builder()
             .build();
   }
-
-  private List<FdrEventEntity> findByPspAndIuv(Pair<DateRequest, DateRequest> reDates, Optional<String> pspId, Optional<String> iuv, Optional<String> flowName, Optional<String> organizationId) {
-    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
-
-    if (reDates.getLeft() != null) {
-      log.infof("Querying re table storage");
-      reStorageEvents.addAll(
-              fdrTableRepository.findSpecificWithParams(
-                      reDates.getLeft().getFrom(),
-                      reDates.getLeft().getTo(),
-                      pspId,
-                      iuv,
-                      flowName,
-                      organizationId
-              )
-      );
-      log.infof("Done querying re table storage");
-    }
-
-    if (reDates.getRight() != null) {
-      log.infof("Querying re cosmos");
-      reStorageEvents.addAll(
-              FdrEventEntity.findSpecificWithParams(
-                      reDates.getRight().getFrom(),
-                      reDates.getRight().getTo(),
-                      pspId,
-                      iuv,
-                      flowName,
-                      organizationId
-              ).stream().toList()
-      );
-      log.infof("Done querying re cosmos");
-    }
-
-    return reStorageEvents;
-  }
-
 
 
     private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
@@ -149,41 +116,36 @@ public class WorkerService {
   }
 
 
-  public FrResponse getFdrByPspAndIuv(String pspId, String iuv, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrByPspAndIuv(String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = findByPspAndIuv(reDates, Optional.of(pspId), Optional.of(iuv), flowName, organizationId);
 
-    if (reStorageEvents.isEmpty()) {
-      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    // Questo è fisso e serve a ottenere le pagine totali
+    int pageNumber = 1;
+    LocalDateTime from = dateFrom.atStartOfDay();
+    LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
+    // La prima chiamata serve a prendere il numero totale di pagine.
+    FdrByPspAndIuvResponse reStorageEvents = fdrRestClient.getFlowByPspAndIuv(pspId, iuv, pageNumber, from, to);
+
+    int totPages = reStorageEvents.getMetadata().getTotPage();
+    String msg = String.format("Total pages %d", totPages);
+    log.info(msg);
+
+    List<FdrInfo> data = reStorageEvents.getData();
+
+    for (int i = 2; i <= totPages; i++) {
+      reStorageEvents = fdrRestClient.getFlowByPspAndIuv(pspId, iuv, i, from, to);
+      data.addAll(reStorageEvents.getData());
     }
 
-    Map<String, List<FdrEventEntity>> reGroups = reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
-
-    log.infof("Found %d different flowNames in %d events", reGroups.size(), reStorageEvents.size());
-
-    List<FdrBaseInfo> collect = reGroups.keySet().stream()
-            .map(fn -> {
-              List<FdrEventEntity> events = reGroups.get(fn);
-              FdrActionInfo fdrInfo = new FdrActionInfo();
-              List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
-              fdrInfo.setFlowName(ordered.get(0).getFlowName());
-              fdrInfo.setCreated(ordered.get(0).getCreated());
-              fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
-              fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
-              fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
-              fdrInfo.setOrganizationId(ordered.stream().filter(s -> s.getOrganizationId() != null).findAny().map(FdrEventEntity::getOrganizationId).orElse(null));
-              return fdrInfo;
-            })
-            .collect(Collectors.toList());
+    List<FdrBaseInfo> dataResponse = data.stream()
+            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated(), fn.getOrganizationId())).toList();
 
     return FrResponse.builder()
             .dateFrom(dateRequest.getFrom())
             .dateTo(dateRequest.getTo())
-            .data(collect.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+            .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
             .build();
   }
-
 
 
   public FrResponse getFdrActions(String pspId, Optional<String> flowName, Optional<String> organizationId, Optional<List<String>> actions,LocalDate dateFrom, LocalDate dateTo) {
@@ -239,12 +201,12 @@ public class WorkerService {
       throw new AppException(
               AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from and date to must be both defined");
-    } else if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+    } else if (dateFrom != null && dateFrom.isAfter(dateTo)) {
       throw new AppException(
               AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from must be before date to");
     }
-    if (dateFrom == null && dateTo == null) {
+    if (dateFrom == null) {
       dateTo = LocalDate.now();
       dateFrom = dateTo.minusDays(dateRangeLimit);
     }
@@ -310,7 +272,7 @@ public class WorkerService {
     fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
     fdrs.setPspId(flowEvents.get(0).getPspId());
     fdrs.setCreated(flowEvents.get(0).getCreated());
-    fdrs.setRevisions(new ArrayList<RevisionInfo>());
+    fdrs.setRevisions(new ArrayList<>());
 
     if(isNew){
       flowEvents.forEach(creation-> fdrs.getRevisions().add(

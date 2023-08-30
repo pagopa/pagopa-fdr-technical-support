@@ -42,6 +42,20 @@ public class PspResource implements Serializable {
                     mediaType = MediaType.APPLICATION_JSON,
                     schema = @Schema(implementation = ProblemJson.class))),
         @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized.",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @APIResponse(
+            responseCode = "404",
+            description = "Not found.",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @APIResponse(
             responseCode = "500",
             description = "Service unavailable.",
             content =
@@ -105,7 +119,14 @@ public class PspResource implements Serializable {
                                     schema = @Schema(implementation = FrResponse.class))),
                     @APIResponse(
                             responseCode = "400",
-                            description = "Bad Request",
+                            description = "Bad request.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "401",
+                            description = "Unauthorized.",
                             content =
                             @Content(
                                     mediaType = MediaType.APPLICATION_JSON,
@@ -120,14 +141,12 @@ public class PspResource implements Serializable {
             })
     @GET
     @Tag(name = "API 2 - Get all FdR by PSP and IUV")
-    @Path("/psps/{pspId}/iuv/{iuv}")
+    @Path("/{pspId}/iuv/{iuv}")
     public Response frO2(@PathParam("pspId") @NotNull String pspId,
                          @PathParam("iuv") @NotNull String iuv,
                          @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-                         @NotNull @QueryParam("dateTo") LocalDate dateTo,
-                         @QueryParam("flowName") Optional<String> flowName,
-                         @QueryParam("organizationId") Optional<String> organizationId) {
-        return Response.ok(workerService.getFdrByPspAndIuv(pspId, iuv, flowName, organizationId, dateFrom, dateTo)).build();
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrByPspAndIuv(pspId, iuv, dateFrom, dateTo)).build();
     }
 
 }

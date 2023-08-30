@@ -103,23 +103,6 @@ public class FdrTableRepository {
         return runQuery(filterBuilder.toString());
     }
 
-
-    public List<FdrEventEntity> findSpecificWithParams(LocalDate dateFrom, LocalDate dateTo, Optional<String> pspId, Optional<String> iuv, Optional<String> flowName, Optional<String> organizationFiscalCode) {
-
-        StringBuilder filterBuilder = new StringBuilder(dateFilter(dateFrom, dateTo));
-
-        pspId.ifPresent(psp -> filterBuilder.append(String.format(" and pspId eq '%s'", psp)));
-        iuv.ifPresent(i -> filterBuilder.append(String.format(" and iuv eq '%s'", i)));
-        organizationFiscalCode.ifPresent(orgId -> filterBuilder.append(String.format(" and organizationId eq '%s'", orgId)));
-
-        flowName.ifPresentOrElse(
-                fn -> filterBuilder.append(String.format(" and flowName eq '%s'", fn)),
-                () -> filterBuilder.append(" and flowName ne ''"));
-
-        return runQuery(filterBuilder.toString());
-    }
-
-
     private String getString(Object o) {
         if (o == null) return null;
         return (String) o;
@@ -135,7 +118,9 @@ public class FdrTableRepository {
                 new ListEntitiesOptions().setFilter(filter).setSelect(propertiesToSelect);
         return getTableClient().listEntities(options, null, null).stream()
                 .map(
-                        this::tableEntityToEventEntity)
+                        e -> {
+                            return tableEntityToEventEntity(e);
+                        })
                 .collect(Collectors.toList());
     }
 }
