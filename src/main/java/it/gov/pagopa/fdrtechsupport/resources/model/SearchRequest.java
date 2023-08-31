@@ -16,5 +16,4 @@ public class SearchRequest {
     private Optional<String> creditorInstitution;
     private Optional<String> flowId;
     private Optional<String> iuv;
-    private Optional<String> iur;
 }
