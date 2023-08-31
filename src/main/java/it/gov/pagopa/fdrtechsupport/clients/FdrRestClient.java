@@ -10,6 +10,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
 
 import java.time.LocalDateTime;
+import org.openapi.quarkus.fdr_internal_json.model.GetPaymentResponse;
+import org.openapi.quarkus.fdr_internal_json.model.GetResponse;
 
 @Path("/")
 @ClientHeaderParam(name = "Ocp-Apim-Subscription-Key", value = "${fdr.api-key-value}")
@@ -18,8 +20,9 @@ import java.time.LocalDateTime;
 public interface FdrRestClient {
 
     @GET
-    @Path("/organizations/{ec}/flows/{flowName}")
-    String getFlow(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
+    @Path("/internal/history/organizations/{ec}/fdrs/{flowName}/revisions/{revision}/psps/{psp}/payments")
+    GetPaymentResponse getFlow(@QueryParam("page") long page, @PathParam("ec") String ec, @PathParam("flowName") String flowName,
+                               @PathParam("revision") String revision, @PathParam("psp") String psp);
 
     @GET
     @Path("/psps/{pspId}/iuv/{iuv}")

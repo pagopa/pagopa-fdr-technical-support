@@ -8,6 +8,7 @@ import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
+import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
@@ -318,7 +319,7 @@ public class WorkerService {
     return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(List.of(fdrs)).build();
   }
 
-  public String getFlow(String organizationId,String psp, String flowName,String revision, LocalDate dateFrom, LocalDate dateTo){
+  public FdrFullInfoResponse getFlow(String organizationId, String psp, String flowName, String revision, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
@@ -333,11 +334,22 @@ public class WorkerService {
     boolean isNew = reStorageEvents.stream().anyMatch(s -> s.getServiceIdentifier().equals("FDR003"));
 
     if(isNew){
-      Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));
-      return fdrRestClient.getFlow(organizationId,flowName);
+      GetPaymentResponse flow = fdrRestClient.getFlow(1,organizationId, flowName, revision, psp);
+      List<Payment> payments = flow.getData();
+
+      Integer totPage = flow.getMetadata().getTotPage();
+      for(int i=2;i<=totPage;i++){
+        GetPaymentResponse flowpage = fdrRestClient.getFlow(i,organizationId, flowName, revision, psp);
+        payments.addAll(flowpage.getData());
+      }
+
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(payments).build();
     }else {
       String body = "";
-      return fdrOldRestClient.nodoChiediFlussoRendicontazione(body);
+      String s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(s).build();
     }
   }
 
