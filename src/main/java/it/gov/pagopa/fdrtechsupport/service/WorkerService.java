@@ -14,8 +14,8 @@ import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
-import org.openapi.quarkus.api_fdr_json.model.FdrByPspAndIuvResponse;
-import org.openapi.quarkus.api_fdr_json.model.FdrInfo;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -125,20 +125,20 @@ public class WorkerService {
     LocalDateTime from = dateFrom.atStartOfDay();
     LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
     // La prima chiamata serve a prendere il numero totale di pagine.
-    FdrByPspAndIuvResponse reStorageEvents = fdrRestClient.getFlowByPspAndIuv(pspId, iuv, pageNumber, from, to);
+    FdrByPspIdIuvIurResponse reStorageEvents = fdrRestClient.getFlowByIuv(pspId, iuv, pageNumber, from, to);
 
     int totPages = reStorageEvents.getMetadata().getTotPage();
     String msg = String.format("Total pages %d", totPages);
     log.info(msg);
 
-    List<FdrInfo> data = reStorageEvents.getData();
+    List<FdrByPspIdIuvIurBase> data = reStorageEvents.getData();
 
     IntStream.rangeClosed(2, totPages)
-            .mapToObj(i -> fdrRestClient.getFlowByPspAndIuv(pspId, iuv, i, from, to).getData())
+            .mapToObj(i -> fdrRestClient.getFlowByIuv(pspId, iuv, i, from, to).getData())
             .forEach(data::addAll);
 
     List<FdrBaseInfo> dataResponse = data.stream()
-            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated(), fn.getOrganizationId())).toList();
+            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId())).toList();
 
     return FrResponse.builder()
             .dateFrom(dateRequest.getFrom())
@@ -147,6 +147,36 @@ public class WorkerService {
             .build();
   }
 
+
+  public FrResponse getFdrByPspAndIur(String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    // Questo è fisso e serve a ottenere le pagine totali
+    int pageNumber = 1;
+    LocalDateTime from = dateFrom.atStartOfDay();
+    LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
+    // La prima chiamata serve a prendere il numero totale di pagine.
+    FdrByPspIdIuvIurResponse reStorageEvents = fdrRestClient.getFlowByIur(pspId, iur, pageNumber, from, to);
+
+    int totPages = reStorageEvents.getMetadata().getTotPage();
+    String msg = String.format("Total pages %d", totPages);
+    log.info(msg);
+
+    List<FdrByPspIdIuvIurBase> data = reStorageEvents.getData();
+
+    IntStream.rangeClosed(2, totPages)
+            .mapToObj(i -> fdrRestClient.getFlowByIur(pspId, iur, i, from, to).getData())
+            .forEach(data::addAll);
+
+    List<FdrBaseInfo> dataResponse = data.stream()
+            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId())).toList();
+
+    return FrResponse.builder()
+            .dateFrom(dateRequest.getFrom())
+            .dateTo(dateRequest.getTo())
+            .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+            .build();
+  }
 
   public FrResponse getFdrActions(String pspId, Optional<String> flowName, Optional<String> organizationId, Optional<List<String>> actions,LocalDate dateFrom, LocalDate dateTo) {
 

@@ -149,4 +149,46 @@ public class PspResource implements Serializable {
         return Response.ok(workerService.getFdrByPspAndIuv(pspId, iuv, dateFrom, dateTo)).build();
     }
 
+
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = FrResponse.class))),
+                    @APIResponse(
+                            responseCode = "400",
+                            description = "Bad request.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "401",
+                            description = "Unauthorized.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "500",
+                            description = "Service unavailable.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @GET
+    @Tag(name = "API 3 - Get all FdR by PSP and IUR")
+    @Path("/{pspId}/iur/{iur}")
+    public Response frO3(@PathParam("pspId") @NotNull String pspId,
+                         @PathParam("iur") @NotNull String iur,
+                         @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrByPspAndIur(pspId, iur, dateFrom, dateTo)).build();
+    }
+
 }

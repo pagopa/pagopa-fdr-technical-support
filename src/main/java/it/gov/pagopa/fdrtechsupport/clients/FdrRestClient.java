@@ -7,7 +7,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import org.openapi.quarkus.api_fdr_json.model.FdrByPspAndIuvResponse;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
 
 import java.time.LocalDateTime;
 
@@ -23,7 +23,14 @@ public interface FdrRestClient {
 
     @GET
     @Path("/psps/{pspId}/iuv/{iuv}")
-    FdrByPspAndIuvResponse getFlowByPspAndIuv(@PathParam("pspId") String pspId, @PathParam("iuv") String iuv,
+    FdrByPspIdIuvIurResponse getFlowByIuv(@PathParam("pspId") String pspId, @PathParam("iuv") String iuv,
+                                          @QueryParam("pageNumber") Integer pageNumber,
+                                          @QueryParam("dateFrom") LocalDateTime dateFrom,
+                                          @QueryParam("dateTo") LocalDateTime dateTo);
+
+    @GET
+    @Path("/psps/{pspId}/iur/{iur}")
+    FdrByPspIdIuvIurResponse getFlowByIur(@PathParam("pspId") String pspId, @PathParam("iur") String iur,
                                               @QueryParam("pageNumber") Integer pageNumber,
                                               @QueryParam("dateFrom") LocalDateTime dateFrom,
                                               @QueryParam("dateTo") LocalDateTime dateTo);

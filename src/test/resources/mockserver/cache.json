@@ -33,7 +33,7 @@
             "organizationId": "string",
             "fdr": "string",
             "revision": 0,
-            "created": "2022-03-27T16:15:50Z"
+            "created": "2022-07-27T16:15:50Z"
           }
         ]
       },
@@ -76,7 +76,7 @@
             "organizationId": "string2",
             "fdr": "string2",
             "revision": 1,
-            "created": "2022-03-27T18:44:10Z"
+            "created": "2022-07-27T18:44:10Z"
           }
         ]
       },
@@ -120,6 +120,49 @@
             "fdr": "string3",
             "revision": 0,
             "created": "2022-07-28T18:44:10Z"
+          }
+        ]
+      },
+      "contentType": "application/json"
+    }
+  }
+},
+{
+  "id": "4",
+  "httpRequest": {
+    "path": "/psps/.*?/iur/.*?",
+    "queryStringParameters": [
+      {
+        "name": "pageNumber",
+        "values": ["1"]
+      },
+      {
+        "name": "dateFrom",
+        "values": ["2022-07-27T00:00"]
+      },
+      {
+        "name": "dateTo",
+        "values": ["2022-07-27T23:59:59.999999999"]
+      }
+    ]
+  },
+  "httpResponse": {
+    "body": {
+      "type": "JSON",
+      "json": {
+        "metadata": {
+          "pageSize": 1,
+          "pageNumber": 1,
+          "totPage": 1
+        },
+        "count": 100,
+        "data": [
+          {
+            "pspId": "string4",
+            "organizationId": "string4",
+            "fdr": "string4",
+            "revision": 0,
+            "created": "2022-07-27T10:13:16Z"
           }
         ]
       },
