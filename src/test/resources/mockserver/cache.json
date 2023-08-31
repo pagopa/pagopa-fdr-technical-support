@@ -1,7 +1,45 @@
 [{
   "id": "old flow",
   "httpRequest": {
-    "path": "/psps/.*?/iuv/.*?",
+    "path": "/organizations/.*?/flows/.*?"
+  },
+  "httpResponse": {
+    "body": "<xml>test</xml>"
+  }
+},{
+  "id": "new flow",
+  "httpRequest": {
+    "path": "/internal/history/organizations/.*?/fdrs/.*?/revisions/.*?/psps/.*?/payments"
+  },
+  "httpResponse": {
+    "body": {
+      "type": "JSON",
+      "json": {
+        "count": 1,
+        "metadata": {
+          "pageSize": 1000,
+          "pageNumber": 1,
+          "totPage": 2
+        },
+        "data": [
+          {
+            "iuv": "iuv",
+            "iur": "iur",
+            "index": 1,
+            "pay": 22.00,
+            "payStatus": "EXECUTED",
+            "payDate": "2023-02-03T12:00:30.900000Z"
+          }
+        ]
+      },
+      "contentType": "application/json"
+    }
+  }
+},
+  {
+  "id": "1",
+  "httpRequest": {
+    "path": "/internal/psps/.*?/iuv/.*?",
     "queryStringParameters": [
       {
         "name": "pageNumber",
@@ -44,7 +82,7 @@
 {
   "id": "2",
   "httpRequest": {
-    "path": "/psps/.*?/iuv/.*?",
+    "path": "/internal/psps/.*?/iuv/.*?",
     "queryStringParameters": [
       {
         "name": "pageNumber",
@@ -87,7 +125,7 @@
 {
   "id": "3",
   "httpRequest": {
-    "path": "/psps/.*?/iuv/.*?",
+    "path": "/internal/psps/.*?/iuv/.*?",
     "queryStringParameters": [
       {
         "name": "pageNumber",
@@ -130,7 +168,7 @@
 {
   "id": "4",
   "httpRequest": {
-    "path": "/psps/.*?/iur/.*?",
+    "path": "/internal/psps/.*?/iur/.*?",
     "queryStringParameters": [
       {
         "name": "pageNumber",

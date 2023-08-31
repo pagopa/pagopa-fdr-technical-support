@@ -17,6 +17,8 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
+import org.openapi.quarkus.api_fdr_json.model.Payment;
+import org.openapi.quarkus.api_fdr_json.model.GetPaymentResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -121,22 +123,24 @@ public class WorkerService {
   public FrResponse getFdrByPspAndIuv(String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
 
+    List<FdrByPspIdIuvIurBase> data = new ArrayList<>();
     // Questo è fisso e serve a ottenere le pagine totali
     int pageNumber = 1;
     LocalDateTime from = dateFrom.atStartOfDay();
     LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
     // La prima chiamata serve a prendere il numero totale di pagine.
     FdrByPspIdIuvIurResponse reStorageEvents = fdrRestClient.getFlowByIuv(pspId, iuv, pageNumber, from, to);
+    if(reStorageEvents!=null){
+      int totPages = reStorageEvents.getMetadata().getTotPage();
+      String msg = String.format("Total pages %d", totPages);
+      log.info(msg);
 
-    int totPages = reStorageEvents.getMetadata().getTotPage();
-    String msg = String.format("Total pages %d", totPages);
-    log.info(msg);
+      data = reStorageEvents.getData();
 
-    List<FdrByPspIdIuvIurBase> data = reStorageEvents.getData();
-
-    IntStream.rangeClosed(2, totPages)
-            .mapToObj(i -> fdrRestClient.getFlowByIuv(pspId, iuv, i, from, to).getData())
-            .forEach(data::addAll);
+      IntStream.rangeClosed(2, totPages)
+              .mapToObj(i -> fdrRestClient.getFlowByIuv(pspId, iuv, i, from, to).getData())
+              .forEach(data::addAll);
+    }
 
     List<FdrBaseInfo> dataResponse = data.stream()
             .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId())).toList();
