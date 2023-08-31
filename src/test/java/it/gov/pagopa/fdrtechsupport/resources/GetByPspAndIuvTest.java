@@ -37,7 +37,7 @@ public class GetByPspAndIuvTest {
                         .then()
                         .statusCode(200)
                         .extract()
-                        .as(new TypeRef<>() {});
+                        .as(new TypeRef<FrResponse>() {});
 
         List<FdrBaseInfo> data = res.getData();
         assertThat(data.size(), greaterThan(0));
