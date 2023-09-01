@@ -32,8 +32,8 @@ import java.util.stream.Stream;
 @ApplicationScoped
 public class WorkerService {
 
-  //private static final String outcomeOK = "OK";
-  //private static final String outcomeKO = "KO";
+  private static final String outcomeOK = "OK";
+  private static final String outcomeKO = "KO";
 
   @Inject Logger log;
 

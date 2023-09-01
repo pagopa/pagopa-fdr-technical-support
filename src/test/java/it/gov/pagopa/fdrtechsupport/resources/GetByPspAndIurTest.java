@@ -21,7 +21,7 @@ public class GetByPspAndIurTest {
 
     public static final String url = "/psps/%s/iur/%s";
     @Test
-    public void testGetFdrByPspAndIur() {
+    void testGetFdrByPspAndIur() {
 
         FrResponse res =
                 given()
@@ -45,7 +45,7 @@ public class GetByPspAndIurTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIurMalformedError() {
+    void testGetFdrByPspAndIurMalformedError() {
 
         given()
                 .param("dateFrom", "27-07-2022")
@@ -57,7 +57,7 @@ public class GetByPspAndIurTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIurEmptyParamError() {
+    void testGetFdrByPspAndIurEmptyParamError() {
 
         given()
                 .param("dateFrom", "")
@@ -69,7 +69,7 @@ public class GetByPspAndIurTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIurReverseDate() {
+    void testGetFdrByPspAndIurReverseDate() {
 
         given()
                 .param("dateFrom", "27-07-2022")

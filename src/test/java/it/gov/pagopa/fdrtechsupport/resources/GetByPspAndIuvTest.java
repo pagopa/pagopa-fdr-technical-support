@@ -6,6 +6,7 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.MongoResource;
 import org.junit.jupiter.api.Test;
@@ -26,7 +27,7 @@ public class GetByPspAndIuvTest {
     public static final String url = "/psps/%s/iuv/%s";
 
     @Test
-    public void testGetFdrByPspAndIuv() {
+    void testGetFdrByPspAndIuv() {
 
         FrResponse res =
                 given()
@@ -50,7 +51,7 @@ public class GetByPspAndIuvTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIuvMalformedError() {
+    void testGetFdrByPspAndIuvMalformedError() {
 
                 given()
                         .param("dateFrom", "27-07-2022")
@@ -62,7 +63,7 @@ public class GetByPspAndIuvTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIuvEmptyParamError() {
+    void testGetFdrByPspAndIuvEmptyParamError() {
 
         given()
                 .param("dateFrom", "")
@@ -74,7 +75,7 @@ public class GetByPspAndIuvTest {
     }
 
     @Test
-    public void testGetFdrByPspAndIurReverseDate() {
+    void testGetFdrByPspAndIurReverseDate() {
 
         given()
                 .param("dateFrom", "27-07-2022")
