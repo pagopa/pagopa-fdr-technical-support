@@ -1,5 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
+import io.swagger.v3.oas.annotations.tags.Tag;
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
@@ -36,6 +37,20 @@ public class PspResource implements Serializable {
         @APIResponse(
             responseCode = "400",
             description = "Bad Request",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @APIResponse(
+            responseCode = "401",
+            description = "Unauthorized.",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ProblemJson.class))),
+        @APIResponse(
+            responseCode = "404",
+            description = "Not found.",
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
@@ -92,5 +107,88 @@ public class PspResource implements Serializable {
 //      //TODO filtrare per organizationId
 //        return Response.ok(workerService.getFdrActions(pspId,flowName,Optional.empty(),dateFrom,dateTo)).build();
 //    }
+
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = FrResponse.class))),
+                    @APIResponse(
+                            responseCode = "400",
+                            description = "Bad request.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "401",
+                            description = "Unauthorized.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "500",
+                            description = "Service unavailable.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @GET
+    @Tag(name = "API 2 - Get all FdR by PSP and IUV")
+    @Path("/{pspId}/iuv/{iuv}")
+    public Response frO2(@PathParam("pspId") @NotNull String pspId,
+                         @PathParam("iuv") @NotNull String iuv,
+                         @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrByPspAndIuv(pspId, iuv, dateFrom, dateTo)).build();
+    }
+
+
+    @APIResponses(
+            value = {
+                    @APIResponse(
+                            responseCode = "200",
+                            description = "OK",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = FrResponse.class))),
+                    @APIResponse(
+                            responseCode = "400",
+                            description = "Bad request.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "401",
+                            description = "Unauthorized.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class))),
+                    @APIResponse(
+                            responseCode = "500",
+                            description = "Service unavailable.",
+                            content =
+                            @Content(
+                                    mediaType = MediaType.APPLICATION_JSON,
+                                    schema = @Schema(implementation = ProblemJson.class)))
+            })
+    @GET
+    @Tag(name = "API 3 - Get all FdR by PSP and IUR")
+    @Path("/{pspId}/iur/{iur}")
+    public Response frO3(@PathParam("pspId") @NotNull String pspId,
+                         @PathParam("iur") @NotNull String iur,
+                         @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+        return Response.ok(workerService.getFdrByPspAndIur(pspId, iur, dateFrom, dateTo)).build();
+    }
 
 }

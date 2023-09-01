@@ -8,23 +8,32 @@ import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
+import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
+import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
+import org.openapi.quarkus.api_fdr_json.model.Payment;
+import org.openapi.quarkus.api_fdr_json.model.GetPaymentResponse;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 
 @ApplicationScoped
 public class WorkerService {
 
-  private static String outcomeOK = "OK";
-  private static String outcomeKO = "KO";
+  private static final String outcomeOK = "OK";
+  private static final String outcomeKO = "KO";
 
   @Inject Logger log;
 
@@ -48,7 +57,8 @@ public class WorkerService {
             .build();
   }
 
-  private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
+
+    private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
     List<FdrEventEntity> reStorageEvents = new ArrayList<>();
     if(reDates.getLeft()!=null){
       log.infof("Querying re table storage");
@@ -97,7 +107,7 @@ public class WorkerService {
               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
               fdrInfo.setFlowName(ordered.get(0).getFlowName());
               fdrInfo.setCreated(ordered.get(0).getCreated());
-              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(null));
+              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(FdrEventEntity::getOrganizationId).orElseGet(null));
             return fdrInfo;
           })
         .collect(Collectors.toList());
@@ -106,6 +116,70 @@ public class WorkerService {
             .dateFrom(dateRequest.getFrom())
             .dateTo(dateRequest.getTo())
             .data(collect)
+            .build();
+  }
+
+
+  public FrResponse getFdrByPspAndIuv(String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    List<FdrByPspIdIuvIurBase> data = new ArrayList<>();
+    // Questo è fisso e serve a ottenere le pagine totali
+    int pageNumber = 1;
+    LocalDateTime from = dateFrom.atStartOfDay();
+    LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
+    // La prima chiamata serve a prendere il numero totale di pagine.
+    FdrByPspIdIuvIurResponse reStorageEvents = fdrRestClient.getFlowByIuv(pspId, iuv, pageNumber, from, to);
+    if(reStorageEvents!=null){
+      int totPages = reStorageEvents.getMetadata().getTotPage();
+      String msg = String.format("Total pages %d", totPages);
+      log.info(msg);
+
+      data = reStorageEvents.getData();
+
+      IntStream.rangeClosed(2, totPages)
+              .mapToObj(i -> fdrRestClient.getFlowByIuv(pspId, iuv, i, from, to).getData())
+              .forEach(data::addAll);
+    }
+
+    List<FdrBaseInfo> dataResponse = data.stream()
+            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId())).toList();
+
+    return FrResponse.builder()
+            .dateFrom(dateRequest.getFrom())
+            .dateTo(dateRequest.getTo())
+            .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+            .build();
+  }
+
+
+  public FrResponse getFdrByPspAndIur(String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
+    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    // Questo è fisso e serve a ottenere le pagine totali
+    int pageNumber = 1;
+    LocalDateTime from = dateFrom.atStartOfDay();
+    LocalDateTime to = LocalDateTime.of(dateTo, LocalTime.MAX);
+    // La prima chiamata serve a prendere il numero totale di pagine.
+    FdrByPspIdIuvIurResponse reStorageEvents = fdrRestClient.getFlowByIur(pspId, iur, pageNumber, from, to);
+
+    int totPages = reStorageEvents.getMetadata().getTotPage();
+    String msg = String.format("Total pages %d", totPages);
+    log.info(msg);
+
+    List<FdrByPspIdIuvIurBase> data = reStorageEvents.getData();
+
+    IntStream.rangeClosed(2, totPages)
+            .mapToObj(i -> fdrRestClient.getFlowByIur(pspId, iur, i, from, to).getData())
+            .forEach(data::addAll);
+
+    List<FdrBaseInfo> dataResponse = data.stream()
+            .map(fn -> new FdrBaseInfo(fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId())).toList();
+
+    return FrResponse.builder()
+            .dateFrom(dateRequest.getFrom())
+            .dateTo(dateRequest.getTo())
+            .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
             .build();
   }
 
@@ -138,7 +212,7 @@ public class WorkerService {
                               fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
                               fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
                               fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
-                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
+                              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(FdrEventEntity::getOrganizationId).orElse(null));
                               return fdrInfo;
                             })
                     .collect(Collectors.toList());
@@ -162,12 +236,12 @@ public class WorkerService {
       throw new AppException(
               AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from and date to must be both defined");
-    } else if (dateFrom != null && dateTo != null && dateFrom.isAfter(dateTo)) {
+    } else if (dateFrom != null && dateFrom.isAfter(dateTo)) {
       throw new AppException(
               AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
               "Date from must be before date to");
     }
-    if (dateFrom == null && dateTo == null) {
+    if (dateFrom == null) {
       dateTo = LocalDate.now();
       dateFrom = dateTo.minusDays(dateRangeLimit);
     }
@@ -188,11 +262,11 @@ public class WorkerService {
 
     if(dateRequest.getFrom().isBefore(dateLimit)){
       historyDateFrom = dateRequest.getFrom();
-      historyDateTo = Arrays.asList(dateLimit,dateRequest.getTo()).stream().min(LocalDate::compareTo).get();
+      historyDateTo = Stream.of(dateLimit,dateRequest.getTo()).min(LocalDate::compareTo).get();
     }
 
     if(dateRequest.getTo().isAfter(dateLimit)){
-      actualDateFrom = Arrays.asList(dateLimit,dateRequest.getFrom()).stream().max(LocalDate::compareTo).get();
+      actualDateFrom = Stream.of(dateLimit,dateRequest.getFrom()).max(LocalDate::compareTo).get();
       if(historyDateTo!=null){
         actualDateFrom = actualDateFrom.plusDays(1);
       }
@@ -217,7 +291,7 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().filter(s -> s.getServiceIdentifier().equals("FDR003")).findAny().isPresent();
+    boolean isNew = reStorageEvents.stream().anyMatch(s -> s.getServiceIdentifier().equals("FDR003"));
 
     List<FdrEventEntity> flowEvents;
     if(isNew){
@@ -233,27 +307,23 @@ public class WorkerService {
     fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
     fdrs.setPspId(flowEvents.get(0).getPspId());
     fdrs.setCreated(flowEvents.get(0).getCreated());
-    fdrs.setRevisions(new ArrayList<RevisionInfo>());
+    fdrs.setRevisions(new ArrayList<>());
 
     if(isNew){
-      flowEvents.forEach(creation->{
-        fdrs.getRevisions().add(
-                new RevisionInfo(creation.getRevision().toString(), creation.getCreated())
-        );
-      });
+      flowEvents.forEach(creation-> fdrs.getRevisions().add(
+              new RevisionInfo(creation.getRevision().toString(), creation.getCreated())
+      ));
     }else {
-      flowEvents.forEach(creation->{
-        fdrs.getRevisions().add(
-                new RevisionInfo(creation.getCreated(), creation.getCreated())
-        );
-      });
+      flowEvents.forEach(creation-> fdrs.getRevisions().add(
+              new RevisionInfo(creation.getCreated(), creation.getCreated())
+      ));
     }
 
 
-    return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(Arrays.asList(fdrs)).build();
+    return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(List.of(fdrs)).build();
   }
 
-  public String getFlow(String organizationId,String psp, String flowName,String revision, LocalDate dateFrom, LocalDate dateTo){
+  public FdrFullInfoResponse getFlow(String organizationId, String psp, String flowName, String revision, LocalDate dateFrom, LocalDate dateTo){
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
@@ -265,14 +335,26 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().filter(s -> s.getServiceIdentifier().equals("FDR003")).findAny().isPresent();
+    boolean isNew = reStorageEvents.stream().anyMatch(s -> s.getServiceIdentifier().equals("FDR003"));
 
     if(isNew){
-      Optional<FdrEventEntity> max = reStorageEvents.stream().max(Comparator.comparingInt(FdrEventEntity::getRevision));
-      return fdrRestClient.getFlow(organizationId,flowName);
+      GetPaymentResponse flow = fdrRestClient.getFlow(1,organizationId, flowName, revision, psp);
+      List<Payment> payments = flow.getData();
+
+      Integer totPage = flow.getMetadata().getTotPage();
+      for(int i=2;i<=totPage;i++){
+        GetPaymentResponse flowpage = fdrRestClient.getFlow(i,organizationId, flowName, revision, psp);
+        payments.addAll(flowpage.getData());
+      }
+
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(payments).build();
     }else {
       String body = "";
-      return fdrOldRestClient.nodoChiediFlussoRendicontazione(body);
+      String s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
+      return FdrFullInfoResponse.builder()
+              .dateFrom(dateFrom).dateTo(dateTo).data(s).build();
     }
   }
+
 }

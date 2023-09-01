@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "4b1662d0-3a25-446e-b811-8957f1bdc9dd",
+		"_postman_id": "e39a63b2-dda5-471d-9a39-9b6f5a57cf38",
 		"name": "API Assistenza Fdr",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "11518494",
-		"_collection_link": "https://speeding-station-482612.postman.co/workspace/Nodo-doc~ec880f84-0a42-4ca9-bbd1-454d00bbe20c/collection/11518494-4b1662d0-3a25-446e-b811-8957f1bdc9dd?action=share&creator=11518494&source=collection_link"
+		"_exporter_id": "26452180"
 	},
 	"item": [
 		{
@@ -132,6 +131,86 @@
 						{
 							"key": "flowName",
 							"value": "2023-07-25nodo-doc-dev-16902903874"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API 2 - by pspId and iuv",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/psps/:psp/iuv/:iuv?dateFrom=2022-07-27&dateTo=2022-07-27",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"psps",
+						":psp",
+						"iuv",
+						":iuv"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2022-07-27"
+						},
+						{
+							"key": "dateTo",
+							"value": "2022-07-27"
+						}
+					],
+					"variable": [
+						{
+							"key": "psp",
+							"value": "25"
+						},
+						{
+							"key": "iuv",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "API 3 - by pspId and iur",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/psps/:psp/iur/:iur?dateFrom=2022-07-27&dateTo=2022-07-27",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"psps",
+						":psp",
+						"iur",
+						":iur"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2022-07-27"
+						},
+						{
+							"key": "dateTo",
+							"value": "2022-07-27"
+						}
+					],
+					"variable": [
+						{
+							"key": "psp",
+							"value": "25"
+						},
+						{
+							"key": "iur",
+							"value": "1"
 						}
 					]
 				}

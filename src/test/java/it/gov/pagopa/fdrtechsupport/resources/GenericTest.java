@@ -1,4 +1,4 @@
-package java.it.gov.pagopa.nodetsworker.resources;
+package it.gov.pagopa.fdrtechsupport.resources;
 
 import io.quarkus.test.junit.QuarkusTest;
 import jakarta.ws.rs.core.MediaType;
