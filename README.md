@@ -1,4 +1,4 @@
-# FdR tech support API
+# FdR Technical Support API
 
 [![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=pagopa_pagopa-fdr-technical-support&metric=alert_status)](https://sonarcloud.io/dashboard?id=pagopa_pagopa-fdr-technical-support)
 
