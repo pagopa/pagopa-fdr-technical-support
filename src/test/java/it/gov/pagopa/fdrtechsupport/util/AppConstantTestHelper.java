@@ -4,7 +4,6 @@ import com.azure.data.tables.models.TableEntity;
 import io.restassured.http.Header;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
 public class AppConstantTestHelper {
 
@@ -20,23 +19,15 @@ public class AppConstantTestHelper {
 
   public static final Header HEADER = new Header("Content-Type", "application/json");
 
-  public static final TableEntity newRe(String pa, String noticeNumber, String iuv) {
+  public static final TableEntity newFdr(LocalDate date,String pa,String flowName,int revision,boolean isnew) {
     TableEntity entity =
         new TableEntity(
-            Util.format(LocalDate.now()),
-            String.valueOf(Optional.ofNullable(noticeNumber).orElse(iuv)));
-    entity.addProperty("idDominio", pa);
-    entity.addProperty("noticeNumber", noticeNumber);
-    entity.addProperty("iuv", iuv);
-    entity.addProperty("esito", "CAMBIO_STATO");
-    if(noticeNumber!=null)
-      entity.addProperty("paymentToken", "pt_" + noticeNumber);
-    if(iuv!=null)
-      entity.addProperty("ccp", "ccp_" + iuv);
-    entity.addProperty("stazione", "77777777777_01");
-    entity.addProperty("psp", "pspTest");
-    entity.addProperty("canale", "canaleTest");
-    entity.addProperty("status", "PAID");
+            Util.format(date),
+                flowName);
+    entity.addProperty("organizationId", pa);
+    entity.addProperty("flowName", flowName);
+    entity.addProperty("revision", revision);
+    entity.addProperty("serviceIdentifier", isnew?"FDR003":"FDR001");
     return entity;
   }
 

@@ -3,6 +3,7 @@ package it.gov.pagopa.fdrtechsupport.service;
 import com.azure.cosmos.implementation.apachecommons.lang.tuple.Pair;
 import it.gov.pagopa.fdrtechsupport.clients.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.clients.FdrRestClient;
+import it.gov.pagopa.fdrtechsupport.clients.model.FdrOldXmlResponse;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
@@ -350,10 +351,9 @@ public class WorkerService {
       return FdrFullInfoResponse.builder()
               .dateFrom(dateFrom).dateTo(dateTo).data(payments).build();
     }else {
-      String body = "";
-      String s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
+      FdrOldXmlResponse s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
       return FdrFullInfoResponse.builder()
-              .dateFrom(dateFrom).dateTo(dateTo).data(s).build();
+              .dateFrom(dateFrom).dateTo(dateTo).data(s.getXmlRendicontazione()).build();
     }
   }
 

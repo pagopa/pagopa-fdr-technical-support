@@ -1,5 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.clients;
 
+import it.gov.pagopa.fdrtechsupport.clients.model.FdrOldXmlResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -13,8 +14,8 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 public interface FdrOldRestClient {
 
     @GET
-    @Path("/organizations/{ec}/flows/{flowName}")
-    String nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
+    @Path("/internal/organizations/{ec}/flows/{flowName}")
+    FdrOldXmlResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
 
 }
 
