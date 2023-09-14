@@ -50,7 +50,8 @@ public class FdrTableRepository {
                     "header",
                     "flowPhisicalDelete",
                     "flowStatus",
-                    "revision"
+                    "revision",
+                    "serviceIdentifier"
             );
 
     public TableClient getTableClient() {
@@ -80,6 +81,7 @@ public class FdrTableRepository {
         ee.setFlowPhisicalDelete(getString(e.getProperty("flowPhisicalDelete")));
         ee.setFlowStatus(getString(e.getProperty("flowStatus")));
         ee.setRevision(getInteger(e.getProperty("revision")));
+        ee.setServiceIdentifier(getString(e.getProperty("serviceIdentifier")));
         return ee;
     }
 

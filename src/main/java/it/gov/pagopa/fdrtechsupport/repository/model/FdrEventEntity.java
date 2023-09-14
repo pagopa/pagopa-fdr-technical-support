@@ -34,7 +34,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
   private String flowStatus;
   private Integer revision;
 
-  private static String dateFilter = " 'PartitionKey': { '$gte': :from , '$lt': :to } ";
+  private static String dateFilter = " 'created': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
     return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom))
             .and("to", DateTimeFormatter.ISO_DATE.format(dateTo.plusDays(1)));

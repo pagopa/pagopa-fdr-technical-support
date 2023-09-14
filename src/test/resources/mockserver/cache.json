@@ -1,10 +1,10 @@
 [{
   "id": "old flow",
   "httpRequest": {
-    "path": "/organizations/.*?/flows/.*?"
+    "path": "/internal/organizations/.*?/flows/.*?"
   },
   "httpResponse": {
-    "body": "<xml>test</xml>"
+    "body": { "xmlRendicontazione":"<xml>test</xml>"}
   }
 },{
   "id": "new flow",

@@ -74,40 +74,6 @@ public class PspResource implements Serializable {
     return Response.ok(workerService.getFdrByParams(Optional.of(pspId),flowName,organizationId,dateFrom,dateTo)).build();
   }
 
-//    @APIResponses(
-//            value = {
-//                    @APIResponse(
-//                            responseCode = "200",
-//                            description = "OK",
-//                            content =
-//                            @Content(
-//                                    mediaType = MediaType.APPLICATION_JSON,
-//                                    schema = @Schema(implementation = FrResponse.class))),
-//                    @APIResponse(
-//                            responseCode = "400",
-//                            description = "Bad Request",
-//                            content =
-//                            @Content(
-//                                    mediaType = MediaType.APPLICATION_JSON,
-//                                    schema = @Schema(implementation = ProblemJson.class))),
-//                    @APIResponse(
-//                            responseCode = "500",
-//                            description = "Service unavailable.",
-//                            content =
-//                            @Content(
-//                                    mediaType = MediaType.APPLICATION_JSON,
-//                                    schema = @Schema(implementation = ProblemJson.class)))
-//            })
-//    @GET
-//    @Path("/{pspId}/flows/{flowName}")
-//    public Response frO1(@PathParam("pspId") @NotNull String pspId,
-//                         @PathParam("flowName")  @NotNull String flowName,
-//                         @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-//                         @NotNull @QueryParam("dateTo") LocalDate dateTo) {
-//      //TODO filtrare per organizationId
-//        return Response.ok(workerService.getFdrActions(pspId,flowName,Optional.empty(),dateFrom,dateTo)).build();
-//    }
-
     @APIResponses(
             value = {
                     @APIResponse(

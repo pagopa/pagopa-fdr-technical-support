@@ -17,8 +17,9 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
-import org.openapi.quarkus.api_fdr_json.model.Payment;
 import org.openapi.quarkus.api_fdr_json.model.GetPaymentResponse;
+import org.openapi.quarkus.api_fdr_json.model.Payment;
+import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -350,10 +351,9 @@ public class WorkerService {
       return FdrFullInfoResponse.builder()
               .dateFrom(dateFrom).dateTo(dateTo).data(payments).build();
     }else {
-      String body = "";
-      String s = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
+      GetXmlRendicontazioneResponse getXmlRendicontazioneResponse = fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
       return FdrFullInfoResponse.builder()
-              .dateFrom(dateFrom).dateTo(dateTo).data(s).build();
+              .dateFrom(dateFrom).dateTo(dateTo).data(getXmlRendicontazioneResponse.getXmlRendicontazione()).build();
     }
   }
 
