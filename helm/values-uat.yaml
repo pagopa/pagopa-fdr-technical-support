@@ -31,7 +31,7 @@ microservice-chart:
   secretProvider:
     create: true
     envSecrets:
-      FDR_SUBSCRIPTION_KEY: "fdr-internal-product-subscription-key-string"
+      FDR_SUBSCRIPTION_KEY: "fdr-internal-product-subscription-key"
       FDR_RE_COSMOS_CONNECTION_STRING: "mongodb-re-connection-string"
       FDR_RE_TABLE_STORAGE_CONN_STRING: "fdr-re-sa-connection-string"
     keyvault:
