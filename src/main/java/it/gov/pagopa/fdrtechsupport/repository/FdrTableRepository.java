@@ -43,8 +43,8 @@ public class FdrTableRepository {
                     ACTION,
                     PSP,
                     ORGANIZATION,
+                    CREATED,
                     "serviceIdentifier",
-                    "created",
                     "sessionId",
                     "eventType",
                     "httpType",
@@ -73,17 +73,16 @@ public class FdrTableRepository {
         ee.setPspId(getString(e.getProperty(PSP)));
         ee.setOrganizationId(getString(e.getProperty(ORGANIZATION)));
         ee.setFdrAction(getString(e.getProperty(ACTION)));
-        ee.setServiceIdentifier(getString(e.getProperty("serviceIdentifier")));
-        ee.setCreated(getString(e.getProperty("created")));
+        ee.setCreated(getString(e.getProperty(CREATED)));
         ee.setSessionId(getString(e.getProperty("sessionId")));
         ee.setEventType(getString(e.getProperty("eventType")));
-        ee.setHttpType(getString(e.getProperty("httpType")));
-        ee.setHttpMethod(getString(e.getProperty("httpMethod")));
-        ee.setHttpUrl(getString(e.getProperty("httpUrl")));
-        ee.setFdrPhisicalDelete(getString(e.getProperty("fdrPhisicalDelete")));
         ee.setFdrStatus(getString(e.getProperty("fdrStatus")));
         ee.setRevision(getInteger(e.getProperty("revision")));
         ee.setServiceIdentifier(getString(e.getProperty("serviceIdentifier")));
+        ee.setHttpType(getString(e.getProperty("httpType")));
+        //ee.setHttpMethod(getString(e.getProperty("httpMethod")));
+        //ee.setHttpUrl(getString(e.getProperty("httpUrl")));
+        //ee.setFdrPhisicalDelete(getString(e.getProperty("fdrPhisicalDelete")));
         return ee;
     }
 

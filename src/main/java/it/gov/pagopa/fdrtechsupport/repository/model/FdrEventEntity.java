@@ -33,12 +33,12 @@ public class FdrEventEntity extends PanacheMongoEntity {
   private String eventType;
   private String pspId;
   private String organizationId;
-  private String httpType;
-  private String httpMethod;
-  private String httpUrl;
-  private String fdrPhisicalDelete;
   private String fdrStatus;
   private Integer revision;
+  private String httpType;
+  //private String httpMethod;
+  //private String httpUrl;
+  //private String fdrPhisicalDelete;
 
   private static String dateFilter = " '%s': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){

@@ -59,7 +59,7 @@ public class WorkerService {
   }
 
 
-    private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
+  private List<FdrEventEntity> find(Pair<DateRequest, DateRequest> reDates,Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId,Optional<List<String>> actions){
     List<FdrEventEntity> reStorageEvents = new ArrayList<>();
     if(reDates.getLeft()!=null){
       log.infof("Querying re table storage");
@@ -88,7 +88,7 @@ public class WorkerService {
   }
 
 
-  public FrResponse getFdrByParams(Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
+  public FrResponse getFdrByPsp(Optional<String> pspId, Optional<String> flowName, Optional<String> organizationId, LocalDate dateFrom, LocalDate dateTo) {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
@@ -301,10 +301,10 @@ public class WorkerService {
     List<FdrEventEntity> flowEvents;
     if(!isOld){
       flowEvents = reStorageEvents.stream()
-              .filter(s->s.getRevision()!=null && s.getFdr()!=null && "PUBLISH".equals(s.getFdrAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+              .filter(s->s.getRevision()!=null).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
     } else{
       flowEvents = reStorageEvents.stream()
-              .filter(s->"REQ".equals(s.getHttpType()) && s.getFdr()!=null && "nodoInviaFlussoRendicontazione".equals(s.getFdrAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+              .filter(s->"REQ".equals(s.getHttpType())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
     }
 
     if(flowEvents.isEmpty()){
