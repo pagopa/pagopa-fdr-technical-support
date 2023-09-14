@@ -8,6 +8,7 @@ public enum AppErrorCodeMessageEnum implements AppErrorCodeMessageInterface {
   DATE_BAD_REQUEST("0400", "bad.request", RestResponse.Status.BAD_REQUEST),
   INTERVAL_TOO_LARGE("0401", "bad.request.interval.too.large", RestResponse.Status.BAD_REQUEST),
   FLOW_NOT_FOUND("0404", "flow.not.found", RestResponse.Status.NOT_FOUND),
+  FLOW_NOT_FOUND_CLIENT("1404", "flow.not.found", RestResponse.Status.NOT_FOUND),
   ERROR("0500", "system.error", RestResponse.Status.INTERNAL_SERVER_ERROR),
   BAD_REQUEST("0400", "bad.request", RestResponse.Status.BAD_REQUEST),
   BAD_REQUEST_INPUT_JSON("0401", "bad.request.inputJson", RestResponse.Status.BAD_REQUEST),
