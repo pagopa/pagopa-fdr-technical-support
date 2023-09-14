@@ -2,8 +2,8 @@ apiVersion: v2
 name: pagopa-fdr-tech-support-api
 description: Technical support api
 type: application
-version: "0.15.0"
-appVersion: "1.0.0-2-NOD-419_recupero_xml"
+version: "0.16.0"
+appVersion: "1.0.0-3-NOD-419_recupero_xml"
 dependencies:
   - name: microservice-chart
     version: 3.0.0
