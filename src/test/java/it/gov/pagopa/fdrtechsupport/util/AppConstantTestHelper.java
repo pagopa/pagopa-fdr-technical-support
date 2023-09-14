@@ -2,8 +2,10 @@ package it.gov.pagopa.fdrtechsupport.util;
 
 import com.azure.data.tables.models.TableEntity;
 import io.restassured.http.Header;
+import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 
 public class AppConstantTestHelper {
 
@@ -19,7 +21,7 @@ public class AppConstantTestHelper {
 
   public static final Header HEADER = new Header("Content-Type", "application/json");
 
-  public static final TableEntity newFdr(LocalDate date,String pa,String flowName,int revision,boolean isnew) {
+  public static final TableEntity newTableFdr(LocalDate date, String pa, String flowName, int revision, boolean isnew) {
     TableEntity entity =
         new TableEntity(
             Util.format(date),
@@ -31,6 +33,15 @@ public class AppConstantTestHelper {
     return entity;
   }
 
+  public static final FdrEventEntity newMongoEntity(LocalDate date, String pa, String flowName, int revision, boolean isnew){
+    FdrEventEntity entity = new FdrEventEntity();
+    entity.setCreated(date.format(DateTimeFormatter.ISO_DATE));
+    entity.setOrganizationId(pa);
+    entity.setFlowName(flowName);
+    entity.setRevision(revision);
+    entity.setServiceIdentifier(isnew?"FDR003":"FDR001");
+    return entity;
+  }
 
 
 }

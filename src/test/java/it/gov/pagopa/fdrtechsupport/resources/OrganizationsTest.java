@@ -4,9 +4,11 @@ import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
 import io.quarkiverse.mockserver.test.MockServerTestResource;
+import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
+import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
@@ -49,6 +51,30 @@ class OrganizationsTest {
     return tableClient;
   }
 
+    @SneakyThrows
+    @Test
+    @DisplayName("get fdr old mongo")
+    void getFdrOldMongo() {
+        String flowName="test1";
+        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
+                PA_CODE,"psp",flowName,1
+        );
+
+        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE, flowName,0,false));
+
+        FdrFullInfoResponse res =
+                given()
+                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
+                        .param("dateTo", Util.format(LocalDate.now()))
+                        .when()
+                        .get(url)
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .as(new TypeRef<FdrFullInfoResponse>() {});
+        assertThat(res.getData(),equalTo("<xml>test</xml>"));
+    }
+
   @SneakyThrows
   @Test
   @DisplayName("get fdr old table storage")
@@ -57,7 +83,7 @@ class OrganizationsTest {
       String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
               PA_CODE,"psp",flowName,1
       );
-      getTableClient().createEntity(AppConstantTestHelper.newFdr(LocalDate.now().minusDays(100),PA_CODE, flowName,0,false));
+      getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE, flowName,0,false));
 
       FdrFullInfoResponse res =
         given()
@@ -74,13 +100,38 @@ class OrganizationsTest {
 
     @SneakyThrows
     @Test
-    @DisplayName("get fdr new")
-    void getFdrNew() {
+    @DisplayName("get fdr new mongo")
+    void getFdrNewMongo() {
         String flowName="test2";
         String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
                 PA_CODE,"psp",flowName,1
         );
-        getTableClient().createEntity(AppConstantTestHelper.newFdr(LocalDate.now().minusDays(100),PA_CODE, flowName,1,true));
+
+        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE, flowName,0,true));
+
+        FdrFullInfoResponse res =
+                given()
+                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
+                        .param("dateTo", Util.format(LocalDate.now()))
+                        .when()
+                        .get(url)
+                        .then()
+                        .statusCode(200)
+                        .extract()
+                        .as(new TypeRef<FdrFullInfoResponse>() {});
+        List<LinkedHashMap> data = (List<LinkedHashMap>)res.getData();
+        assertThat(data.get(0).get("iuv"),equalTo("iuv"));
+    }
+
+    @SneakyThrows
+    @Test
+    @DisplayName("get fdr new table")
+    void getFdrNewTable() {
+        String flowName="test2";
+        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
+                PA_CODE,"psp",flowName,1
+        );
+        getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE, flowName,1,true));
 
         FdrFullInfoResponse res =
                 given()
