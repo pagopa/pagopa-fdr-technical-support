@@ -18,10 +18,6 @@ import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse
 @GeneratedClass(value = "api_fdr_nodo.json")
 public interface FdrOldRestClient {
 
-    @GET
-    @Path("/internal/organizations/{ec}/flows/{flowName}")
-    GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
-
     @ClientExceptionMapper
     static RuntimeException toException(Response response) {
         if (response.getStatus() == 500) {
@@ -31,12 +27,17 @@ public interface FdrOldRestClient {
         }
         if (response.getStatus() == 404) {
             return new AppException(
-                    AppErrorCodeMessageEnum.FLOW_NOT_FOUND
+                    AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT
             );
         }
         return new AppException(
                 AppErrorCodeMessageEnum.ERROR
         );
     }
+
+    @GET
+    @Path("/internal/organizations/{ec}/flows/{flowName}")
+    GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
+
 }
 

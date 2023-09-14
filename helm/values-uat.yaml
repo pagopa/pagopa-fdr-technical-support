@@ -23,14 +23,15 @@ microservice-chart:
     OTEL_ENDPOINT: "http://otel-collector.elastic-system.svc.cluster.local:4317"
     RE_COSMOS_DAY_LIMIT: "10"
     LOG_LEVEL: "INFO"
+    FDR_NODO_ENDPOINT: "https://api.uat.platform.pagopa.it/fdr-legacy/service-internal/v1"
+    FDR_ENDPOINT: "https://api.uat.platform.pagopa.it/fdr/service-internal/v1"
   envFieldRef:
     APP_NAME: "metadata.labels['app.kubernetes.io/instance']"
     APP_VERSION: "metadata.labels['app.kubernetes.io/version']"
   secretProvider:
     create: true
     envSecrets:
-      FDR_SUBSCRIPTION_KEY: "fdr-subscription-key-string"
-      FDR_NODO_SUBSCRIPTION_KEY: "fdr-legacy-subscription-key-string"
+      FDR_SUBSCRIPTION_KEY: "fdr-internal-product-subscription-key-string"
       FDR_RE_COSMOS_CONNECTION_STRING: "mongodb-re-connection-string"
       FDR_RE_TABLE_STORAGE_CONN_STRING: "fdr-re-sa-connection-string"
     keyvault:

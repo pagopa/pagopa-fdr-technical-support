@@ -292,15 +292,21 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().anyMatch(s -> s.getServiceIdentifier().equals("FDR003"));
+    boolean isOld = reStorageEvents.stream().anyMatch(s ->  s.getServiceIdentifier()!=null && !s.getServiceIdentifier().equals("FDR003"));
 
     List<FdrEventEntity> flowEvents;
-    if(isNew){
+    if(!isOld){
       flowEvents = reStorageEvents.stream()
               .filter(s->s.getRevision()!=null && s.getFlowName()!=null && "CREATE_FLOW".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
     } else{
       flowEvents = reStorageEvents.stream()
               .filter(s->"REQ".equals(s.getHttpType()) && s.getFlowName()!=null && "nodoInviaFlussoRendicontazione".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+    }
+
+    if(flowEvents.isEmpty()){
+      throw new AppException(
+              AppErrorCodeMessageEnum.FLOW_NOT_FOUND
+      );
     }
 
     FdrRevisionInfo fdrs = new FdrRevisionInfo();
@@ -310,7 +316,7 @@ public class WorkerService {
     fdrs.setCreated(flowEvents.get(0).getCreated());
     fdrs.setRevisions(new ArrayList<>());
 
-    if(isNew){
+    if(!isOld){
       flowEvents.forEach(creation-> fdrs.getRevisions().add(
               new RevisionInfo(creation.getRevision().toString(), creation.getCreated())
       ));
@@ -336,9 +342,8 @@ public class WorkerService {
       );
     }
 
-    boolean isNew = reStorageEvents.stream().anyMatch(s -> s.getServiceIdentifier().equals("FDR003"));
-
-    if(isNew){
+    boolean isOld = reStorageEvents.stream().anyMatch(s ->  s.getServiceIdentifier()!=null && !s.getServiceIdentifier().equals("FDR003"));
+    if(!isOld){
       GetPaymentResponse flow = fdrRestClient.getFlow(1,organizationId, flowName, revision, psp);
       List<Payment> payments = flow.getData();
 
