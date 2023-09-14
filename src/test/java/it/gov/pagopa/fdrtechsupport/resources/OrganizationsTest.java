@@ -16,7 +16,6 @@ import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.openapi.quarkus.api_fdr_json.model.Payment;
 
 import java.time.LocalDate;
 import java.util.LinkedHashMap;
@@ -31,12 +30,14 @@ import static org.hamcrest.Matchers.equalTo;
 @QuarkusTestResource(MockServerTestResource.class)
 @QuarkusTestResource(AzuriteResource.class)
 @QuarkusTestResource(MongoResource.class)
-class PspTest {
+class OrganizationsTest {
 
   @ConfigProperty(name = "fdr-re-table-storage.connection-string")
   String connString;
 
   private TableClient tableClient;
+//  @Inject
+//  MongoClient mongoClient;
 
   private TableClient getTableClient() {
     if (tableClient == null) {
@@ -50,8 +51,8 @@ class PspTest {
 
   @SneakyThrows
   @Test
-  @DisplayName("get fdr old")
-  void getFdrOld() {
+  @DisplayName("get fdr old table storage")
+  void getFdrOldTable() {
       String flowName="test1";
       String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
               PA_CODE,"psp",flowName,1

@@ -1,4 +1,12 @@
 [{
+  "id": "old flow",
+  "httpRequest": {
+    "path": "/internal/organizations/.*?/flows/.*?"
+  },
+  "httpResponse": {
+    "body": { "xmlRendicontazione":"<xml>test</xml>"}
+  }
+},{
   "id": "new flow",
   "httpRequest": {
     "path": "/internal/history/organizations/.*?/fdrs/.*?/revisions/.*?/psps/.*?/payments"
