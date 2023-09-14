@@ -15,7 +15,7 @@ import java.time.LocalDateTime;
 @Path("/")
 @ClientHeaderParam(name = "Ocp-Apim-Subscription-Key", value = "${fdr.api-key-value}")
 @RegisterRestClient(configKey = "fdr")
-@GeneratedClass(value = "api_fdr.json", tag = "fdr_replies")
+@GeneratedClass(value = "api_fdr.json")
 public interface FdrRestClient {
 
     @GET
