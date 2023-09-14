@@ -108,7 +108,7 @@ public class WorkerService {
               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
               fdrInfo.setFlowName(ordered.get(0).getFlowName());
               fdrInfo.setCreated(ordered.get(0).getCreated());
-              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(FdrEventEntity::getOrganizationId).orElseGet(null));
+              fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
             return fdrInfo;
           })
         .collect(Collectors.toList());
