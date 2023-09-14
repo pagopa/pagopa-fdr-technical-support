@@ -17,24 +17,30 @@ import java.util.Optional;
 @MongoEntity(collection = "events")
 public class FdrEventEntity extends PanacheMongoEntity {
 
+  public static String ACTION = "fdrAction";
+  public static String NAME = "fdr";
+  public static String PSP = "pspId";
+  public static String IUV = "iuv";
+  public static String ORGANIZATION = "organizationId";
+  public static String PARTITIONKEY = "PartitionKey";
+  public static String CREATED = "created";
+
+  private String fdr;
+  private String fdrAction;
   private String serviceIdentifier;
   private String created;
   private String sessionId;
   private String eventType;
-  private String flowName;
   private String pspId;
   private String organizationId;
-  private String flowAction;
   private String httpType;
   private String httpMethod;
   private String httpUrl;
-//  private String bodyRef;
-//  private String header;
-  private String flowPhisicalDelete;
-  private String flowStatus;
+  private String fdrPhisicalDelete;
+  private String fdrStatus;
   private Integer revision;
 
-  private static String dateFilter = " 'created': { '$gte': :from , '$lt': :to } ";
+  private static String dateFilter = " '%s': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
     return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom))
             .and("to", DateTimeFormatter.ISO_DATE.format(dateTo.plusDays(1)));
@@ -48,14 +54,14 @@ public class FdrEventEntity extends PanacheMongoEntity {
           Optional<String> organizationId,
           Optional<List<String>> actions) {
     final Parameters params = dateParams(dateFrom, dateTo);
-    StringBuilder filterBuilder = new StringBuilder(dateFilter);
+    StringBuilder filterBuilder = new StringBuilder(String.format(dateFilter,CREATED));
     pspId.ifPresent(psp->{
-      filterBuilder.append(",'pspId': :pspId");
+      filterBuilder.append(String.format(",'%s': :pspId",PSP));
       params.and("pspId", psp);
     });
     areParametersPresent(flowName, organizationId, params, filterBuilder);
     if(actions.isPresent()){
-      filterBuilder.append(",'flowAction' : { '$in': [:actions] }");
+      filterBuilder.append(String.format(",'%s' : { '$in': [:actions] }",ACTION));
       params.and("actions", actions.get());
     }
     String filter = "{"+filterBuilder.toString()+"}";
@@ -68,12 +74,12 @@ public class FdrEventEntity extends PanacheMongoEntity {
     StringBuilder filterBuilder = new StringBuilder(dateFilter);
 
     pspId.ifPresent(psp -> {
-      filterBuilder.append(",'pspId': :pspId");
+      filterBuilder.append(String.format(",'%s': :pspId"));
       params.and("pspId", psp);
     });
 
     iuv.ifPresent(i -> {
-      filterBuilder.append(",'iuv': :iuv");
+      filterBuilder.append(String.format(",'%s': :iuv",IUV));
       params.and("iuv", i);
     });
 
@@ -86,14 +92,14 @@ public class FdrEventEntity extends PanacheMongoEntity {
   private static void areParametersPresent(Optional<String> flowName, Optional<String> organizationId, Parameters params, StringBuilder filterBuilder) {
 
     if (flowName.isPresent()) {
-      filterBuilder.append(",'flowName': :flowName");
+      filterBuilder.append(String.format(",'%s': :flowName",NAME));
       params.and("flowName", flowName.get());
     } else {
-      filterBuilder.append(",'flowName': { '$ne' : null }");
+      filterBuilder.append(String.format(",'%s': { '$ne' : null }",NAME));
     }
 
     if (organizationId.isPresent()) {
-      filterBuilder.append(",'organizationId': :organizationId");
+      filterBuilder.append(String.format(",'%s': :organizationId",ORGANIZATION));
       params.and("organizationId", organizationId.get());
     }
   }

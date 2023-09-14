@@ -5,7 +5,6 @@ import io.restassured.http.Header;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class AppConstantTestHelper {
 
@@ -40,7 +39,7 @@ public class AppConstantTestHelper {
     entity.setCreated(Util.format(date));
     entity.setOrganizationId(pa);
     entity.setPspId(psp);
-    entity.setFlowName(flowName);
+    entity.setFdr(flowName);
     entity.setRevision(revision);
     entity.setServiceIdentifier(isnew?"FDR003":"FDR001");
     return entity;

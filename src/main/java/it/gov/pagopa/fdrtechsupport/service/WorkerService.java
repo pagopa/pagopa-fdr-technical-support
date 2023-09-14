@@ -92,10 +92,12 @@ public class WorkerService {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,pspId, flowName, organizationId,Optional.empty());
+    List<FdrEventEntity> reStorageEvents = find(reDates,pspId, flowName, organizationId,Optional.of(
+            Arrays.asList("nodoInviaFlussoRendicontazione","PUBLISH")
+    ));
 
     Map<String, List<FdrEventEntity>> reGroups =
-            reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getFlowName));
+            reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getFdr));
 
     log.infof("found %d different flowNames in %d events", reGroups.size(),reStorageEvents.size());
 
@@ -106,7 +108,7 @@ public class WorkerService {
             List<FdrEventEntity> events = reGroups.get(fn);
             FdrBaseInfo fdrInfo = new FdrBaseInfo();
               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
-              fdrInfo.setFlowName(ordered.get(0).getFlowName());
+              fdrInfo.setFlowName(ordered.get(0).getFdr());
               fdrInfo.setCreated(ordered.get(0).getCreated());
               fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
             return fdrInfo;
@@ -208,9 +210,9 @@ public class WorkerService {
                               List<FdrEventEntity> events = reGroups.get(fn);
                               FdrActionInfo fdrInfo = new FdrActionInfo();
                               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
-                              fdrInfo.setFlowName(ordered.get(0).getFlowName());
+                              fdrInfo.setFlowName(ordered.get(0).getFdr());
                               fdrInfo.setCreated(ordered.get(0).getCreated());
-                              fdrInfo.setFlowAction(ordered.get(0).getFlowAction());
+                              fdrInfo.setFlowAction(ordered.get(0).getFdrAction());
                               fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
                               fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
                               fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(FdrEventEntity::getOrganizationId).orElse(null));
@@ -284,7 +286,9 @@ public class WorkerService {
 
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     Pair<DateRequest, DateRequest> reDates = getHistoryDates(dateRequest);
-    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId),Optional.empty());
+    List<FdrEventEntity> reStorageEvents = find(reDates,Optional.empty(), Optional.of(flowName), Optional.of(organizationId),Optional.of(
+            Arrays.asList("nodoInviaFlussoRendicontazione","PUBLISH")
+    ));
 
     if(reStorageEvents.isEmpty()){
       throw new AppException(
@@ -297,10 +301,10 @@ public class WorkerService {
     List<FdrEventEntity> flowEvents;
     if(!isOld){
       flowEvents = reStorageEvents.stream()
-              .filter(s->s.getRevision()!=null && s.getFlowName()!=null && "CREATE_FLOW".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+              .filter(s->s.getRevision()!=null && s.getFdr()!=null && "PUBLISH".equals(s.getFdrAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
     } else{
       flowEvents = reStorageEvents.stream()
-              .filter(s->"REQ".equals(s.getHttpType()) && s.getFlowName()!=null && "nodoInviaFlussoRendicontazione".equals(s.getFlowAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
+              .filter(s->"REQ".equals(s.getHttpType()) && s.getFdr()!=null && "nodoInviaFlussoRendicontazione".equals(s.getFdrAction())).sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
     }
 
     if(flowEvents.isEmpty()){
