@@ -69,9 +69,9 @@ public class PspResource implements Serializable {
   public Response frO1(@PathParam("pspId") @NotNull String pspId,
                        @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
                        @NotNull @QueryParam("dateTo") LocalDate dateTo,
-                       @QueryParam("flowName") Optional<String> flowName,
+                       @QueryParam("fdr") Optional<String> fdr,
                        @QueryParam("organizationId") Optional<String> organizationId) {
-    return Response.ok(workerService.getFdrByPsp(Optional.of(pspId),flowName,organizationId,dateFrom,dateTo)).build();
+    return Response.ok(workerService.getFdrByPsp(Optional.of(pspId),fdr,organizationId,dateFrom,dateTo)).build();
   }
 
     @APIResponses(

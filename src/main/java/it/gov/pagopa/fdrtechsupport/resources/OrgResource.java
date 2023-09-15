@@ -58,15 +58,15 @@ public class OrgResource implements Serializable {
                     schema = @Schema(implementation = ProblemJson.class)))
       })
   @GET
-  @Path("/{organizationId}/flows/{flowName}")
+  @Path("/{organizationId}/flows/{fdr}")
   //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-4---Get-all-revision-of-a-FdR-by-Organization-and-Flow-Name-%5BFR_02%5D
   public Response getRevisions(
           @PathParam("organizationId") @NotNull String organizationId,
-          @PathParam("flowName") @NotNull String flowName,
+          @PathParam("fdr") @NotNull String fdr,
           @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
           @NotNull @QueryParam("dateTo") LocalDate dateTo
   ) {
-    return Response.ok(workerService.getRevisions(organizationId,flowName,dateFrom,dateTo)).build();
+    return Response.ok(workerService.getRevisions(organizationId,fdr,dateFrom,dateTo)).build();
   }
 
     @APIResponses(
@@ -101,17 +101,17 @@ public class OrgResource implements Serializable {
                                     schema = @Schema(implementation = ProblemJson.class)))
             })
     @GET
-    @Path("/{organizationId}/psps/{psp}/flows/{flowName}/revisions/{revision}")
+    @Path("/{organizationId}/psps/{psp}/flows/{fdr}/revisions/{revision}")
     //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-5---Get-a-specific-FdR-by-Organization%2C-Flow-Name%2C-PSP-and-revision
     public Response getFlow(
             @PathParam("organizationId") @NotNull String organizationId,
-            @PathParam("flowName") @NotNull String flowName,
+            @PathParam("fdr") @NotNull String fdr,
             @PathParam("psp") @NotNull String psp,
             @PathParam("revision") @NotNull String revision,
             @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
             @NotNull @QueryParam("dateTo") LocalDate dateTo
     ) {
-        return Response.ok(workerService.getFlow(organizationId,psp,flowName,revision,dateFrom,dateTo)).build();
+        return Response.ok(workerService.getFlow(organizationId,psp,fdr,revision,dateFrom,dateTo)).build();
     }
 
     @GET
