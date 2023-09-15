@@ -42,7 +42,7 @@ public interface FdrOldRestClient {
     }
 
     @GET
-    @Path("/internal/organizations/{ec}/flows/{flowName}")
+    @Path("/internal/organizations/{ec}/fdrs/{flowName}")
     GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
 
 }

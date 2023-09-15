@@ -54,7 +54,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
           Optional<String> organizationId,
           Optional<List<String>> actions) {
     final Parameters params = dateParams(dateFrom, dateTo);
-    StringBuilder filterBuilder = new StringBuilder(String.format(dateFilter,CREATED));
+    StringBuilder filterBuilder = new StringBuilder(String.format(dateFilter,PARTITIONKEY));
     pspId.ifPresent(psp->{
       filterBuilder.append(String.format(",'%s': :pspId",PSP));
       params.and("pspId", psp);
