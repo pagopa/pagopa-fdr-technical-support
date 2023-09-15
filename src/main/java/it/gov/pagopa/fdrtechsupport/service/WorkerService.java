@@ -108,7 +108,7 @@ public class WorkerService {
             List<FdrEventEntity> events = reGroups.get(fn);
             FdrBaseInfo fdrInfo = new FdrBaseInfo();
               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
-              fdrInfo.setFlowName(ordered.get(0).getFdr());
+              fdrInfo.setFdr(ordered.get(0).getFdr());
               fdrInfo.setCreated(ordered.get(0).getCreated());
               fdrInfo.setOrganizationId(ordered.stream().filter(s->s.getOrganizationId()!=null).findAny().map(s->s.getOrganizationId()).orElseGet(()->null));
             return fdrInfo;
@@ -210,7 +210,7 @@ public class WorkerService {
                               List<FdrEventEntity> events = reGroups.get(fn);
                               FdrActionInfo fdrInfo = new FdrActionInfo();
                               List<FdrEventEntity> ordered = events.stream().sorted(Comparator.comparing(FdrEventEntity::getCreated)).toList();
-                              fdrInfo.setFlowName(ordered.get(0).getFdr());
+                              fdrInfo.setFdr(ordered.get(0).getFdr());
                               fdrInfo.setCreated(ordered.get(0).getCreated());
                               fdrInfo.setFlowAction(ordered.get(0).getFdrAction());
                               fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
@@ -314,7 +314,7 @@ public class WorkerService {
     }
 
     FdrRevisionInfo fdrs = new FdrRevisionInfo();
-    fdrs.setFlowName(flowName);
+    fdrs.setFdr(flowName);
     fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
     fdrs.setPspId(flowEvents.get(0).getPspId());
     fdrs.setCreated(flowEvents.get(0).getCreated());

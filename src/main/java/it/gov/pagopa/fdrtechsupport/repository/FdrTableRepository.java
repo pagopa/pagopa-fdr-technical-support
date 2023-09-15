@@ -32,6 +32,7 @@ public class FdrTableRepository {
     String tableName;
 
     private TableServiceClient tableServiceClient = null;
+    private String excludeInternal = " and eventType ne 'INTERNAL ";
     private String dateFilterString = "%s ge '%s' and %s lt '%s'";
     private String dateFilter(LocalDate datefrom,LocalDate dateTo){
         return String.format(dateFilterString, PARTITIONKEY,Util.format(datefrom),PARTITIONKEY, Util.format(dateTo.plusDays(1)));
@@ -91,6 +92,7 @@ public class FdrTableRepository {
             Optional<List<String>> actions) {
 
         StringBuilder filterBuilder = new StringBuilder(dateFilter(datefrom,dateTo));
+        filterBuilder.append(excludeInternal);
 
         pspId.map(psp->filterBuilder.append(String.format(" and %s eq '%s'",PSP, psp)));
         organizationFiscalCode.map(orgId->filterBuilder.append(String.format(" and %s eq '%s'", ORGANIZATION,orgId)));

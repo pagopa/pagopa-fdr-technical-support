@@ -40,6 +40,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
   //private String httpUrl;
   //private String fdrPhisicalDelete;
 
+  private static String excludeInternals = ",'eventType' : { '$ne' : 'INTERNAL' }";
   private static String dateFilter = " '%s': { '$gte': :from , '$lt': :to } ";
   private static Parameters dateParams(LocalDate dateFrom, LocalDate dateTo){
     return Parameters.with("from", DateTimeFormatter.ISO_DATE.format(dateFrom))
@@ -55,6 +56,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
           Optional<List<String>> actions) {
     final Parameters params = dateParams(dateFrom, dateTo);
     StringBuilder filterBuilder = new StringBuilder(String.format(dateFilter,PARTITIONKEY));
+    filterBuilder.append(excludeInternals);
     pspId.ifPresent(psp->{
       filterBuilder.append(String.format(",'%s': :pspId",PSP));
       params.and("pspId", psp);
@@ -72,6 +74,7 @@ public class FdrEventEntity extends PanacheMongoEntity {
 
     final Parameters params = dateParams(dateFrom, dateTo);
     StringBuilder filterBuilder = new StringBuilder(dateFilter);
+    filterBuilder.append(excludeInternals);
 
     pspId.ifPresent(psp -> {
       filterBuilder.append(String.format(",'%s': :pspId"));
