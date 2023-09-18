@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.0.0-4-NOD-419_recupero_xml'
+    tag: '1.0.1'
   readinessProbe:
     httpGet:
       path: /q/health/ready
