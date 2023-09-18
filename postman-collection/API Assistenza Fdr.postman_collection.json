@@ -1,9 +1,10 @@
 {
 	"info": {
-		"_postman_id": "e39a63b2-dda5-471d-9a39-9b6f5a57cf38",
+		"_postman_id": "8830a722-ba8b-4fed-a4e3-d16cf5f1fdae",
 		"name": "API Assistenza Fdr",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "26452180"
+		"_exporter_id": "11518494",
+		"_collection_link": "https://speeding-station-482612.postman.co/workspace/Nodo-doc~ec880f84-0a42-4ca9-bbd1-454d00bbe20c/collection/11518494-8830a722-ba8b-4fed-a4e3-d16cf5f1fdae?action=share&source=collection_link&creator=11518494"
 	},
 	"item": [
 		{
@@ -29,7 +30,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp?dateFrom=2023-07-22&dateTo=2023-07-27",
+					"raw": "{{ts-host}}/psps/:psp?dateFrom=2023-09-13&dateTo=2023-09-15",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -40,97 +41,17 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-07-22"
+							"value": "2023-09-13"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-07-27"
+							"value": "2023-09-15"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
 							"value": "nodo-doc-dev"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "API 6 - by psp and flowName",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{ts-host}}/psps/:psp/flows/:flowName?dateFrom=2023-07-22&dateTo=2023-07-27",
-					"host": [
-						"{{ts-host}}"
-					],
-					"path": [
-						"psps",
-						":psp",
-						"flows",
-						":flowName"
-					],
-					"query": [
-						{
-							"key": "dateFrom",
-							"value": "2023-07-22"
-						},
-						{
-							"key": "dateTo",
-							"value": "2023-07-27"
-						}
-					],
-					"variable": [
-						{
-							"key": "psp",
-							"value": "nodo-doc-dev"
-						},
-						{
-							"key": "flowName",
-							"value": "2023-07-25nodo-doc-dev-16902929234"
-						}
-					]
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "Api 4 - by orgId and flowName",
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{ts-host}}/organizations/:organization/flows/:flowName?dateFrom=2023-07-19&dateTo=2023-07-19",
-					"host": [
-						"{{ts-host}}"
-					],
-					"path": [
-						"organizations",
-						":organization",
-						"flows",
-						":flowName"
-					],
-					"query": [
-						{
-							"key": "dateFrom",
-							"value": "2023-07-19"
-						},
-						{
-							"key": "dateTo",
-							"value": "2023-07-19"
-						}
-					],
-					"variable": [
-						{
-							"key": "organization",
-							"value": "00000000099"
-						},
-						{
-							"key": "flowName",
-							"value": "2023-07-25nodo-doc-dev-16902903874"
 						}
 					]
 				}
@@ -143,7 +64,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp/iuv/:iuv?dateFrom=2022-07-27&dateTo=2022-07-27",
+					"raw": "{{ts-host}}/psps/:psp/iuv/:iuv?dateFrom=2023-09-13&dateTo=2023-09-15",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -156,21 +77,21 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2022-07-27"
+							"value": "2023-09-13"
 						},
 						{
 							"key": "dateTo",
-							"value": "2022-07-27"
+							"value": "2023-09-15"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
-							"value": "25"
+							"value": "nodo-doc-dev"
 						},
 						{
 							"key": "iuv",
-							"value": "1"
+							"value": "91847041675818a"
 						}
 					]
 				}
@@ -183,7 +104,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp/iur/:iur?dateFrom=2022-07-27&dateTo=2022-07-27",
+					"raw": "{{ts-host}}/psps/:psp/iur/:iur?dateFrom=2023-07-22&dateTo=2023-07-27",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -196,21 +117,187 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2022-07-27"
+							"value": "2023-07-22"
 						},
 						{
 							"key": "dateTo",
-							"value": "2022-07-27"
+							"value": "2023-07-27"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
-							"value": "25"
+							"value": "nodo-doc-dev"
 						},
 						{
 							"key": "iur",
+							"value": "4868482079b"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api 4 - by orgId",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/organizations/:organization/flows/:flowName?dateFrom=2023-09-13&dateTo=2023-09-14",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"organizations",
+						":organization",
+						"flows",
+						":flowName"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-09-13"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-09-14"
+						}
+					],
+					"variable": [
+						{
+							"key": "organization",
+							"value": "00000000099"
+						},
+						{
+							"key": "flowName",
+							"value": "2023-09-14nodo-doc-dev-1694697113"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api 5 - get flow by revision",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:psp/flows/:flowName/revisions/:revision?dateFrom=2023-09-13&dateTo=2023-09-14",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"organizations",
+						":organizationId",
+						"psps",
+						":psp",
+						"flows",
+						":flowName",
+						"revisions",
+						":revision"
+					],
+					"query": [
+						{
+							"key": "dateFrom",
+							"value": "2023-09-13"
+						},
+						{
+							"key": "dateTo",
+							"value": "2023-09-14"
+						}
+					],
+					"variable": [
+						{
+							"key": "organizationId",
+							"value": "00000000099"
+						},
+						{
+							"key": "psp",
+							"value": "nodo-doc-dev"
+						},
+						{
+							"key": "flowName",
+							"value": "2023-09-14nodo-doc-dev-16946971130"
+						},
+						{
+							"key": "revision",
 							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api 6 - get downloads",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/download?date=2023-09-14",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"organizations",
+						":organizationId",
+						"psps",
+						":pspId",
+						"download"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2023-09-14"
+						}
+					],
+					"variable": [
+						{
+							"key": "organizationId",
+							"value": "00000000099"
+						},
+						{
+							"key": "pspId",
+							"value": "nodo-doc-dev"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Api 7 - get uploads",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/upload?date=2023-09-14",
+					"host": [
+						"{{ts-host}}"
+					],
+					"path": [
+						"organizations",
+						":organizationId",
+						"psps",
+						":pspId",
+						"upload"
+					],
+					"query": [
+						{
+							"key": "date",
+							"value": "2023-09-14"
+						}
+					],
+					"variable": [
+						{
+							"key": "organizationId",
+							"value": "00000000099"
+						},
+						{
+							"key": "pspId",
+							"value": "nodo-doc-dev"
 						}
 					]
 				}

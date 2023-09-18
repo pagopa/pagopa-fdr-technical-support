@@ -20,23 +20,29 @@ public interface FdrOldRestClient {
 
     @ClientExceptionMapper
     static RuntimeException toException(Response response) {
-        if (response.getStatus() == 500) {
-            return new AppException(
-                    AppErrorCodeMessageEnum.ERROR
-            );
+        switch (response.getStatus()){
+            case 500:
+                return new AppException(
+                        AppErrorCodeMessageEnum.ERROR
+                );
+            case 404:
+                return new AppException(
+                        AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT
+                );
+            case 401:
+                return new AppException(
+                        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+                );
+            default:
+                return new AppException(
+                        AppErrorCodeMessageEnum.ERROR
+                );
         }
-        if (response.getStatus() == 404) {
-            return new AppException(
-                    AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT
-            );
-        }
-        return new AppException(
-                AppErrorCodeMessageEnum.ERROR
-        );
+
     }
 
     @GET
-    @Path("/internal/organizations/{ec}/flows/{flowName}")
+    @Path("/internal/organizations/{ec}/fdrs/{flowName}")
     GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
 
 }

@@ -45,7 +45,7 @@ public class GetByPspAndIuvTest {
         assertThat(data.size(), greaterThan(0));
         assertThat(res.getDateFrom().toString(), equalTo("2022-07-27"));
         assertThat(res.getDateTo().toString(), equalTo("2022-07-27"));
-        assertThat(data.get(0).getFlowName(), equalTo("string"));
+        assertThat(data.get(0).getFdr(), equalTo("string"));
         assertThat(data.get(0).getOrganizationId(), equalTo("string"));
         assertThat(data.get(0).getCreated(), equalTo("2022-07-27T16:15:50Z"));
     }
