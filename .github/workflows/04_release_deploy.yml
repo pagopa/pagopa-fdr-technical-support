@@ -127,7 +127,7 @@ jobs:
         if: always()
         uses: ravsamhq/notify-slack-action@v2
         with:
-          status: ${{ needs.deploy_azure_fn.result }}
+          status: ${{ needs.deploy_aks.result }}
           token: ${{ secrets.GITHUB_TOKEN }}
           notification_title: 'New Release on ${{ needs.setup.outputs.environment }} for ${{ needs.release.outputs.version }} has {status_message}'
           message_format: '{emoji} <{run_url}|{workflow}> {status_message} in <{repo_url}|{repo}>'
