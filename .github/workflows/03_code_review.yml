@@ -38,4 +38,4 @@ jobs:
           coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/entities/*"
           cpd_exclusions: "**/models/**,**/entities/*"
           java_distribution: "graalvm"
-          java_version: '17'
+          java_version: "17.0.7"
