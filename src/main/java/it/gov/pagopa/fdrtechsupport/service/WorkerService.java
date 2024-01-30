@@ -275,6 +275,7 @@ public class WorkerService {
   }
 
   private Pair<DateRequest, DateRequest> getHistoryDates(DateRequest dateRequest) {
+    //TODO togliere sto metodo
     LocalDate dateLimit = LocalDate.now().minusDays(reCosmosDayLimit);
     LocalDate historyDateFrom = null;
     LocalDate historyDateTo = null;
