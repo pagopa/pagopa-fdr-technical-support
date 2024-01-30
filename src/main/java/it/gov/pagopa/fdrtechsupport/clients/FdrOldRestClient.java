@@ -18,32 +18,22 @@ import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse
 @GeneratedClass(value = "api_fdr_nodo.json")
 public interface FdrOldRestClient {
 
-    @ClientExceptionMapper
-    static RuntimeException toException(Response response) {
-        switch (response.getStatus()){
-            case 500:
-                return new AppException(
-                        AppErrorCodeMessageEnum.ERROR
-                );
-            case 404:
-                return new AppException(
-                        AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT
-                );
-            case 401:
-                return new AppException(
-                        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
-                );
-            default:
-                return new AppException(
-                        AppErrorCodeMessageEnum.ERROR
-                );
-        }
-
+  @ClientExceptionMapper
+  static RuntimeException toException(Response response) {
+    switch (response.getStatus()) {
+      case 500:
+        return new AppException(AppErrorCodeMessageEnum.ERROR);
+      case 404:
+        return new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT);
+      case 401:
+        return new AppException(AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT);
+      default:
+        return new AppException(AppErrorCodeMessageEnum.ERROR);
     }
+  }
 
-    @GET
-    @Path("/internal/organizations/{ec}/fdrs/{flowName}")
-    GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(@PathParam("ec") String ec, @PathParam("flowName") String flowName);
-
+  @GET
+  @Path("/internal/organizations/{ec}/fdrs/{flowName}")
+  GetXmlRendicontazioneResponse nodoChiediFlussoRendicontazione(
+      @PathParam("ec") String ec, @PathParam("flowName") String flowName);
 }
-

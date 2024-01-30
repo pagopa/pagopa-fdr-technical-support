@@ -1,34 +1,31 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
-import com.azure.data.tables.TableClient;
-import com.azure.data.tables.TableServiceClient;
-import com.azure.data.tables.TableServiceClientBuilder;
-import io.quarkiverse.mockserver.test.MockServerTestResource;
-import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
-import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.MongoResource;
-import it.gov.pagopa.fdrtechsupport.util.Util;
-import lombok.SneakyThrows;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
-
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
+
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
+import io.quarkiverse.mockserver.test.MockServerTestResource;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.common.mapper.TypeRef;
+import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
+import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
+import it.gov.pagopa.fdrtechsupport.util.MongoResource;
+import it.gov.pagopa.fdrtechsupport.util.Util;
+import java.time.LocalDate;
+import java.util.LinkedHashMap;
+import java.util.List;
+import lombok.SneakyThrows;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
@@ -40,8 +37,9 @@ class OrganizationsTest {
   String connString;
 
   private TableClient tableClient;
-//  @Inject
-//  MongoClient mongoClient;
+
+  //  @Inject
+  //  MongoClient mongoClient;
 
   private TableClient getTableClient() {
     if (tableClient == null) {
@@ -53,41 +51,19 @@ class OrganizationsTest {
     return tableClient;
   }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr old mongo")
-    void getFdrOldMongo() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,"psp",flowName,1
-        );
-
-        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE,PSP_CODE, flowName,0,false));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
-                        .param("dateTo", Util.format(LocalDate.now()))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        assertThat(res.getData(),equalTo("<xml>test</xml>"));
-    }
-
   @SneakyThrows
   @Test
   @DisplayName("get fdr old table storage")
   void getFdrOldTable() {
-      String flowName= RandomStringUtils.randomAlphabetic(20);
-      String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-              PA_CODE,PSP_CODE,flowName,1
-      );
-      getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE,PSP_CODE, flowName,0,false));
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdr(
+                LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 0, false));
 
-      FdrFullInfoResponse res =
+    FdrFullInfoResponse res =
         given()
             .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
             .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
@@ -97,56 +73,32 @@ class OrganizationsTest {
             .statusCode(200)
             .extract()
             .as(new TypeRef<FdrFullInfoResponse>() {});
-      assertThat(res.getData(),equalTo("<xml>test</xml>"));
+    assertThat(res.getData(), equalTo("<xml>test</xml>"));
   }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr new mongo")
-    void getFdrNewMongo() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,PSP_CODE,flowName,1
-        );
+  @SneakyThrows
+  @Test
+  @DisplayName("get fdr new table")
+  void getFdrNewTable() {
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdr(
+                LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, true));
 
-        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE,PSP_CODE, flowName,0,true));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
-                        .param("dateTo", Util.format(LocalDate.now()))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        List<LinkedHashMap> data = (List<LinkedHashMap>)res.getData();
-        assertThat(data.get(0).get("iuv"),equalTo("iuv"));
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr new table")
-    void getFdrNewTable() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,PSP_CODE,flowName,1
-        );
-        getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE,PSP_CODE, flowName,1,true));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-                        .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        List<LinkedHashMap> data = (List<LinkedHashMap>)res.getData();
-        assertThat(data.get(0).get("iuv"),equalTo("iuv"));
-    }
-
+    FdrFullInfoResponse res =
+        given()
+            .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
+            .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .when()
+            .get(url)
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(new TypeRef<FdrFullInfoResponse>() {});
+    List<LinkedHashMap> data = (List<LinkedHashMap>) res.getData();
+    assertThat(data.get(0).get("iuv"), equalTo("iuv"));
+  }
 }

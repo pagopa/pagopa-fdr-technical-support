@@ -11,7 +11,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class RevisionInfo{
-    private String revision;
-    private String created;
+public class RevisionInfo {
+  private String revision;
+  private String created;
 }

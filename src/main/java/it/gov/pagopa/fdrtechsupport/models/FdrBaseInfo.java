@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @AllArgsConstructor
 @SuperBuilder
 public class FdrBaseInfo {
-    private String fdr;
-    private String created;
-    private String organizationId;
+  private String fdr;
+  private String created;
+  private String organizationId;
 }

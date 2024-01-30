@@ -1,8 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.resources.response;
 
-import lombok.*;
-
 import java.time.LocalDate;
+import lombok.*;
 
 @Getter
 @Setter
@@ -10,7 +9,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Builder
 public class FdrFullInfoResponse {
-    private LocalDate dateFrom;
-    private LocalDate dateTo;
-    private Object data;
+  private LocalDate dateFrom;
+  private LocalDate dateTo;
+  private Object data;
 }
