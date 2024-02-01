@@ -29,7 +29,9 @@ public class FdrTableRepository {
   String tableName;
 
   private TableServiceClient tableServiceClient = null;
-  private String excludeInternal = "";
+  private String internalPublishedFilter =
+      " and eventType eq 'INTERNAL' and fdrStatus eq 'PUBLISHED' ";
+  private String interfaceFilter = " and eventType eq 'INTERFACE' ";
   private String dateFilterString = "%s ge '%s' and %s lt '%s'";
 
   private String dateFilter(LocalDate datefrom, LocalDate dateTo) {
@@ -95,10 +97,20 @@ public class FdrTableRepository {
       Optional<String> pspId,
       Optional<String> flowName,
       Optional<String> organizationFiscalCode,
-      Optional<List<String>> actions) {
+      Optional<List<String>> actions,
+      Optional<String> eventAndStatus) {
 
     StringBuilder filterBuilder = new StringBuilder(dateFilter(datefrom, dateTo));
-    filterBuilder.append(excludeInternal);
+    if (eventAndStatus.isPresent()) {
+      switch (eventAndStatus.get().toLowerCase()) {
+        case "internalpublished":
+          filterBuilder.append(internalPublishedFilter);
+          break;
+        case "interface":
+          filterBuilder.append(interfaceFilter);
+          break;
+      }
+    }
 
     pspId.map(psp -> filterBuilder.append(String.format(" and %s eq '%s'", PSP, psp)));
     organizationFiscalCode.map(

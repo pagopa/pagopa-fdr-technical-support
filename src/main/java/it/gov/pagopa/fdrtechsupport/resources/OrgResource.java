@@ -59,14 +59,12 @@ public class OrgResource implements Serializable {
   @Path("/{organizationId}/flows/{fdr}")
   // https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-4---Get-all-revision-of-a-FdR-by-Organization-and-Flow-Name-%5BFR_02%5D
   public Response getRevisions(
-          @PathParam("organizationId") @NotNull String organizationId,
-          @PathParam("fdr") @NotNull String fdr,
-          @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-          @NotNull @QueryParam("dateTo") LocalDate dateTo
-  ) {
+      @PathParam("organizationId") @NotNull String organizationId,
+      @PathParam("fdr") @NotNull String fdr,
+      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
+      @NotNull @QueryParam("dateTo") LocalDate dateTo) {
 
-    //TODO modificare ricerca per prendere solo eventType eq 'INTERNAL' e status 'PUBLISHED'
-    return Response.ok(workerService.getRevisions(organizationId,fdr,dateFrom,dateTo)).build();
+    return Response.ok(workerService.getRevisions(organizationId, fdr, dateFrom, dateTo)).build();
   }
 
   @APIResponses(
@@ -109,30 +107,36 @@ public class OrgResource implements Serializable {
       @PathParam("psp") @NotNull String psp,
       @PathParam("revision") @NotNull String revision,
       @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo) {
-      //TODO aggiungere parametro tipoFile xml o json
-      //se json,cercare su fdrhistory e recuperare il blob
-      //se xml fare solo chiamata chiediflussorendicontazione
-    return Response.ok(workerService.getFlow(organizationId, psp, fdr, revision, dateFrom, dateTo))
+      @NotNull @QueryParam("dateTo") LocalDate dateTo,
+      @NotNull @QueryParam("fileType") String fileType) {
+    return Response.ok(
+            workerService.getFlow(organizationId, psp, fdr, revision, dateFrom, dateTo, fileType))
         .build();
   }
 
-    @GET
-    @Path("/{organizationId}/psps/{psp}/download")
-    //https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-5---Get-a-specific-FdR-by-Organization%2C-Flow-Name%2C-PSP-and-revision
-    public Response getDownloads(
-            @PathParam("organizationId") @NotNull String organizationId,
-            @PathParam("psp") @NotNull String psp,
-            @NotNull @QueryParam("date") LocalDate date
-    ) {
-      //TODO modificare ricerca per prendere solo eventType eq 'INTERFACE' e actions in (...) -- aggiungere action se mancanti
-        FrResponse fdrActions = workerService.getFdrActions(psp,
-                Optional.empty(),
-                Optional.of(organizationId),
-                Optional.of(Arrays.asList("nodoChiediFlussoRendicontazione", "GET_FDR", "GET_FDR_PAYMENT")),
-                date, date);
-        return Response.ok(FrSingleDateResponse.builder().data(fdrActions.getData()).date(fdrActions.getDateFrom()).build()).build();
-    }
+  @GET
+  @Path("/{organizationId}/psps/{psp}/download")
+  // https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-5---Get-a-specific-FdR-by-Organization%2C-Flow-Name%2C-PSP-and-revision
+  public Response getDownloads(
+      @PathParam("organizationId") @NotNull String organizationId,
+      @PathParam("psp") @NotNull String psp,
+      @NotNull @QueryParam("date") LocalDate date) {
+    FrResponse fdrActions =
+        workerService.getFdrActions(
+            psp,
+            Optional.empty(),
+            Optional.of(organizationId),
+            Optional.of(
+                Arrays.asList("nodoChiediFlussoRendicontazione", "GET_FDR", "GET_FDR_PAYMENT")),
+            date,
+            date);
+    return Response.ok(
+            FrSingleDateResponse.builder()
+                .data(fdrActions.getData())
+                .date(fdrActions.getDateFrom())
+                .build())
+        .build();
+  }
 
   @GET
   @Path("/{organizationId}/psps/{psp}/upload")
@@ -141,7 +145,6 @@ public class OrgResource implements Serializable {
       @PathParam("organizationId") @NotNull String organizationId,
       @PathParam("psp") @NotNull String psp,
       @NotNull @QueryParam("date") LocalDate date) {
-      //TODO modificare ricerca per prendere solo eventType eq 'INTERFACE' e actions in (...) -- aggiungere action se mancanti
     return Response.ok(
             workerService.getFdrActions(
                 psp,

@@ -11,5 +11,5 @@ import lombok.*;
 public class FdrFullInfoResponse {
   private LocalDate dateFrom;
   private LocalDate dateTo;
-  private Object data;
+  private String data;
 }

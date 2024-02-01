@@ -32,8 +32,11 @@ microservice-chart:
     create: true
     envSecrets:
       FDR_SUBSCRIPTION_KEY: "fdr-internal-product-subscription-key"
-      FDR_RE_COSMOS_CONNECTION_STRING: "mongodb-re-connection-string"
       FDR_RE_TABLE_STORAGE_CONN_STRING: "fdr-re-sa-connection-string"
+      FDR_HISTORY_TABLE_STORAGE_CONN_STRING: "fdr-history-sa-table-storage-connection-string"
+      FDR_HISTORY_PUBLISH_TABLE_STORAGE_TABLE_NAME: "fdr-history-sa-table-storage-publish-table-name"
+      FDR_HISTORY_PAYMENT_PUBLISH_TABLE_STORAGE_TABLE_NAME: "fdr-history-sa-table-storage-payment-publish-table-name"
+      FDR_HISTORY_BLOB_STORAGE_CONN_STRING: "fdr-history-sa-blob-storage-connection-string"
     keyvault:
       name: "pagopa-p-fdr-kv"
       tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"

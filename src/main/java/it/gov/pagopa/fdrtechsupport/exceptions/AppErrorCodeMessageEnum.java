@@ -20,8 +20,8 @@ public enum AppErrorCodeMessageEnum implements AppErrorCodeMessageInterface {
   BAD_REQUEST_INPUT_JSON_DESERIALIZE_ERROR(
       "0404", "bad.request.inputJson.deserialize", RestResponse.Status.BAD_REQUEST),
   BAD_REQUEST_INPUT_JSON_NON_VALID_FORMAT(
-      "0405", "bad.request.inputJson.notValidJsonFormat", RestResponse.Status.BAD_REQUEST);
-
+      "0405", "bad.request.inputJson.notValidJsonFormat", RestResponse.Status.BAD_REQUEST),
+  INVALID_FILE_TYPE("0406", "bad.request.invalidFileType", RestResponse.Status.BAD_REQUEST);
   private final String errorCode;
   private final String errorMessageKey;
   private final RestResponse.Status httpStatus;
