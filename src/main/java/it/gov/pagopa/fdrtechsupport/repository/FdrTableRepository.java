@@ -115,15 +115,6 @@ public class FdrTableRepository {
     pspId.map(psp -> filterBuilder.append(String.format(" and %s eq '%s'", PSP, psp)));
     organizationFiscalCode.map(
         orgId -> filterBuilder.append(String.format(" and %s eq '%s'", ORGANIZATION, orgId)));
-    actions.ifPresent(
-        act -> {
-          filterBuilder.append(" and ( ");
-          filterBuilder.append(
-              String.join(
-                  " or ",
-                  act.stream().map(a -> String.format(" %s eq '%s' ", ACTION, a)).toList()));
-          filterBuilder.append(" )");
-        });
 
     flowName.ifPresentOrElse(
         fn -> filterBuilder.append(String.format(" and %s eq '%s'", NAME, fn)),

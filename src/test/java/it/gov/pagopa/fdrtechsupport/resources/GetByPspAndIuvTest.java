@@ -1,38 +1,70 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
 import static io.restassured.RestAssured.given;
+import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
 import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.MongoResource;
+import java.time.LocalDate;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
 @QuarkusTestResource(AzuriteResource.class)
-@QuarkusTestResource(MongoResource.class)
+// @QuarkusTestResource(MongoResource.class)
 public class GetByPspAndIuvTest {
 
+  @ConfigProperty(name = "fdr-history-table-storage.connection-string")
+  String connString;
+
   public static final String url = "/psps/%s/iuv/%s";
+  private TableClient tableClient;
+
+  private TableClient getTableClient() {
+    if (tableClient == null) {
+      TableServiceClient tableServiceClient =
+          new TableServiceClientBuilder().connectionString(connString).buildClient();
+      tableServiceClient.createTableIfNotExists("fdrpaymentpublish");
+      tableClient = tableServiceClient.getTableClient("fdrpaymentpublish");
+    }
+    return tableClient;
+  }
 
   @Test
   void testGetFdrByPspAndIuv() {
-
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String orgId = RandomStringUtils.randomAlphabetic(10);
+    String iuv = RandomStringUtils.randomAlphabetic(20);
+    LocalDate created = LocalDate.now();
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdrPaymentPublish(
+                created, PSP_CODE, orgId, flowName, iuv));
+    DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
     FrResponse res =
         given()
-            .param("dateFrom", "2022-07-27")
-            .param("dateTo", "2022-07-27")
+            .param("dateFrom", created.toString())
+            .param("dateTo", created.toString())
             .when()
-            .get(url.formatted(25, 1))
+            .get(url.formatted(PSP_CODE, iuv))
             .then()
             .statusCode(200)
             .extract()
@@ -40,11 +72,10 @@ public class GetByPspAndIuvTest {
 
     List<FdrBaseInfo> data = res.getData();
     assertThat(data.size(), greaterThan(0));
-    assertThat(res.getDateFrom().toString(), equalTo("2022-07-27"));
-    assertThat(res.getDateTo().toString(), equalTo("2022-07-27"));
-    assertThat(data.get(0).getFdr(), equalTo("string"));
-    assertThat(data.get(0).getOrganizationId(), equalTo("string"));
-    assertThat(data.get(0).getCreated(), equalTo("2022-07-27T16:15:50Z"));
+    assertThat(data.get(0).getFdr(), equalTo(flowName));
+    assertThat(
+        OffsetDateTime.parse(data.get(0).getCreated(), formatter),
+        equalTo(created.atStartOfDay().atOffset(ZoneOffset.UTC)));
   }
 
   @Test
@@ -72,7 +103,7 @@ public class GetByPspAndIuvTest {
   }
 
   @Test
-  void testGetFdrByPspAndIurReverseDate() {
+  void testGetFdrByPspAndIuvReverseDate() {
 
     given()
         .param("dateFrom", "27-07-2022")

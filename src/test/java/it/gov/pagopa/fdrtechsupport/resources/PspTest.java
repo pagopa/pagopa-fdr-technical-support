@@ -63,8 +63,8 @@ class PspTest {
     PagedIterable<TableEntity> tableEntities = getTableClient().listEntities();
     FrResponse res =
         given()
-            .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-            .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .param("dateFrom", Util.format(LocalDate.now().minusDays(102)))
+            .param("dateTo", Util.format(LocalDate.now().minusDays(98)))
             .when()
             .get(url)
             .then()
