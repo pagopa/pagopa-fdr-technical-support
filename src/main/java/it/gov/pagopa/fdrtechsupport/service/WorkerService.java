@@ -279,7 +279,7 @@ public class WorkerService {
     } else {
       flowEvents =
           reStorageEvents.stream()
-              .filter(s -> "REQ".equals(s.getHttpType()))
+              .filter(s -> "INTERN".equals(s.getHttpType()))
               .sorted(Comparator.comparing(FdrEventEntity::getCreated))
               .toList();
     }
@@ -302,9 +302,7 @@ public class WorkerService {
                   .add(new RevisionInfo(creation.getRevision().toString(), creation.getCreated())));
     } else {
       flowEvents.forEach(
-          creation ->
-              fdrs.getRevisions()
-                  .add(new RevisionInfo(creation.getCreated(), creation.getCreated())));
+          creation -> fdrs.getRevisions().add(new RevisionInfo("NA", creation.getCreated())));
     }
 
     return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(List.of(fdrs)).build();
