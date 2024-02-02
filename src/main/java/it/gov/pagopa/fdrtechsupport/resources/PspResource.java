@@ -66,8 +66,8 @@ public class PspResource implements Serializable {
   // https://pagopa.atlassian.net/wiki/spaces/PN5/pages/761201348/Design+Review+FdR+API+Assistenza#API-1---Get-all-FdR-by-PSP-%5BFR_01_04%5D
   public Response frO1(
       @PathParam("pspId") @NotNull String pspId,
-      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo,
+      @QueryParam("dateFrom") LocalDate dateFrom,
+      @QueryParam("dateTo") LocalDate dateTo,
       @QueryParam("fdr") Optional<String> fdr,
       @QueryParam("organizationId") Optional<String> organizationId) {
     return Response.ok(
@@ -112,8 +112,8 @@ public class PspResource implements Serializable {
   public Response frO2(
       @PathParam("pspId") @NotNull String pspId,
       @PathParam("iuv") @NotNull String iuv,
-      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+      @QueryParam("dateFrom") LocalDate dateFrom,
+      @QueryParam("dateTo") LocalDate dateTo) {
     return Response.ok(workerService.getFdrByPspAndIuv(pspId, iuv, dateFrom, dateTo)).build();
   }
 
@@ -154,8 +154,8 @@ public class PspResource implements Serializable {
   public Response frO3(
       @PathParam("pspId") @NotNull String pspId,
       @PathParam("iur") @NotNull String iur,
-      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+      @QueryParam("dateFrom") LocalDate dateFrom,
+      @QueryParam("dateTo") LocalDate dateTo) {
     return Response.ok(workerService.getFdrByPspAndIur(pspId, iur, dateFrom, dateTo)).build();
   }
 }
