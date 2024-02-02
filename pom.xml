@@ -5,7 +5,7 @@
 
   <groupId>it.gov.pagopa</groupId>
   <artifactId>fdr-techical-support</artifactId>
-  <version>1.0.8</version>
+  <version>1.0.9</version>
 
   <properties>
     <compiler-plugin.version>3.11.0</compiler-plugin.version>
