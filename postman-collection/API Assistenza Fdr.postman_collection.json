@@ -1,10 +1,9 @@
 {
 	"info": {
-		"_postman_id": "8830a722-ba8b-4fed-a4e3-d16cf5f1fdae",
+		"_postman_id": "18129a93-8e28-4ae6-80f1-2181ef6b3676",
 		"name": "API Assistenza Fdr",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-		"_exporter_id": "11518494",
-		"_collection_link": "https://speeding-station-482612.postman.co/workspace/Nodo-doc~ec880f84-0a42-4ca9-bbd1-454d00bbe20c/collection/11518494-8830a722-ba8b-4fed-a4e3-d16cf5f1fdae?action=share&source=collection_link&creator=11518494"
+		"_exporter_id": "26451960"
 	},
 	"item": [
 		{
@@ -30,7 +29,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp?dateFrom=2023-09-13&dateTo=2023-09-15",
+					"raw": "{{ts-host}}/psps/:psp?dateFrom=2024-02-01&dateTo=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -41,17 +40,17 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-09-13"
+							"value": "2024-02-01"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-09-15"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						}
 					]
 				}
@@ -64,7 +63,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp/iuv/:iuv?dateFrom=2023-09-13&dateTo=2023-09-15",
+					"raw": "{{ts-host}}/psps/:psp/iuv/:iuv?dateFrom=2024-01-30&dateTo=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -77,21 +76,21 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-09-13"
+							"value": "2024-01-30"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-09-15"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						},
 						{
 							"key": "iuv",
-							"value": "91847041675818a"
+							"value": "81835854417758a"
 						}
 					]
 				}
@@ -104,7 +103,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/psps/:psp/iur/:iur?dateFrom=2023-07-22&dateTo=2023-07-27",
+					"raw": "{{ts-host}}/psps/:psp/iur/:iur?dateFrom=2024-01-29&dateTo=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -117,21 +116,21 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-07-22"
+							"value": "2024-01-29"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-07-27"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "psp",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						},
 						{
 							"key": "iur",
-							"value": "4868482079b"
+							"value": "6049506481"
 						}
 					]
 				}
@@ -144,7 +143,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/organizations/:organization/flows/:flowName?dateFrom=2023-09-13&dateTo=2023-09-14",
+					"raw": "{{ts-host}}/organizations/:organization/flows/:flowName?dateFrom=2024-01-29&dateTo=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -157,21 +156,21 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-09-13"
+							"value": "2024-01-29"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-09-14"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "organization",
-							"value": "00000000099"
+							"value": "15376371009"
 						},
 						{
 							"key": "flowName",
-							"value": "2023-09-14nodo-doc-dev-1694697113"
+							"value": "2024-02-0260000000001-17068800300"
 						}
 					]
 				}
@@ -184,7 +183,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/organizations/:organizationId/psps/:psp/flows/:flowName/revisions/:revision?dateFrom=2023-09-13&dateTo=2023-09-14",
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:psp/flows/:flowName/revisions/:revision?dateFrom=2024-01-29&dateTo=2024-02-02&fileType=json",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -201,25 +200,29 @@
 					"query": [
 						{
 							"key": "dateFrom",
-							"value": "2023-09-13"
+							"value": "2024-01-29"
 						},
 						{
 							"key": "dateTo",
-							"value": "2023-09-14"
+							"value": "2024-02-02"
+						},
+						{
+							"key": "fileType",
+							"value": "json"
 						}
 					],
 					"variable": [
 						{
 							"key": "organizationId",
-							"value": "00000000099"
+							"value": "15376371009"
 						},
 						{
 							"key": "psp",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						},
 						{
 							"key": "flowName",
-							"value": "2023-09-14nodo-doc-dev-16946971130"
+							"value": "2024-02-0260000000001-17068810001"
 						},
 						{
 							"key": "revision",
@@ -236,7 +239,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/download?date=2023-09-14",
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/download?date=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -250,17 +253,17 @@
 					"query": [
 						{
 							"key": "date",
-							"value": "2023-09-14"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "organizationId",
-							"value": "00000000099"
+							"value": "15376371009"
 						},
 						{
 							"key": "pspId",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						}
 					]
 				}
@@ -273,7 +276,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/upload?date=2023-09-14",
+					"raw": "{{ts-host}}/organizations/:organizationId/psps/:pspId/upload?date=2024-02-02",
 					"host": [
 						"{{ts-host}}"
 					],
@@ -287,17 +290,17 @@
 					"query": [
 						{
 							"key": "date",
-							"value": "2023-09-14"
+							"value": "2024-02-02"
 						}
 					],
 					"variable": [
 						{
 							"key": "organizationId",
-							"value": "00000000099"
+							"value": "15376371009"
 						},
 						{
 							"key": "pspId",
-							"value": "nodo-doc-dev"
+							"value": "60000000001"
 						}
 					]
 				}
