@@ -37,7 +37,8 @@ microservice-chart:
       FDR_HISTORY_TABLE_STORAGE_CONN_STRING: "fdr-history-sa-table-storage-connection-string"
       FDR_HISTORY_PUBLISH_TABLE_STORAGE_TABLE_NAME: "fdr-history-sa-table-storage-publish-table-name"
       FDR_HISTORY_PAYMENT_PUBLISH_TABLE_STORAGE_TABLE_NAME: "fdr-history-sa-table-storage-payment-publish-table-name"
-      FDR_HISTORY_BLOB_STORAGE_CONN_STRING: "fdr-history-sa-blob-storage-connection-string"
+      BLOB_HISTORY_CONNECTION_STRING: "fdr-history-sa-connection-string"
+      TABLE_HISTORY_CONNECTION_STRING: "fdr-history-sa-connection-string"
     keyvault:
       name: "pagopa-u-fdr-kv"
       tenantId: "7788edaf-0346-4068-9d79-c868aed15b3d"
