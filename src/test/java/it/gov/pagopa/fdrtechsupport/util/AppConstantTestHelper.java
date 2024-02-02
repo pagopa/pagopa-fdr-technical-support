@@ -2,7 +2,6 @@ package it.gov.pagopa.fdrtechsupport.util;
 
 import com.azure.data.tables.models.TableEntity;
 import io.restassured.http.Header;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import java.time.LocalDate;
 
 public class AppConstantTestHelper {
@@ -63,18 +62,6 @@ public class AppConstantTestHelper {
     entity.addProperty("receiver_organization_id", orgId);
     entity.addProperty("jsonref_container_name", containerName);
     entity.addProperty("jsonref_file_name", fileName);
-    return entity;
-  }
-
-  public static final FdrEventEntity newMongoEntity(
-      LocalDate date, String pa, String psp, String flowName, int revision, boolean isnew) {
-    FdrEventEntity entity = new FdrEventEntity();
-    entity.setCreated(Util.format(date));
-    entity.setOrganizationId(pa);
-    entity.setPspId(psp);
-    entity.setFdr(flowName);
-    entity.setRevision(revision);
-    entity.setServiceIdentifier(isnew ? "FDR003" : "FDR001");
     return entity;
   }
 }

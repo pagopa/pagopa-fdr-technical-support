@@ -16,10 +16,12 @@ import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrHistoryBlobRefEntity;
 import it.gov.pagopa.fdrtechsupport.util.Util;
 import jakarta.enterprise.context.ApplicationScoped;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -169,9 +171,11 @@ public class FdrHistoryTableRepository {
 
   public String getBlobByNameAndRevision(DateRequest dates, String name, String revision) {
     FdrHistoryBlobRefEntity refEntity = findFlowByNameAndRevision(dates, name, revision);
-    return getBlobContainerClient(refEntity.getContainerName())
-        .getBlobClient(refEntity.getFileName())
-        .downloadContent()
-        .toString();
+    byte[] byteArray =
+        getBlobContainerClient(refEntity.getContainerName())
+            .getBlobClient(refEntity.getFileName())
+            .downloadContent()
+            .toBytes();
+    return new String(Base64.getEncoder().encode(byteArray), StandardCharsets.UTF_8);
   }
 }

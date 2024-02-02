@@ -22,6 +22,7 @@ import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.Util;
 import java.time.LocalDate;
+import java.util.Base64;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.DisplayName;
@@ -93,7 +94,7 @@ class OrganizationsTest {
             .statusCode(200)
             .extract()
             .as(new TypeRef<FdrFullInfoResponse>() {});
-    assertThat(res.getData(), equalTo("jsonzip"));
+    assertThat(new String(Base64.getDecoder().decode(res.getData())), equalTo("jsonzip"));
   }
 
   @SneakyThrows
