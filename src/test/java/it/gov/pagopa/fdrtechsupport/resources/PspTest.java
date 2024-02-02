@@ -18,7 +18,6 @@ import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.MongoResource;
 import it.gov.pagopa.fdrtechsupport.util.Util;
 import java.time.LocalDate;
 import lombok.SneakyThrows;
@@ -30,7 +29,6 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
 @QuarkusTestResource(AzuriteResource.class)
-@QuarkusTestResource(MongoResource.class)
 class PspTest {
 
   @ConfigProperty(name = "fdr-re-table-storage.connection-string")
