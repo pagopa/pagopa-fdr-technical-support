@@ -64,16 +64,4 @@ public class AppConstantTestHelper {
     entity.addProperty("jsonref_file_name", fileName);
     return entity;
   }
-
-  //  public static final FdrEventEntity newMongoEntity(
-  //      LocalDate date, String pa, String psp, String flowName, int revision, boolean isnew) {
-  //    FdrEventEntity entity = new FdrEventEntity();
-  //    entity.setCreated(Util.format(date));
-  //    entity.setOrganizationId(pa);
-  //    entity.setPspId(psp);
-  //    entity.setFdr(flowName);
-  //    entity.setRevision(revision);
-  //    entity.setServiceIdentifier(isnew ? "FDR003" : "FDR001");
-  //    return entity;
-  //  }
 }
