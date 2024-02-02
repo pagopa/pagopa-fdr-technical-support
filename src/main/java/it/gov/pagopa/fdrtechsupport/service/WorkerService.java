@@ -241,7 +241,7 @@ public class WorkerService {
       dateTo = LocalDate.now();
       dateFrom = dateTo.minusDays(dateRangeLimit);
     }
-    if (ChronoUnit.DAYS.between(dateFrom, dateTo) > dateRangeLimit - 1) {
+    if (ChronoUnit.DAYS.between(dateFrom, dateTo) > dateRangeLimit) {
       throw new AppException(AppErrorCodeMessageEnum.INTERVAL_TOO_LARGE, dateRangeLimit);
     }
     return DateRequest.builder().from(dateFrom).to(dateTo).build();
@@ -305,7 +305,11 @@ public class WorkerService {
           creation -> fdrs.getRevisions().add(new RevisionInfo("NA", creation.getCreated())));
     }
 
-    return FrResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(List.of(fdrs)).build();
+    return FrResponse.builder()
+        .dateFrom(dateRequest.getFrom())
+        .dateTo(dateRequest.getTo())
+        .data(List.of(fdrs))
+        .build();
   }
 
   public FdrFullInfoResponse getFlow(
@@ -317,18 +321,23 @@ public class WorkerService {
       LocalDate dateTo,
       String fileType) {
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    fileType = (fileType == null || fileType.isBlank()) ? "json" : fileType;
     if (fileType.equalsIgnoreCase("json")) {
       log.infof("Querying history table storage");
       String flow =
           fdrHistoryTableRepository.getBlobByNameAndRevision(dateRequest, flowName, revision);
       log.infof("Done querying history table storage");
-      return FdrFullInfoResponse.builder().dateFrom(dateFrom).dateTo(dateTo).data(flow).build();
+      return FdrFullInfoResponse.builder()
+          .dateFrom(dateRequest.getFrom())
+          .dateTo(dateRequest.getTo())
+          .data(flow)
+          .build();
     } else if (fileType.equalsIgnoreCase("xml")) {
       GetXmlRendicontazioneResponse getXmlRendicontazioneResponse =
           fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
       return FdrFullInfoResponse.builder()
-          .dateFrom(dateFrom)
-          .dateTo(dateTo)
+          .dateFrom(dateRequest.getFrom())
+          .dateTo(dateRequest.getTo())
           .data(getXmlRendicontazioneResponse.getXmlRendicontazione())
           .build();
     } else {

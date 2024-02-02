@@ -61,8 +61,8 @@ public class OrgResource implements Serializable {
   public Response getRevisions(
       @PathParam("organizationId") @NotNull String organizationId,
       @PathParam("fdr") @NotNull String fdr,
-      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo) {
+      @QueryParam("dateFrom") LocalDate dateFrom,
+      @QueryParam("dateTo") LocalDate dateTo) {
 
     return Response.ok(workerService.getRevisions(organizationId, fdr, dateFrom, dateTo)).build();
   }
@@ -106,9 +106,9 @@ public class OrgResource implements Serializable {
       @PathParam("fdr") @NotNull String fdr,
       @PathParam("psp") @NotNull String psp,
       @PathParam("revision") @NotNull String revision,
-      @NotNull @QueryParam("dateFrom") LocalDate dateFrom,
-      @NotNull @QueryParam("dateTo") LocalDate dateTo,
-      @NotNull @QueryParam("fileType") String fileType) {
+      @QueryParam("dateFrom") LocalDate dateFrom,
+      @QueryParam("dateTo") LocalDate dateTo,
+      @QueryParam("fileType") String fileType) {
     return Response.ok(
             workerService.getFlow(organizationId, psp, fdr, revision, dateFrom, dateTo, fileType))
         .build();
@@ -120,7 +120,7 @@ public class OrgResource implements Serializable {
   public Response getDownloads(
       @PathParam("organizationId") @NotNull String organizationId,
       @PathParam("psp") @NotNull String psp,
-      @NotNull @QueryParam("date") LocalDate date) {
+      @QueryParam("date") LocalDate date) {
     FrResponse fdrActions =
         workerService.getFdrActions(
             psp,
@@ -144,7 +144,7 @@ public class OrgResource implements Serializable {
   public Response getUploads(
       @PathParam("organizationId") @NotNull String organizationId,
       @PathParam("psp") @NotNull String psp,
-      @NotNull @QueryParam("date") LocalDate date) {
+      @QueryParam("date") LocalDate date) {
     return Response.ok(
             workerService.getFdrActions(
                 psp,
