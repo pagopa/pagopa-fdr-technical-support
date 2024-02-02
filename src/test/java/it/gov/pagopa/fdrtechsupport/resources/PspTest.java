@@ -1,5 +1,11 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
+import static io.restassured.RestAssured.given;
+import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
+import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.greaterThan;
+
 import com.azure.core.http.rest.PagedIterable;
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
@@ -9,30 +15,17 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.MongoResource;
 import it.gov.pagopa.fdrtechsupport.util.Util;
+import java.time.LocalDate;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
-
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Random;
-
-import static io.restassured.RestAssured.given;
-import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
-import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
 
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
@@ -55,49 +48,29 @@ class PspTest {
     return tableClient;
   }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr by psp mongo")
-    void getByPspMongo() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/psps/%s".formatted(PSP_CODE);
+  @SneakyThrows
+  @Test
+  @DisplayName("get fdr by psp table")
+  void getByPspTable() {
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String url = "/psps/%s".formatted(PSP_CODE);
 
-        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE,PSP_CODE, flowName,0,false));
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdr(
+                LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, true));
 
-        FrResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
-                        .param("dateTo", Util.format(LocalDate.now()))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FrResponse>() {});
-        assertThat(res.getData().size(),greaterThan(0));
-    }
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr by psp table")
-    void getByPspTable() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/psps/%s".formatted(PSP_CODE);
-
-        getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE,PSP_CODE, flowName,1,true));
-
-        PagedIterable<TableEntity> tableEntities = getTableClient().listEntities();
-        FrResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-                        .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FrResponse>() {});
-        assertThat(res.getData().size(),greaterThan(0));
-    }
-
-
+    PagedIterable<TableEntity> tableEntities = getTableClient().listEntities();
+    FrResponse res =
+        given()
+            .param("dateFrom", Util.format(LocalDate.now().minusDays(102)))
+            .param("dateTo", Util.format(LocalDate.now().minusDays(98)))
+            .when()
+            .get(url)
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(new TypeRef<FrResponse>() {});
+    assertThat(res.getData().size(), greaterThan(0));
+  }
 }

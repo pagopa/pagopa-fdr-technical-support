@@ -1,7 +1,7 @@
 [{
   "id": "old flow",
   "httpRequest": {
-    "path": "/internal/organizations/.*?/flows/.*?"
+    "path": "/internal/organizations/.*?/fdrs/.*?"
   },
   "httpResponse": {
     "body": { "xmlRendicontazione":"<xml>test</xml>"}

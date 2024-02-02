@@ -1,13 +1,12 @@
 package it.gov.pagopa.fdrtechsupport.util;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
+import java.util.HashMap;
+import java.util.Map;
 import lombok.SneakyThrows;
 import org.testcontainers.containers.GenericContainer;
 import org.testcontainers.containers.MongoDBContainer;
 import org.testcontainers.utility.DockerImageName;
-
-import java.util.HashMap;
-import java.util.Map;
 
 public class MongoResource implements QuarkusTestResourceLifecycleManager {
 

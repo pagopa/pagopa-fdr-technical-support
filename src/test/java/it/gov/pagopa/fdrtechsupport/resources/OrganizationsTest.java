@@ -1,152 +1,125 @@
 package it.gov.pagopa.fdrtechsupport.resources;
 
-import com.azure.data.tables.TableClient;
-import com.azure.data.tables.TableServiceClient;
-import com.azure.data.tables.TableServiceClientBuilder;
-import io.quarkiverse.mockserver.test.MockServerTestResource;
-import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
-import io.quarkus.test.common.QuarkusTestResource;
-import io.quarkus.test.junit.QuarkusTest;
-import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
-import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.MongoResource;
-import it.gov.pagopa.fdrtechsupport.util.Util;
-import lombok.SneakyThrows;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
-
-import java.time.LocalDate;
-import java.util.LinkedHashMap;
-import java.util.List;
-
 import static io.restassured.RestAssured.given;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.equalTo;
 
+import com.azure.core.util.BinaryData;
+import com.azure.data.tables.TableClient;
+import com.azure.data.tables.TableServiceClient;
+import com.azure.data.tables.TableServiceClientBuilder;
+import com.azure.storage.blob.BlobContainerClient;
+import com.azure.storage.blob.BlobServiceClient;
+import com.azure.storage.blob.BlobServiceClientBuilder;
+import io.quarkiverse.mockserver.test.MockServerTestResource;
+import io.quarkus.test.common.QuarkusTestResource;
+import io.quarkus.test.junit.QuarkusTest;
+import io.restassured.common.mapper.TypeRef;
+import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
+import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
+import it.gov.pagopa.fdrtechsupport.util.Util;
+import java.time.LocalDate;
+import lombok.SneakyThrows;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
+
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
 @QuarkusTestResource(AzuriteResource.class)
-@QuarkusTestResource(MongoResource.class)
 class OrganizationsTest {
 
-  @ConfigProperty(name = "fdr-re-table-storage.connection-string")
+  @ConfigProperty(name = "fdr-history-table-storage.connection-string")
   String connString;
 
+  @ConfigProperty(name = "fdr-history-blob-storage.connection-string")
+  String blobConnString;
+
   private TableClient tableClient;
-//  @Inject
-//  MongoClient mongoClient;
+  private BlobServiceClient blobServiceClient = null;
 
   private TableClient getTableClient() {
     if (tableClient == null) {
       TableServiceClient tableServiceClient =
           new TableServiceClientBuilder().connectionString(connString).buildClient();
-      tableServiceClient.createTableIfNotExists("events");
-      tableClient = tableServiceClient.getTableClient("events");
+      tableServiceClient.createTableIfNotExists("fdrpublish");
+      tableClient = tableServiceClient.getTableClient("fdrpublish");
     }
     return tableClient;
   }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr old mongo")
-    void getFdrOldMongo() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,"psp",flowName,1
-        );
-
-        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE,PSP_CODE, flowName,0,false));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
-                        .param("dateTo", Util.format(LocalDate.now()))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        assertThat(res.getData(),equalTo("<xml>test</xml>"));
-    }
+  private BlobContainerClient getBlobContainerClient(String containerName) {
+    blobServiceClient =
+        new BlobServiceClientBuilder().connectionString(blobConnString).buildClient();
+    blobServiceClient.createBlobContainerIfNotExists(containerName);
+    return blobServiceClient.getBlobContainerClient(containerName);
+  }
 
   @SneakyThrows
   @Test
-  @DisplayName("get fdr old table storage")
-  void getFdrOldTable() {
-      String flowName= RandomStringUtils.randomAlphabetic(20);
-      String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-              PA_CODE,PSP_CODE,flowName,1
-      );
-      getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE,PSP_CODE, flowName,0,false));
+  @DisplayName("get fdr json")
+  void getFdrJson() {
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String containerName = "fdrhistory";
+    String fileName = flowName + ".json.zip";
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdrPublish(
+                LocalDate.now().minusDays(100),
+                PA_CODE,
+                PSP_CODE,
+                flowName,
+                1,
+                containerName,
+                fileName));
+    getBlobContainerClient(containerName)
+        .getBlobClient(fileName)
+        .upload(BinaryData.fromString("jsonzip"));
 
-      FdrFullInfoResponse res =
+    FdrFullInfoResponse res =
         given()
             .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
             .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .param("fileType", "json")
             .when()
             .get(url)
             .then()
             .statusCode(200)
             .extract()
             .as(new TypeRef<FdrFullInfoResponse>() {});
-      assertThat(res.getData(),equalTo("<xml>test</xml>"));
+    assertThat(res.getData(), equalTo("jsonzip"));
   }
 
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr new mongo")
-    void getFdrNewMongo() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,PSP_CODE,flowName,1
-        );
+  @SneakyThrows
+  @Test
+  @DisplayName("get fdr xml")
+  void getFdrXml() {
+    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
+    getTableClient()
+        .createEntity(
+            AppConstantTestHelper.newTableFdrPublish(
+                LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, "", ""));
 
-        FdrEventEntity.persist(AppConstantTestHelper.newMongoEntity(LocalDate.now().minusDays(1),PA_CODE,PSP_CODE, flowName,0,true));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(2)))
-                        .param("dateTo", Util.format(LocalDate.now()))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        List<LinkedHashMap> data = (List<LinkedHashMap>)res.getData();
-        assertThat(data.get(0).get("iuv"),equalTo("iuv"));
-    }
-
-    @SneakyThrows
-    @Test
-    @DisplayName("get fdr new table")
-    void getFdrNewTable() {
-        String flowName= RandomStringUtils.randomAlphabetic(20);
-        String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(
-                PA_CODE,PSP_CODE,flowName,1
-        );
-        getTableClient().createEntity(AppConstantTestHelper.newTableFdr(LocalDate.now().minusDays(100),PA_CODE,PSP_CODE, flowName,1,true));
-
-        FdrFullInfoResponse res =
-                given()
-                        .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-                        .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
-                        .when()
-                        .get(url)
-                        .then()
-                        .statusCode(200)
-                        .extract()
-                        .as(new TypeRef<FdrFullInfoResponse>() {});
-        List<LinkedHashMap> data = (List<LinkedHashMap>)res.getData();
-        assertThat(data.get(0).get("iuv"),equalTo("iuv"));
-    }
-
+    FdrFullInfoResponse res =
+        given()
+            .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
+            .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .param("fileType", "xml")
+            .when()
+            .get(url)
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(new TypeRef<FdrFullInfoResponse>() {});
+    String data = res.getData();
+    assertThat(res.getData(), equalTo("<xml>test</xml>"));
+  }
 }

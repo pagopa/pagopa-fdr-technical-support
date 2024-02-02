@@ -8,7 +8,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FdrActionInfo extends FdrBaseInfo{
-    private String flowAction;
-    private String serviceIdentifier;
+public class FdrActionInfo extends FdrBaseInfo {
+  private String flowAction;
+  private String serviceIdentifier;
 }
