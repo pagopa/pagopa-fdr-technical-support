@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.0.10'
+    tag: '1.0.11'
   readinessProbe:
     httpGet:
       path: /q/health/ready
