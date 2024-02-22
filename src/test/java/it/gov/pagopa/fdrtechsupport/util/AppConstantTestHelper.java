@@ -28,6 +28,7 @@ public class AppConstantTestHelper {
     entity.addProperty("revision", revision);
     entity.addProperty("eventType", "INTERNAL");
     entity.addProperty("fdrStatus", "PUBLISHED");
+    entity.addProperty("fdrAction", "PUBLISH");
     entity.addProperty("serviceIdentifier", isnew ? "FDR003" : "FDR001");
     return entity;
   }
@@ -43,6 +44,7 @@ public class AppConstantTestHelper {
     entity.addProperty("iuv", iur);
     entity.addProperty("eventType", "INTERNAL");
     entity.addProperty("fdrStatus", "PUBLISHED");
+    entity.addProperty("fdrAction", "PUBLISH");
     return entity;
   }
 
