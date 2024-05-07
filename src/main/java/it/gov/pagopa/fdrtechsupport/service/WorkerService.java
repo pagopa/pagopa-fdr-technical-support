@@ -12,15 +12,15 @@ import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import java.time.LocalDate;
-import java.time.temporal.ChronoUnit;
-import java.util.*;
-import java.util.stream.Collectors;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
 import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse;
+
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WorkerService {
@@ -240,9 +240,6 @@ public class WorkerService {
     if (dateFrom == null) {
       dateTo = LocalDate.now();
       dateFrom = dateTo.minusDays(dateRangeLimit);
-    }
-    if (ChronoUnit.DAYS.between(dateFrom, dateTo) > dateRangeLimit) {
-      throw new AppException(AppErrorCodeMessageEnum.INTERVAL_TOO_LARGE, dateRangeLimit);
     }
     return DateRequest.builder().from(dateFrom).to(dateTo).build();
   }
