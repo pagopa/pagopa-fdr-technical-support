@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller.model.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
+import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;
@@ -15,5 +15,5 @@ public class FrSingleDateResponse {
   private LocalDate date;
 
   @JsonProperty("data")
-  private List<FdrBaseInfo> data;
+  private List<FlowBaseInfo> data;
 }

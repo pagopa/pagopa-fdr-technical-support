@@ -2,7 +2,7 @@ package it.gov.pagopa.fdrtechsupport.controller;
 
 import it.gov.pagopa.fdrtechsupport.controller.interfaces.IOrganizationController;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.validation.constraints.NotNull;
@@ -19,7 +19,7 @@ public class OrganizationController implements IOrganizationController {
     this.workerService = workerService;
   }
 
-  public FrResponse getRevisions(String organizationId, String flowId, LocalDate dateFrom, LocalDate dateTo) {
+  public MultipleFlowsResponse getRevisions(String organizationId, String flowId, LocalDate dateFrom, LocalDate dateTo) {
 
     return workerService.getRevisions(organizationId, flowId, dateFrom, dateTo);
   }
@@ -32,7 +32,7 @@ public class OrganizationController implements IOrganizationController {
 
   @Override
   public FrSingleDateResponse getDownloads(String organizationId, String pspId, LocalDate date) {
-    FrResponse fdrActions =
+    MultipleFlowsResponse fdrActions =
         workerService.getFdrActions(
             pspId,
             Optional.empty(),
@@ -48,7 +48,7 @@ public class OrganizationController implements IOrganizationController {
   }
 
   @Override
-  public FrResponse getUploads(String organizationId, @NotNull String pspId, LocalDate date) {
+  public MultipleFlowsResponse getUploads(String organizationId, @NotNull String pspId, LocalDate date) {
     return workerService.getFdrActions(
                 pspId,
                 Optional.empty(),

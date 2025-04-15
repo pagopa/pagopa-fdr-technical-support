@@ -9,7 +9,7 @@ import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -43,8 +43,8 @@ public class WorkerService {
 
   @RestClient FdrRestClient fdrRestClient;
 
-  private FdrRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
-    return FdrRevisionInfo.builder().build();
+  private FlowRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
+    return FlowRevisionInfo.builder().build();
   }
 
   private List<FdrEventEntity> find(
@@ -69,7 +69,7 @@ public class WorkerService {
     return reStorageEvents;
   }
 
-  public FrResponse getFdrByPsp(
+  public MultipleFlowsResponse getFdrByPsp(
       Optional<String> pspId,
       Optional<String> flowName,
       Optional<String> organizationId,
@@ -91,12 +91,12 @@ public class WorkerService {
 
     log.infof("found %d different flowNames in %d events", reGroups.size(), reStorageEvents.size());
 
-    List<FdrBaseInfo> collect =
+    List<FlowBaseInfo> collect =
         reGroups.keySet().stream()
             .map(
                 fn -> {
                   List<FdrEventEntity> events = reGroups.get(fn);
-                  FdrBaseInfo fdrInfo = new FdrBaseInfo();
+                  FlowBaseInfo fdrInfo = new FlowBaseInfo();
                   List<FdrEventEntity> ordered =
                       events.stream()
                           .sorted(Comparator.comparing(FdrEventEntity::getCreated))
@@ -113,58 +113,58 @@ public class WorkerService {
                 })
             .collect(Collectors.toList());
 
-    return FrResponse.builder()
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
         .data(collect)
         .build();
   }
 
-  public FrResponse getFdrByPspAndIuv(
+  public MultipleFlowsResponse getFdrByPspAndIuv(
       String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     List<FdrByPspIdIuvIurBase> data =
         fdrHistoryTableRepository.findFlowByPspAndIuvIur(
             dateRequest, pspId, Optional.of(iuv), Optional.empty());
 
-    List<FdrBaseInfo> dataResponse =
+    List<FlowBaseInfo> dataResponse =
         data.stream()
             .map(
                 fn ->
-                    new FdrBaseInfo(
+                    new FlowBaseInfo(
                         fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
             .toList();
 
-    return FrResponse.builder()
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+        .data(dataResponse.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
         .build();
   }
 
-  public FrResponse getFdrByPspAndIur(
+  public MultipleFlowsResponse getFdrByPspAndIur(
       String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     List<FdrByPspIdIuvIurBase> data =
         fdrHistoryTableRepository.findFlowByPspAndIuvIur(
             dateRequest, pspId, Optional.empty(), Optional.of(iur));
 
-    List<FdrBaseInfo> dataResponse =
+    List<FlowBaseInfo> dataResponse =
         data.stream()
             .map(
                 fn ->
-                    new FdrBaseInfo(
+                    new FlowBaseInfo(
                         fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
             .toList();
 
-    return FrResponse.builder()
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+        .data(dataResponse.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
         .build();
   }
 
-  public FrResponse getFdrActions(
+  public MultipleFlowsResponse getFdrActions(
       String pspId,
       Optional<String> flowName,
       Optional<String> organizationId,
@@ -191,12 +191,12 @@ public class WorkerService {
 
     log.infof("found %d different flowNames in %d events", reGroups.size(), reStorageEvents.size());
 
-    List<FdrBaseInfo> collect =
+    List<FlowBaseInfo> collect =
         reGroups.keySet().stream()
             .map(
                 fn -> {
                   List<FdrEventEntity> events = reGroups.get(fn);
-                  FdrActionInfo fdrInfo = new FdrActionInfo();
+                  FlowActionInfo fdrInfo = new FlowActionInfo();
                   List<FdrEventEntity> ordered =
                       events.stream()
                           .sorted(Comparator.comparing(FdrEventEntity::getCreated))
@@ -216,10 +216,10 @@ public class WorkerService {
                 })
             .collect(Collectors.toList());
 
-    return FrResponse.builder()
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
-        .data(collect.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+        .data(collect.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
         .build();
   }
 
@@ -230,6 +230,7 @@ public class WorkerService {
    * @param dateTo
    */
   private DateRequest verifyDate(LocalDate dateFrom, LocalDate dateTo) {
+
     if (dateFrom == null && dateTo != null || dateFrom != null && dateTo == null) {
       throw new AppException(
           AppErrorCodeMessageEnum.DATE_BAD_REQUEST, "Date from and date to must be both defined");
@@ -244,8 +245,9 @@ public class WorkerService {
     return DateRequest.builder().from(dateFrom).to(dateTo).build();
   }
 
-  public FrResponse getRevisions(
+  public MultipleFlowsResponse getRevisions(
       String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
+
     DateRequest dateRequest = verifyDate(dateFrom, dateTo);
     List<FdrEventEntity> reStorageEvents =
         find(
@@ -285,7 +287,7 @@ public class WorkerService {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    FdrRevisionInfo fdrs = new FdrRevisionInfo();
+    FlowRevisionInfo fdrs = new FlowRevisionInfo();
     fdrs.setFdr(flowName);
     fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
     fdrs.setPspId(flowEvents.get(0).getPspId());
@@ -302,7 +304,7 @@ public class WorkerService {
           creation -> fdrs.getRevisions().add(new RevisionInfo("NA", creation.getCreated())));
     }
 
-    return FrResponse.builder()
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
         .data(List.of(fdrs))

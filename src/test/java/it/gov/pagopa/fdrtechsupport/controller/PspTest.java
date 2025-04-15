@@ -15,7 +15,7 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
@@ -59,7 +59,7 @@ class PspTest {
                 LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, true));
 
     PagedIterable<TableEntity> tableEntities = getTableClient().listEntities();
-    FrResponse res =
+    MultipleFlowsResponse res =
         given()
             .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(102)))
             .param("dateTo", DateUtil.format(LocalDate.now().minusDays(98)))
@@ -68,7 +68,7 @@ class PspTest {
             .then()
             .statusCode(200)
             .extract()
-            .as(new TypeRef<FrResponse>() {});
+            .as(new TypeRef<MultipleFlowsResponse>() {});
     assertThat(res.getData().size(), greaterThan(0));
   }
 }

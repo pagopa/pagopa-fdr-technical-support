@@ -11,8 +11,11 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FdrBaseInfo {
+public class FlowBaseInfo {
+
   private String fdr;
+
   private String created;
+
   private String organizationId;
 }

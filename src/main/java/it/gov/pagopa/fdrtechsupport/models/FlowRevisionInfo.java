@@ -12,7 +12,7 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FdrRevisionInfo extends FdrBaseInfo {
+public class FlowRevisionInfo extends FlowBaseInfo {
   private String pspId;
   private List<RevisionInfo> revisions;
 }

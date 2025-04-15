@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
@@ -24,7 +24,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/flows/{flowId}")
-    FrResponse getRevisions(
+    MultipleFlowsResponse getRevisions(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("flowId") @NotNull String flowId,
             @QueryParam("dateFrom") LocalDate dateFrom,
@@ -66,7 +66,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/psps/{pspId}/upload")
-    FrResponse getUploads(
+    MultipleFlowsResponse getUploads(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("pspId") @NotNull String pspId,
             @QueryParam("date") LocalDate date);

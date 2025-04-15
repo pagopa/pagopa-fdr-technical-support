@@ -13,8 +13,8 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import java.time.LocalDate;
@@ -59,7 +59,7 @@ public class GetByPspAndIuvTest {
             AppConstantTestHelper.newTableFdrPaymentPublish(
                 created, PSP_CODE, orgId, flowName, iuv));
     DateTimeFormatter formatter = DateTimeFormatter.ISO_DATE_TIME;
-    FrResponse res =
+    MultipleFlowsResponse res =
         given()
             .param("dateFrom", created.toString())
             .param("dateTo", created.toString())
@@ -70,7 +70,7 @@ public class GetByPspAndIuvTest {
             .extract()
             .as(new TypeRef<>() {});
 
-    List<FdrBaseInfo> data = res.getData();
+    List<FlowBaseInfo> data = res.getData();
     assertThat(data.size(), greaterThan(0));
     assertThat(data.get(0).getFdr(), equalTo(flowName));
     assertThat(

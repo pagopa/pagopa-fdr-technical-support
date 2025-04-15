@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -22,7 +22,7 @@ public interface IPSPController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{pspId}")
-    FrResponse searchFlowByPsp(
+    MultipleFlowsResponse searchFlowByPsp(
             @PathParam("pspId") @NotNull String pspId,
             @QueryParam("dateFrom") LocalDate dateFrom,
             @QueryParam("dateTo") LocalDate dateTo,
@@ -36,7 +36,7 @@ public interface IPSPController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{pspId}/iuv/{iuv}")
-    FrResponse searchFlowByPspAndIuv(
+    MultipleFlowsResponse searchFlowByPspAndIuv(
             @PathParam("pspId") @NotNull String pspId,
             @PathParam("iuv") @NotNull String iuv,
             @QueryParam("dateFrom") LocalDate dateFrom,
@@ -49,7 +49,7 @@ public interface IPSPController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{pspId}/iur/{iur}")
-    FrResponse searchFlowByPspAndIur(
+    MultipleFlowsResponse searchFlowByPspAndIur(
             @PathParam("pspId") @NotNull String pspId,
             @PathParam("iur") @NotNull String iur,
             @QueryParam("dateFrom") LocalDate dateFrom,
