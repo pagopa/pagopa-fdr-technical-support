@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.resources.exceptionmapper;
+package it.gov.pagopa.fdrtechsupport.controllers.exceptionmapper;
 
 import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.JsonMappingException;

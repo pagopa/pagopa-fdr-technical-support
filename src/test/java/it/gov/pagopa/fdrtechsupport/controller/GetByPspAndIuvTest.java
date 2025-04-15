@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.resources;
+package it.gov.pagopa.fdrtechsupport.controllers;
 
 import static io.restassured.RestAssured.given;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
@@ -14,7 +14,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
-import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controllers.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import java.time.LocalDate;

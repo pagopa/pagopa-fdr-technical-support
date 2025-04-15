@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.resources.response;
+package it.gov.pagopa.fdrtechsupport.controllers.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;

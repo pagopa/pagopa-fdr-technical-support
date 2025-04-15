@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.resources.response;
+package it.gov.pagopa.fdrtechsupport.controllers.response;
 
 import java.time.LocalDate;
 import lombok.*;

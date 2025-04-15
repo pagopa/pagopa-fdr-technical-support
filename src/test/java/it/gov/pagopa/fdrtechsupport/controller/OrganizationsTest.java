@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.resources;
+package it.gov.pagopa.fdrtechsupport.controllers;
 
 import static io.restassured.RestAssured.given;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
@@ -17,7 +17,7 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controllers.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.Util;
