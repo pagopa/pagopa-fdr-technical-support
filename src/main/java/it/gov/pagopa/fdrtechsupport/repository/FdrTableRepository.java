@@ -8,7 +8,7 @@ import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.data.tables.models.ListEntitiesOptions;
 import com.azure.data.tables.models.TableEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.util.Util;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -17,9 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-// @Startup
 @ApplicationScoped
-// @UnlessBuildProfile("test")
 public class FdrTableRepository {
 
   @ConfigProperty(name = "fdr-re-table-storage.connection-string")
@@ -38,9 +36,9 @@ public class FdrTableRepository {
     return String.format(
         dateFilterString,
         PARTITIONKEY,
-        Util.format(datefrom),
+        DateUtil.format(datefrom),
         PARTITIONKEY,
-        Util.format(dateTo.plusDays(1)));
+        DateUtil.format(dateTo.plusDays(1)));
   }
 
   private List<String> propertiesToSelect =

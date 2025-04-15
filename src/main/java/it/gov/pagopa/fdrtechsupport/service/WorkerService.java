@@ -1,15 +1,15 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
-import it.gov.pagopa.fdrtechsupport.clients.FdrOldRestClient;
-import it.gov.pagopa.fdrtechsupport.clients.FdrRestClient;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
+import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
+import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.resources.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.resources.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
