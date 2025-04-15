@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.clients;
+package it.gov.pagopa.fdrtechsupport.client;
 
 import io.quarkiverse.openapi.generator.annotations.GeneratedClass;
 import io.quarkus.rest.client.reactive.ClientExceptionMapper;

@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
-import it.gov.pagopa.fdrtechsupport.clients.FdrOldRestClient;
-import it.gov.pagopa.fdrtechsupport.clients.FdrRestClient;
+import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
+import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import it.gov.pagopa.fdrtechsupport.models.*;
