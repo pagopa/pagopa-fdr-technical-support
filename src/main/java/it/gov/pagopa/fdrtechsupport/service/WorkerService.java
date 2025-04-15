@@ -2,25 +2,25 @@ package it.gov.pagopa.fdrtechsupport.service;
 
 import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
-import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
-import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
 import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse;
-
-import java.time.LocalDate;
-import java.util.*;
-import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class WorkerService {
@@ -76,7 +76,7 @@ public class WorkerService {
       LocalDate dateFrom,
       LocalDate dateTo) {
 
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     List<FdrEventEntity> reStorageEvents =
         find(
             dateRequest,
@@ -122,7 +122,7 @@ public class WorkerService {
 
   public MultipleFlowsResponse getFdrByPspAndIuv(
       String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     List<FdrByPspIdIuvIurBase> data =
         fdrHistoryTableRepository.findFlowByPspAndIuvIur(
             dateRequest, pspId, Optional.of(iuv), Optional.empty());
@@ -144,7 +144,7 @@ public class WorkerService {
 
   public MultipleFlowsResponse getFdrByPspAndIur(
       String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     List<FdrByPspIdIuvIurBase> data =
         fdrHistoryTableRepository.findFlowByPspAndIuvIur(
             dateRequest, pspId, Optional.empty(), Optional.of(iur));
@@ -172,7 +172,7 @@ public class WorkerService {
       LocalDate dateFrom,
       LocalDate dateTo) {
 
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     List<FdrEventEntity> reStorageEvents =
         find(
             dateRequest,
@@ -229,26 +229,10 @@ public class WorkerService {
    * @param dateFrom
    * @param dateTo
    */
-  private DateRequest verifyDate(LocalDate dateFrom, LocalDate dateTo) {
-
-    if (dateFrom == null && dateTo != null || dateFrom != null && dateTo == null) {
-      throw new AppException(
-          AppErrorCodeMessageEnum.DATE_BAD_REQUEST, "Date from and date to must be both defined");
-    } else if (dateFrom != null && dateFrom.isAfter(dateTo)) {
-      throw new AppException(
-          AppErrorCodeMessageEnum.DATE_BAD_REQUEST, "Date from must be before date to");
-    }
-    if (dateFrom == null) {
-      dateTo = LocalDate.now();
-      dateFrom = dateTo.minusDays(dateRangeLimit);
-    }
-    return DateRequest.builder().from(dateFrom).to(dateTo).build();
-  }
-
   public MultipleFlowsResponse getRevisions(
       String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
 
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     List<FdrEventEntity> reStorageEvents =
         find(
             dateRequest,
@@ -319,7 +303,7 @@ public class WorkerService {
       LocalDate dateFrom,
       LocalDate dateTo,
       String fileType) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
     fileType = (fileType == null || fileType.isBlank()) ? "json" : fileType;
     if (fileType.equalsIgnoreCase("json")) {
       log.infof("Querying history table storage");
