@@ -10,11 +10,11 @@ import com.azure.data.tables.models.TableEntity;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrHistoryBlobRefEntity;
-import it.gov.pagopa.fdrtechsupport.util.Util;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -58,9 +58,9 @@ public class FdrHistoryTableRepository {
     return String.format(
         dateFilterString,
         PARTITIONKEY,
-        Util.format(datefrom),
+        DateUtil.format(datefrom),
         PARTITIONKEY,
-        Util.format(dateTo.plusDays(1)));
+        DateUtil.format(dateTo.plusDays(1)));
   }
 
   private List<String> publishPropertiesToSelect =

@@ -18,7 +18,7 @@ import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.Util;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import java.time.LocalDate;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -61,8 +61,8 @@ class PspTest {
     PagedIterable<TableEntity> tableEntities = getTableClient().listEntities();
     FrResponse res =
         given()
-            .param("dateFrom", Util.format(LocalDate.now().minusDays(102)))
-            .param("dateTo", Util.format(LocalDate.now().minusDays(98)))
+            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(102)))
+            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(98)))
             .when()
             .get(url)
             .then()

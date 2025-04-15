@@ -2,8 +2,8 @@ package it.gov.pagopa.fdrtechsupport.clients;
 
 import io.quarkiverse.openapi.generator.annotations.GeneratedClass;
 import io.quarkus.rest.client.reactive.ClientExceptionMapper;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageEnum;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppException;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;

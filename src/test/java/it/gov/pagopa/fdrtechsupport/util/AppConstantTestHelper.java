@@ -2,6 +2,8 @@ package it.gov.pagopa.fdrtechsupport.util;
 
 import com.azure.data.tables.models.TableEntity;
 import io.restassured.http.Header;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
+
 import java.time.LocalDate;
 
 public class AppConstantTestHelper {
@@ -21,7 +23,7 @@ public class AppConstantTestHelper {
 
   public static final TableEntity newTableFdr(
       LocalDate date, String pa, String psp, String flowName, int revision, boolean isnew) {
-    TableEntity entity = new TableEntity(Util.format(date), flowName);
+    TableEntity entity = new TableEntity(DateUtil.format(date), flowName);
     entity.addProperty("organizationId", pa);
     entity.addProperty("pspId", psp);
     entity.addProperty("fdr", flowName);
@@ -35,7 +37,7 @@ public class AppConstantTestHelper {
 
   public static final TableEntity newTableFdrPaymentPublish(
       LocalDate date, String psp, String orgId, String flowName, String iur) {
-    TableEntity entity = new TableEntity(Util.format(date), flowName);
+    TableEntity entity = new TableEntity(DateUtil.format(date), flowName);
     entity.addProperty("ref_fdr_sender_psp_id", psp);
     entity.addProperty("ref_fdr", flowName);
     entity.addProperty("created", date.atStartOfDay());
@@ -56,7 +58,7 @@ public class AppConstantTestHelper {
       Integer revision,
       String containerName,
       String fileName) {
-    TableEntity entity = new TableEntity(Util.format(date), flowName);
+    TableEntity entity = new TableEntity(DateUtil.format(date), flowName);
     entity.addProperty("sender_psp_id", psp);
     entity.addProperty("fdr", flowName);
     entity.addProperty("revision", revision);

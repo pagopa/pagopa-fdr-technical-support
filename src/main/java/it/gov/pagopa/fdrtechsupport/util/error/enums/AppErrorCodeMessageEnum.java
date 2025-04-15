@@ -1,10 +1,10 @@
-package it.gov.pagopa.fdrtechsupport.exceptions;
+package it.gov.pagopa.fdrtechsupport.util.error.enums;
 
-import it.gov.pagopa.fdrtechsupport.util.AppConstant;
-import it.gov.pagopa.fdrtechsupport.util.AppMessageUtil;
+import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
+import it.gov.pagopa.fdrtechsupport.util.logging.AppMessageUtil;
 import org.jboss.resteasy.reactive.RestResponse;
 
-public enum AppErrorCodeMessageEnum implements AppErrorCodeMessageInterface {
+public enum AppErrorCodeMessageEnum {
   DATE_BAD_REQUEST("0400", "bad.request", RestResponse.Status.BAD_REQUEST),
   FLOW_NOT_FOUND("0404", "flow.not.found", RestResponse.Status.NOT_FOUND),
   FLOW_NOT_FOUND_CLIENT("1404", "flow.not.found", RestResponse.Status.NOT_FOUND),
@@ -32,17 +32,14 @@ public enum AppErrorCodeMessageEnum implements AppErrorCodeMessageInterface {
     this.httpStatus = httpStatus;
   }
 
-  @Override
   public String errorCode() {
     return AppConstant.SERVICE_CODE_APP + "-" + errorCode;
   }
 
-  @Override
   public String message(Object... args) {
     return AppMessageUtil.getMessage(errorMessageKey, args);
   }
 
-  @Override
   public RestResponse.Status httpStatus() {
     return httpStatus;
   }

@@ -20,7 +20,7 @@ import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.Util;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import java.time.LocalDate;
 import java.util.Base64;
 import lombok.SneakyThrows;
@@ -85,8 +85,8 @@ class OrganizationsTest {
 
     FdrFullInfoResponse res =
         given()
-            .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-            .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
+            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
             .param("fileType", "json")
             .when()
             .get(url)
@@ -111,8 +111,8 @@ class OrganizationsTest {
 
     FdrFullInfoResponse res =
         given()
-            .param("dateFrom", Util.format(LocalDate.now().minusDays(101)))
-            .param("dateTo", Util.format(LocalDate.now().minusDays(99)))
+            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
+            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
             .param("fileType", "xml")
             .when()
             .get(url)

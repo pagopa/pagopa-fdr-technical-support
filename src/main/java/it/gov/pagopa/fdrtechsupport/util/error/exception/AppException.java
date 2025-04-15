@@ -1,6 +1,8 @@
-package it.gov.pagopa.fdrtechsupport.exceptions;
+package it.gov.pagopa.fdrtechsupport.util.error.exception;
 
 import java.io.Serializable;
+
+import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageInterface;
 import lombok.Getter;
 
 @Getter

@@ -20,7 +20,7 @@ public class PSPController implements IPSPController {
   public Response searchFlowByPsp(String pspId, LocalDate dateFrom, LocalDate dateTo, String flowId, String organizationId) {
 
     return Response.ok(
-            workerService.getFdrByPsp(Optional.of(pspId), fdr, organizationId, dateFrom, dateTo))
+            workerService.getFdrByPsp(Optional.of(pspId), flowId, organizationId, dateFrom, dateTo))
         .build();
   }
 

@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.util;
+package it.gov.pagopa.fdrtechsupport.util.constant;
 
 public class AppConstant {
 
