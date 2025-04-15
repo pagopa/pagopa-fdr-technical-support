@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controllers.model;
+package it.gov.pagopa.fdrtechsupport.controller.model.request;
 
 import java.util.Optional;
 import lombok.AllArgsConstructor;

@@ -1,8 +1,8 @@
-package it.gov.pagopa.fdrtechsupport.controllers;
+package it.gov.pagopa.fdrtechsupport.controller;
 
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
-import it.gov.pagopa.fdrtechsupport.controllers.response.FrResponse;
-import it.gov.pagopa.fdrtechsupport.controllers.response.FrSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import jakarta.inject.Inject;
 import jakarta.validation.constraints.NotNull;

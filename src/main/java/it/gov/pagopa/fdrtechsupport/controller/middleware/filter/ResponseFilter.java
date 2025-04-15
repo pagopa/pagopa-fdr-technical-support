@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controllers.filter;
+package it.gov.pagopa.fdrtechsupport.controller.middleware.filter;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.container.ContainerRequestContext;

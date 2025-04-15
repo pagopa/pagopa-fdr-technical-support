@@ -1,7 +1,6 @@
-package it.gov.pagopa.fdrtechsupport.controllers.response;
+package it.gov.pagopa.fdrtechsupport.controller.model.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
-import java.util.List;
 import lombok.*;
 import lombok.extern.jackson.Jacksonized;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;

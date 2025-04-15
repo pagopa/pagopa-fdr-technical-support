@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controllers;
+package it.gov.pagopa.fdrtechsupport.controller;
 
 import static io.restassured.RestAssured.given;
 

@@ -17,9 +17,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
-// @Startup
 @ApplicationScoped
-// @UnlessBuildProfile("test")
 public class FdrTableRepository {
 
   @ConfigProperty(name = "fdr-re-table-storage.connection-string")

@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controllers;
+package it.gov.pagopa.fdrtechsupport.controller;
 
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
@@ -8,7 +8,7 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.models.FdrBaseInfo;
-import it.gov.pagopa.fdrtechsupport.controllers.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.Test;
