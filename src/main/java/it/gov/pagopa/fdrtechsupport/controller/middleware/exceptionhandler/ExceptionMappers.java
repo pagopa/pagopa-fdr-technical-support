@@ -5,27 +5,30 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonMappingException.Reference;
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import com.fasterxml.jackson.databind.exc.MismatchedInputException;
-import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
-import it.gov.pagopa.fdrtechsupport.exceptions.AppErrorCodeMessageInterface;
-import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
-import jakarta.inject.Inject;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import jakarta.ws.rs.WebApplicationException;
 import jakarta.ws.rs.core.Response;
+import org.jboss.logging.Logger;
+import org.jboss.resteasy.reactive.RestResponse;
+import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
+
 import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import org.jboss.logging.Logger;
-import org.jboss.resteasy.reactive.RestResponse;
-import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 public class ExceptionMappers {
 
-  @Inject Logger log;
+  Logger log;
+
+  public ExceptionMappers(Logger log) {
+    this.log = log;
+  }
 
   @ServerExceptionMapper
   public Response mapWebApplicationException(WebApplicationException webApplicationException) {
@@ -41,9 +44,8 @@ public class ExceptionMappers {
 
   @ServerExceptionMapper
   public RestResponse<ProblemJson> mapAppException(AppException appEx) {
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
-    String message = codeMessage.message(appEx.getArgs());
 
     ProblemJson errorResponse =
         ProblemJson.builder()
@@ -62,7 +64,7 @@ public class ExceptionMappers {
         new AppException(
             jsonMappingException, AppErrorCodeMessageEnum.BAD_REQUEST_INPUT_JSON_NON_VALID_FORMAT);
 
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
@@ -82,7 +84,7 @@ public class ExceptionMappers {
         new AppException(
             jsonParseException, AppErrorCodeMessageEnum.BAD_REQUEST_INPUT_JSON_NON_VALID_FORMAT);
 
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
@@ -145,7 +147,7 @@ public class ExceptionMappers {
               currentValue);
     }
 
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
@@ -173,7 +175,7 @@ public class ExceptionMappers {
             AppErrorCodeMessageEnum.BAD_REQUEST_INPUT_JSON_DESERIALIZE_ERROR,
             field);
 
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
@@ -194,7 +196,7 @@ public class ExceptionMappers {
   @ServerExceptionMapper
   public RestResponse<ProblemJson> mapThrowable(Throwable exception) {
     AppException appEx = new AppException(exception, AppErrorCodeMessageEnum.ERROR);
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
@@ -213,7 +215,7 @@ public class ExceptionMappers {
 
     AppException appEx =
         new AppException(constraintViolationException, AppErrorCodeMessageEnum.BAD_REQUEST);
-    AppErrorCodeMessageInterface codeMessage = appEx.getCodeMessage();
+    AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
 
     ProblemJson errorResponse =
