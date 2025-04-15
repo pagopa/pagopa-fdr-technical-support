@@ -1,8 +1,10 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
-import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
@@ -22,7 +24,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/flows/{flowId}")
-    Response getRevisions(
+    FrResponse getRevisions(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("flowId") @NotNull String flowId,
             @QueryParam("dateFrom") LocalDate dateFrom,
@@ -35,7 +37,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}")
-    Response getFlow(
+    FdrFullInfoResponse getFlow(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("flowId") @NotNull String flowId,
             @PathParam("pspId") @NotNull String pspId,
@@ -52,7 +54,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/psps/{pspId}/download")
-    Response getDownloads(
+    FrSingleDateResponse getDownloads(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("pspId") @NotNull String pspId,
             @QueryParam("date") LocalDate date);
@@ -64,7 +66,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/psps/{pspId}/upload")
-    Response getUploads(
+    FrResponse getUploads(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("pspId") @NotNull String pspId,
             @QueryParam("date") LocalDate date);

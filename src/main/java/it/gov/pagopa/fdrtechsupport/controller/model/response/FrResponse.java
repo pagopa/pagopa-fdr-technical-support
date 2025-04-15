@@ -14,7 +14,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FrResponse {
+
   private LocalDate dateFrom;
+
   private LocalDate dateTo;
 
   @JsonProperty("data")
