@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.models;
+package it.gov.pagopa.fdrtechsupport.controller.model.error.response;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;

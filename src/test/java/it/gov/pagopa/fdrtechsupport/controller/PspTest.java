@@ -15,7 +15,7 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;

@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controller.model.response;
+package it.gov.pagopa.fdrtechsupport.controller.model.flow.response;
 
 import java.time.LocalDate;
 import lombok.*;
@@ -9,7 +9,10 @@ import lombok.*;
 @AllArgsConstructor
 @Builder
 public class FlowContentResponse {
+
   private LocalDate dateFrom;
+
   private LocalDate dateTo;
+
   private String data;
 }

@@ -1,9 +1,9 @@
 package it.gov.pagopa.fdrtechsupport.service.middleware.mapper;
 
-import it.gov.pagopa.fdrtechsupport.models.FlowActionInfo;
-import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
-import it.gov.pagopa.fdrtechsupport.models.FlowRevisionInfo;
-import it.gov.pagopa.fdrtechsupport.models.RevisionInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowActionInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowRevisionInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.RevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import java.util.ArrayList;
 import java.util.List;

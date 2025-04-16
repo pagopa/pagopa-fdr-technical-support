@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.util.common;
 
-import it.gov.pagopa.fdrtechsupport.models.DateRequest;
-import it.gov.pagopa.fdrtechsupport.models.DateTimeRequest;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
+import it.gov.pagopa.fdrtechsupport.service.model.DateTimeRequest;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;

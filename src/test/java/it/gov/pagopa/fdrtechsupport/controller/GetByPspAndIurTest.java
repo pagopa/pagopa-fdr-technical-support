@@ -1,5 +1,11 @@
 package it.gov.pagopa.fdrtechsupport.controller;
 
+import static io.restassured.RestAssured.given;
+import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.greaterThan;
+
 import com.azure.data.tables.TableClient;
 import com.azure.data.tables.TableServiceClient;
 import com.azure.data.tables.TableServiceClientBuilder;
@@ -7,24 +13,17 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.junit.jupiter.api.Test;
-import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
-
 import java.time.LocalDate;
 import java.time.OffsetDateTime;
 import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-
-import static io.restassured.RestAssured.given;
-import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
-import static org.hamcrest.Matchers.greaterThan;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.junit.jupiter.api.Test;
+import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
@@ -79,13 +78,14 @@ public class GetByPspAndIurTest {
   void wideDateRange() {
 
     given()
-            .param("dateFrom", "2021-07-01")
-            .param("dateTo", "2022-07-01")
-            .when()
-            .get(url.formatted(25, 1))
-            .then()
-            .statusCode(equalTo(200));
+        .param("dateFrom", "2021-07-01")
+        .param("dateTo", "2022-07-01")
+        .when()
+        .get(url.formatted(25, 1))
+        .then()
+        .statusCode(equalTo(200));
   }
+
   @Test
   void testGetFdrByPspAndIurMalformedError() {
 

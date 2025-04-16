@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.models;
+package it.gov.pagopa.fdrtechsupport.service.model;
 
 import java.time.LocalDate;
 import lombok.*;

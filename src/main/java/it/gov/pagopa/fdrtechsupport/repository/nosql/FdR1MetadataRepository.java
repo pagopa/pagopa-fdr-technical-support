@@ -4,16 +4,17 @@ import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
 import io.quarkus.panache.common.Sort;
 import io.quarkus.panache.common.Sort.Direction;
-import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdR1MetadataEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.base.Repository;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.base.SortField;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
-public class FdR1MetadataRepository extends Repository implements PanacheRepository<FdR1MetadataEntity> {
+public class FdR1MetadataRepository extends Repository
+    implements PanacheRepository<FdR1MetadataEntity> {
 
   public List<FdR1MetadataEntity> find(
       DateRequest reDates,
@@ -22,8 +23,12 @@ public class FdR1MetadataRepository extends Repository implements PanacheReposit
       Optional<String> organizationId) {
 
     // set standard clauses on query
-    StringBuilder query = new StringBuilder("SELECT m FROM FdR1MetadataEntity m WHERE m.flowDate >= :dateFrom AND m.flowDate <= :dateTo");
-    Parameters params = new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
+    StringBuilder query =
+        new StringBuilder(
+            "SELECT m FROM FdR1MetadataEntity m WHERE m.flowDate >= :dateFrom AND m.flowDate <="
+                + " :dateTo");
+    Parameters params =
+        new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
 
     // set flow name clause on query
     if (flowName.isPresent()) {

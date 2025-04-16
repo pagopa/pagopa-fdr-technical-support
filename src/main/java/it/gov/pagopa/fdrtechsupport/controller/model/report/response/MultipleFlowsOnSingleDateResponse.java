@@ -1,7 +1,7 @@
-package it.gov.pagopa.fdrtechsupport.controller.model.response;
+package it.gov.pagopa.fdrtechsupport.controller.model.report.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
 import java.time.LocalDate;
 import java.util.List;
 import lombok.Builder;

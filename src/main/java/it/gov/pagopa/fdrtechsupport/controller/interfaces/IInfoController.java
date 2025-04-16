@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.InfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.common.response.InfoResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -17,29 +17,29 @@ import org.openapi.quarkus.api_fdr_json.model.ErrorResponse;
 @Tag(name = "Info", description = "Info operations")
 public interface IInfoController {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(
-            operationId = "InfoController_healthCheck",
-            summary = "Health-check",
-            description = "Get health check and deployment-related information")
-    @APIResponses(
-            value = {
-                    @APIResponse(
-                            responseCode = "200",
-                            description = "Success",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = InfoResponse.class))),
-                    @APIResponse(
-                            responseCode = "500",
-                            description = "Internal Server Error",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    example = "..."))
-            })
-    InfoResponse healthCheck();
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Operation(
+      operationId = "InfoController_healthCheck",
+      summary = "Health-check",
+      description = "Get health check and deployment-related information")
+  @APIResponses(
+      value = {
+        @APIResponse(
+            responseCode = "200",
+            description = "Success",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = InfoResponse.class))),
+        @APIResponse(
+            responseCode = "500",
+            description = "Internal Server Error",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = ErrorResponse.class),
+                    example = "..."))
+      })
+  InfoResponse healthCheck();
 }

@@ -1,5 +1,6 @@
-package it.gov.pagopa.fdrtechsupport.models;
+package it.gov.pagopa.fdrtechsupport.controller.model.flow.response;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -11,11 +12,9 @@ import lombok.experimental.SuperBuilder;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class FlowBaseInfo {
+public class FlowRevisionInfo extends FlowBaseInfo {
 
-  private String fdr;
+  private String pspId;
 
-  private String created;
-
-  private String organizationId;
+  private List<RevisionInfo> revisions;
 }

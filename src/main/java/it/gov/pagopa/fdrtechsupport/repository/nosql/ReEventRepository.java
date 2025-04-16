@@ -2,9 +2,9 @@ package it.gov.pagopa.fdrtechsupport.repository.nosql;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
 import io.quarkus.panache.common.Parameters;
-import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.base.Repository;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
 import java.util.Optional;
@@ -21,8 +21,11 @@ public class ReEventRepository extends Repository implements PanacheRepository<R
       Optional<String> eventAndStatus) {
 
     // set standard clauses on query
-    StringBuilder query = new StringBuilder("SELECT e FROM ReEventEntity e WHERE p.created >= :dateFrom AND p.created <= :dateTo");
-    Parameters params = new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
+    StringBuilder query =
+        new StringBuilder(
+            "SELECT e FROM ReEventEntity e WHERE p.created >= :dateFrom AND p.created <= :dateTo");
+    Parameters params =
+        new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
 
     // set 'event-and-status' clause on query
     if (eventAndStatus.isPresent()) {
@@ -65,8 +68,6 @@ public class ReEventRepository extends Repository implements PanacheRepository<R
     }
 
     // finally, execute the complete query
-    return ReEventEntity.findByQuery(query.toString(), params)
-        .project(ReEventEntity.class)
-        .list();
+    return ReEventEntity.findByQuery(query.toString(), params).project(ReEventEntity.class).list();
   }
 }

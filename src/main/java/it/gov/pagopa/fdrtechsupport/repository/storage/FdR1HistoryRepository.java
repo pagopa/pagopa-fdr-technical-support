@@ -2,12 +2,11 @@ package it.gov.pagopa.fdrtechsupport.repository.storage;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import it.gov.pagopa.fdrtechsupport.models.DateRequest;
 import it.gov.pagopa.fdrtechsupport.repository.model.BlobRefEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdR1MetadataEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.FdR1MetadataRepository;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import it.gov.pagopa.fdrtechsupport.util.common.StringUtil;
-import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Comparator;
 import java.util.List;
@@ -32,32 +31,47 @@ public class FdR1HistoryRepository {
   public FdR1HistoryRepository(FdR1MetadataRepository fdr1MetadataRepository) {
 
     this.fdr1MetadataRepository = fdr1MetadataRepository;
-    this.blobServiceClient = new BlobServiceClientBuilder()
-        .connectionString(blobConnectionString)
-        .buildClient();
+    this.blobServiceClient =
+        new BlobServiceClientBuilder().connectionString(blobConnectionString).buildClient();
   }
 
-  public String getByFlowNameAndPspIdAndRevision(DateRequest dateRequest, String flowName, String pspId, String organizationId, String revision) {
+  public String getByFlowNameAndPspIdAndRevision(
+      DateRequest dateRequest,
+      String flowName,
+      String pspId,
+      String organizationId,
+      String revision) {
 
     String fileContent = null;
-    String fileName = getFileNameFromMetadata(dateRequest, flowName, pspId, organizationId, Integer.parseInt(revision));
+    String fileName =
+        getFileNameFromMetadata(
+            dateRequest, flowName, pspId, organizationId, Integer.parseInt(revision));
     if (fileName != null) {
       log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
-      byte[] byteArray = this.blobServiceClient.getBlobContainerClient(blobContainerName)
-          .getBlobClient(fileName)
-          .downloadContent()
-          .toBytes();
-      fileContent =  StringUtil.decompressGZip(byteArray);
+      byte[] byteArray =
+          this.blobServiceClient
+              .getBlobContainerClient(blobContainerName)
+              .getBlobClient(fileName)
+              .downloadContent()
+              .toBytes();
+      fileContent = StringUtil.decompressGZip(byteArray);
     }
     return fileContent;
   }
 
-  private String getFileNameFromMetadata(DateRequest dateRequest, String flowName, String pspId, String organizationId, Integer revision) {
+  private String getFileNameFromMetadata(
+      DateRequest dateRequest,
+      String flowName,
+      String pspId,
+      String organizationId,
+      Integer revision) {
 
-    List<FdR1MetadataEntity> entities = fdr1MetadataRepository.find(dateRequest,
-        Optional.ofNullable(flowName),
-        Optional.ofNullable(pspId),
-        Optional.ofNullable(organizationId));
+    List<FdR1MetadataEntity> entities =
+        fdr1MetadataRepository.find(
+            dateRequest,
+            Optional.ofNullable(flowName),
+            Optional.ofNullable(pspId),
+            Optional.ofNullable(organizationId));
 
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 

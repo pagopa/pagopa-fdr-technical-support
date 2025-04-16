@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.controller.model.response;
+package it.gov.pagopa.fdrtechsupport.controller.model.common.response;
 
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import lombok.*;
@@ -12,20 +12,20 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 public class InfoResponse {
 
   @Schema(
-          example = "pagopa-fdr-technical-support",
-          description = "The identificative name of the deployed application")
+      example = "pagopa-fdr-technical-support",
+      description = "The identificative name of the deployed application")
   private String name;
 
   @Schema(example = "1.2.3", description = "The current version of the deployed application")
   private String version;
 
   @Schema(
-          example = "dev",
-          description = "The current environment where the application is deployed")
+      example = "dev",
+      description = "The current environment where the application is deployed")
   private String environment;
 
   @Schema(
-          example = "FDR Technical Support",
-          description = "The descriptive information related to the info response")
+      example = "FDR Technical Support",
+      description = "The descriptive information related to the info response")
   private String description;
 }

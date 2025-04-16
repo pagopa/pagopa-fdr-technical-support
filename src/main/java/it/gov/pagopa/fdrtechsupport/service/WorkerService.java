@@ -2,17 +2,19 @@ package it.gov.pagopa.fdrtechsupport.service;
 
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsOnSingleDateResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
-import it.gov.pagopa.fdrtechsupport.models.*;
-import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowRevisionInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsOnSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.ReEventRepository;
 import it.gov.pagopa.fdrtechsupport.repository.storage.FdR1HistoryRepository;
 import it.gov.pagopa.fdrtechsupport.repository.storage.FdR3HistoryRepository;
 import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ClientResponseMapper;
 import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ReEventEntityMapper;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
+import it.gov.pagopa.fdrtechsupport.service.model.DateTimeRequest;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
@@ -29,28 +31,34 @@ import org.eclipse.microprofile.rest.client.inject.RestClient;
 @Slf4j
 public class WorkerService {
 
-  private static final String outcomeOK = "OK";
-  private static final String outcomeKO = "KO";
-
-  @ConfigProperty(name = "re-cosmos.day-limit")
-  Integer reCosmosDayLimit;
-
-  @ConfigProperty(name = "date-range-limit")
+  @ConfigProperty(name = "re-events.date-range.limit")
   Integer dateRangeLimit;
 
-  @Inject ReEventRepository reEventRepository;
+  private final ReEventRepository reEventRepository;
 
-  @Inject FdR1HistoryRepository fdr1HistoryRepository;
+  private final FdR1HistoryRepository fdr1HistoryRepository;
 
-  @Inject FdR3HistoryRepository fdr3HistoryRepository;
+  private final FdR3HistoryRepository fdr3HistoryRepository;
 
-  @Inject FdrTableRepository fdrTableRepository;
+  @RestClient @Inject FdrRestClient fdrClient;
 
-  @RestClient FdrRestClient fdrClient;
+  private final ReEventEntityMapper reEventMapper;
 
-  @Inject ReEventEntityMapper reEventMapper;
+  private final ClientResponseMapper clientResponseMapper;
 
-  @Inject ClientResponseMapper clientResponseMapper;
+  public WorkerService(
+      ReEventRepository reEventRepository,
+      FdR1HistoryRepository fdr1HistoryRepository,
+      FdR3HistoryRepository fdr3HistoryRepository,
+      ReEventEntityMapper reEventMapper,
+      ClientResponseMapper clientResponseMapper) {
+
+    this.reEventRepository = reEventRepository;
+    this.fdr1HistoryRepository = fdr1HistoryRepository;
+    this.fdr3HistoryRepository = fdr3HistoryRepository;
+    this.reEventMapper = reEventMapper;
+    this.clientResponseMapper = clientResponseMapper;
+  }
 
   public MultipleFlowsResponse searchFlowByPsp(
       String pspId, String flowName, String organizationId, LocalDate dateFrom, LocalDate dateTo) {
@@ -85,7 +93,7 @@ public class WorkerService {
     // map the element and return the required result
     List<FlowBaseInfo> collect =
         reEventGroups.values().stream()
-            .map(eventGroup -> reEventMapper.toFlowBaseInfo(eventGroup))
+            .map(reEventMapper::toFlowBaseInfo)
             .collect(Collectors.toList());
     return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
@@ -109,7 +117,7 @@ public class WorkerService {
     // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
         response.getData().stream()
-            .map(e -> clientResponseMapper.toFlowBaseInfo(e))
+            .map(clientResponseMapper::toFlowBaseInfo)
             .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
             .toList();
     return MultipleFlowsResponse.builder()
@@ -134,7 +142,7 @@ public class WorkerService {
     // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
         response.getData().stream()
-            .map(e -> clientResponseMapper.toFlowBaseInfo(e))
+            .map(clientResponseMapper::toFlowBaseInfo)
             .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
             .toList();
     return MultipleFlowsResponse.builder()
@@ -177,7 +185,7 @@ public class WorkerService {
     // map the element and return the required result
     List<FlowBaseInfo> collect =
         reEventGroups.values().stream()
-            .map(eventGroup -> reEventMapper.toFlowActionInfo(eventGroup))
+            .map(reEventMapper::toFlowActionInfo)
             .collect(Collectors.toList());
     return MultipleFlowsOnSingleDateResponse.builder()
         .date(dateRequest.getFrom())

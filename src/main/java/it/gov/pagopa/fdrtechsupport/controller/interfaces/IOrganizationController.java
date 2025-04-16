@@ -1,8 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsOnSingleDateResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsOnSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import jakarta.validation.constraints.NotNull;
 import jakarta.ws.rs.*;
 import java.time.LocalDate;

@@ -1,9 +1,9 @@
 package it.gov.pagopa.fdrtechsupport.controller;
 
 import it.gov.pagopa.fdrtechsupport.controller.interfaces.IOrganizationController;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsOnSingleDateResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsOnSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
 import java.time.LocalDate;

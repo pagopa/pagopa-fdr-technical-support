@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller;
 
 import it.gov.pagopa.fdrtechsupport.controller.interfaces.IPSPController;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
 import java.time.LocalDate;
 
