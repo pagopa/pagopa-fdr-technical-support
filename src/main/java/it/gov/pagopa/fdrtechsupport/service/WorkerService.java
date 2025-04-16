@@ -2,6 +2,7 @@ package it.gov.pagopa.fdrtechsupport.service;
 
 import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
+import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.models.*;
@@ -12,6 +13,7 @@ import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.ReEventRepository;
 import it.gov.pagopa.fdrtechsupport.repository.storage.FdR1HistoryRepository;
 import it.gov.pagopa.fdrtechsupport.repository.storage.FdR3HistoryRepository;
+import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ClientResponseMapper;
 import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ReEventEntityMapper;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
@@ -24,7 +26,6 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
 
 @ApplicationScoped
 @Slf4j
@@ -51,9 +52,11 @@ public class WorkerService {
 
   @RestClient FdrOldRestClient fdrOldRestClient;
 
-  @RestClient FdrRestClient fdrRestClient;
+  @RestClient FdrRestClient fdrClient;
 
   @Inject ReEventEntityMapper reEventMapper;
+
+  @Inject ClientResponseMapper clientResponseMapper;
 
   private FlowRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
     return FlowRevisionInfo.builder().build();
@@ -100,17 +103,16 @@ public class WorkerService {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    // grouping RE events by flow name
+    // grouping RE events by flow name and sort them by creation date
     Map<String, List<ReEventEntity>> reEventGroups =
         reEvents.stream().collect(Collectors.groupingBy(ReEventEntity::getFdr));
+    reEventGroups
+        .values()
+        .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
     log.debug(
         "Found [{}] different flow names in [{}] total events!",
         reEventGroups.size(),
         reEvents.size());
-
-    reEventGroups
-        .values()
-        .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
 
     // map the element and return the required result
     List<FlowBaseInfo> collect =
@@ -124,47 +126,53 @@ public class WorkerService {
         .build();
   }
 
-  public MultipleFlowsResponse getFdrByPspAndIuv(
+  public MultipleFlowsResponse searchFlowByPspAndIuv(
       String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
-    List<FdrByPspIdIuvIurBase> data =
-        fdrHistoryTableRepository.findFlowByPspAndIuvIur(
-            dateRequest, pspId, Optional.of(iuv), Optional.empty());
 
+    // check dates and get valid ones
+    DateTimeRequest dateTimeRequest =
+        DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // call FdR-Fase3 API in order to retrieve required response, searching by IUV
+    PaginatedFlowsBySenderAndReceiverResponse response =
+        fdrClient.getFlowByIuv(
+            pspId, iuv, dateTimeRequest.getFrom(), dateTimeRequest.getTo(), 0, 1000);
+
+    // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
-        data.stream()
-            .map(
-                fn ->
-                    new FlowBaseInfo(
-                        fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
+        response.getData().stream()
+            .map(e -> clientResponseMapper.toFlowBaseInfo(e))
+            .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
             .toList();
-
     return MultipleFlowsResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
+        .dateFrom(dateTimeRequest.getFrom().toLocalDate())
+        .dateTo(dateTimeRequest.getTo().toLocalDate())
+        .data(dataResponse)
         .build();
   }
 
-  public MultipleFlowsResponse getFdrByPspAndIur(
+  public MultipleFlowsResponse searchFlowByPspAndIur(
       String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
-    List<FdrByPspIdIuvIurBase> data =
-        fdrHistoryTableRepository.findFlowByPspAndIuvIur(
-            dateRequest, pspId, Optional.empty(), Optional.of(iur));
 
+    // check dates and get valid ones
+    DateTimeRequest dateTimeRequest =
+        DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // call FdR-Fase3 API in order to retrieve required response, searching by IUR
+    PaginatedFlowsBySenderAndReceiverResponse response =
+        fdrClient.getFlowByIur(
+            pspId, iur, dateTimeRequest.getFrom(), dateTimeRequest.getTo(), 0, 1000);
+
+    // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
-        data.stream()
-            .map(
-                fn ->
-                    new FlowBaseInfo(
-                        fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
+        response.getData().stream()
+            .map(e -> clientResponseMapper.toFlowBaseInfo(e))
+            .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
             .toList();
-
     return MultipleFlowsResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
+        .dateFrom(dateTimeRequest.getFrom().toLocalDate())
+        .dateTo(dateTimeRequest.getTo().toLocalDate())
+        .data(dataResponse)
         .build();
   }
 

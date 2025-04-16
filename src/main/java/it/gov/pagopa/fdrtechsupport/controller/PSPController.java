@@ -24,13 +24,13 @@ public class PSPController implements IPSPController {
   public MultipleFlowsResponse searchFlowByPspAndIuv(
       String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
 
-    return workerService.getFdrByPspAndIuv(pspId, iuv, dateFrom, dateTo);
+    return workerService.searchFlowByPspAndIuv(pspId, iuv, dateFrom, dateTo);
   }
 
   @Override
   public MultipleFlowsResponse searchFlowByPspAndIur(
       String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
 
-    return workerService.getFdrByPspAndIur(pspId, iur, dateFrom, dateTo);
+    return workerService.searchFlowByPspAndIur(pspId, iur, dateFrom, dateTo);
   }
 }

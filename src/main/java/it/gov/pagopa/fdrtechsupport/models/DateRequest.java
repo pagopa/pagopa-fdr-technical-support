@@ -11,5 +11,6 @@ import lombok.*;
 public class DateRequest {
 
   private LocalDate from;
+
   private LocalDate to;
 }

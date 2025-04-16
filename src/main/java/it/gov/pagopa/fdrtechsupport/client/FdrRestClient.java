@@ -2,6 +2,7 @@ package it.gov.pagopa.fdrtechsupport.client;
 
 import io.quarkiverse.openapi.generator.annotations.GeneratedClass;
 import io.quarkus.rest.client.reactive.ClientExceptionMapper;
+import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.ws.rs.GET;
@@ -12,7 +13,6 @@ import jakarta.ws.rs.core.Response;
 import java.time.LocalDateTime;
 import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
-import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurResponse;
 import org.openapi.quarkus.api_fdr_json.model.GetPaymentResponse;
 
 @Path("/")
@@ -46,19 +46,21 @@ public interface FdrRestClient {
 
   @GET
   @Path("/internal/psps/{pspId}/iuv/{iuv}")
-  FdrByPspIdIuvIurResponse getFlowByIuv(
+  PaginatedFlowsBySenderAndReceiverResponse getFlowByIuv(
       @PathParam("pspId") String pspId,
       @PathParam("iuv") String iuv,
-      @QueryParam("pageNumber") Integer pageNumber,
-      @QueryParam("dateFrom") LocalDateTime dateFrom,
-      @QueryParam("dateTo") LocalDateTime dateTo);
+      @QueryParam("createdFrom") LocalDateTime createdFrom,
+      @QueryParam("createdTo") LocalDateTime createdTo,
+      @QueryParam("page") Integer pageNumber,
+      @QueryParam("size") Integer pageSize);
 
   @GET
   @Path("/internal/psps/{pspId}/iur/{iur}")
-  FdrByPspIdIuvIurResponse getFlowByIur(
+  PaginatedFlowsBySenderAndReceiverResponse getFlowByIur(
       @PathParam("pspId") String pspId,
       @PathParam("iur") String iur,
-      @QueryParam("pageNumber") Integer pageNumber,
-      @QueryParam("dateFrom") LocalDateTime dateFrom,
-      @QueryParam("dateTo") LocalDateTime dateTo);
+      @QueryParam("createdFrom") LocalDateTime createdFrom,
+      @QueryParam("createdTo") LocalDateTime createdTo,
+      @QueryParam("page") Integer pageNumber,
+      @QueryParam("size") Integer pageSize);
 }
