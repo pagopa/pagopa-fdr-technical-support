@@ -149,8 +149,8 @@
     <dependency>
       <groupId>io.quarkiverse.mockserver</groupId>
       <artifactId>quarkus-mockserver-test</artifactId>
-      <version>1.0.0</version>
-      <scope>provided</scope>
+      <version>1.13.0</version>
+      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>com.github.terma</groupId>
