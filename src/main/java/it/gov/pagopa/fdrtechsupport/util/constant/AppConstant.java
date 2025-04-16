@@ -10,6 +10,8 @@ public class AppConstant {
   public static final String INDEXES = "indexes";
   public static final String INTERNAL_READ = "internalRead";
 
+  public static final String HISTORICAL_FDR3_FILENAME_TEMPLATE = "%s_%s_%s.json.zip";
+
   private AppConstant() {
     throw new IllegalStateException("Constants class");
   }

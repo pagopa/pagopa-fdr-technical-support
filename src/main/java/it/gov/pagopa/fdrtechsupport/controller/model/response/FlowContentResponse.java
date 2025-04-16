@@ -8,7 +8,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class FdrFullInfoResponse {
+public class FlowContentResponse {
   private LocalDate dateFrom;
   private LocalDate dateTo;
   private String data;

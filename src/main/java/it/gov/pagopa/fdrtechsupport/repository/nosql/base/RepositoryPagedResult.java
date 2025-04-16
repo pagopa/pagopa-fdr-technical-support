@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.repository;
+package it.gov.pagopa.fdrtechsupport.repository.nosql.base;
 
 import java.util.List;
 import lombok.Builder;

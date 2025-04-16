@@ -2,12 +2,14 @@ package it.gov.pagopa.fdrtechsupport.service;
 
 import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.models.*;
+import it.gov.pagopa.fdrtechsupport.repository.storage.FdR1HistoryRepository;
+import it.gov.pagopa.fdrtechsupport.repository.storage.FdR3HistoryRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
-import it.gov.pagopa.fdrtechsupport.repository.ReEventRepository;
+import it.gov.pagopa.fdrtechsupport.repository.nosql.ReEventRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ReEventEntityMapper;
@@ -23,7 +25,6 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 import org.jboss.logging.Logger;
 import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
-import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse;
 
 @ApplicationScoped
 public class WorkerService {
@@ -41,6 +42,14 @@ public class WorkerService {
 
   @Inject
   ReEventRepository reEventRepository;
+
+  @Inject
+  FdR1HistoryRepository fdr1HistoryRepository;
+
+  @Inject
+  FdR3HistoryRepository fdr3HistoryRepository;
+
+
 
   @Inject FdrTableRepository fdrTableRepository;
 
@@ -283,36 +292,37 @@ public class WorkerService {
         .build();
   }
 
-  public FdrFullInfoResponse getFlow(
+  public FlowContentResponse getFlow(
       String organizationId,
-      String psp,
+      String pspId,
       String flowName,
       String revision,
       LocalDate dateFrom,
       LocalDate dateTo,
       String fileType) {
+
+    // check dates and get valid ones
     DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // extract file type default if not set
     fileType = (fileType == null || fileType.isBlank()) ? "json" : fileType;
+
+    // retrieve flow content based on passed file type
+    String flowContent;
     if (fileType.equalsIgnoreCase("json")) {
-      log.infof("Querying history table storage");
-      String flow =
-          fdrHistoryTableRepository.getBlobByNameAndRevision(dateRequest, flowName, revision);
-      log.infof("Done querying history table storage");
-      return FdrFullInfoResponse.builder()
-          .dateFrom(dateRequest.getFrom())
-          .dateTo(dateRequest.getTo())
-          .data(flow)
-          .build();
+      flowContent = fdr3HistoryRepository.getByFlowNameAndPspIdAndRevision(flowName, pspId, revision);
+
     } else if (fileType.equalsIgnoreCase("xml")) {
-      GetXmlRendicontazioneResponse getXmlRendicontazioneResponse =
-          fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
-      return FdrFullInfoResponse.builder()
-          .dateFrom(dateRequest.getFrom())
-          .dateTo(dateRequest.getTo())
-          .data(getXmlRendicontazioneResponse.getXmlRendicontazione())
-          .build();
+      flowContent = fdr1HistoryRepository.getByFlowNameAndPspIdAndRevision(dateRequest, flowName, pspId, organizationId, revision);
+
     } else {
       throw new AppException(AppErrorCodeMessageEnum.INVALID_FILE_TYPE);
     }
+
+    return FlowContentResponse.builder()
+        .dateFrom(dateRequest.getFrom())
+        .dateTo(dateRequest.getTo())
+        .data(flowContent)
+        .build();
   }
 }

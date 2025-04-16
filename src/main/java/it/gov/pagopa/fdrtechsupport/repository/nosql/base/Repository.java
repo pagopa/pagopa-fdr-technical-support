@@ -1,4 +1,4 @@
-package it.gov.pagopa.fdrtechsupport.repository;
+package it.gov.pagopa.fdrtechsupport.repository.nosql.base;
 
 import io.quarkus.hibernate.orm.panache.PanacheQuery;
 import io.quarkus.panache.common.Sort;

@@ -1,7 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller;
 
 import it.gov.pagopa.fdrtechsupport.controller.interfaces.IOrganizationController;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import it.gov.pagopa.fdrtechsupport.service.WorkerService;
@@ -25,7 +25,7 @@ public class OrganizationController implements IOrganizationController {
   }
 
   @Override
-  public FdrFullInfoResponse getFlow(String organizationId, String flowId, String pspId, String revision, LocalDate dateFrom, LocalDate dateTo, String fileType) {
+  public FlowContentResponse getFlow(String organizationId, String flowId, String pspId, String revision, LocalDate dateFrom, LocalDate dateTo, String fileType) {
 
     return workerService.getFlow(organizationId, pspId, flowId, revision, dateFrom, dateTo, fileType);
   }

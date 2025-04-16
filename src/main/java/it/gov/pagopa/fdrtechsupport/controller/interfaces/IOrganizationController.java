@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
 import jakarta.validation.constraints.NotNull;
@@ -37,7 +37,7 @@ public interface IOrganizationController {
             description = "...")
     @APIResponses(value = {})
     @Path("/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}")
-    FdrFullInfoResponse getFlow(
+    FlowContentResponse getFlow(
             @PathParam("organizationId") @NotNull String organizationId,
             @PathParam("flowId") @NotNull String flowId,
             @PathParam("pspId") @NotNull String pspId,
