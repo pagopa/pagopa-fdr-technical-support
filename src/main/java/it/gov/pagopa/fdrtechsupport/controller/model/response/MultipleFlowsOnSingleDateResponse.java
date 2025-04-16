@@ -11,7 +11,8 @@ import lombok.extern.jackson.Jacksonized;
 @Getter
 @Builder
 @Jacksonized
-public class FrSingleDateResponse {
+public class MultipleFlowsOnSingleDateResponse {
+
   private LocalDate date;
 
   @JsonProperty("data")

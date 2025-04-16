@@ -1,5 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.service.middleware.mapper;
 
+import it.gov.pagopa.fdrtechsupport.models.FlowActionInfo;
 import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
 import it.gov.pagopa.fdrtechsupport.models.FlowRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.models.RevisionInfo;
@@ -52,7 +53,24 @@ public interface ReEventEntityMapper {
             .filter(s -> s.getOrganizationId() != null)
             .findAny()
             .map(ReEventEntity::getOrganizationId)
-            .orElseGet(() -> null));
+            .orElse(null));
+    return result;
+  }
+
+  default FlowActionInfo toFlowActionInfo(List<ReEventEntity> reEvents) {
+
+    FlowActionInfo result = new FlowActionInfo();
+    result.setFdr(reEvents.get(0).getFdr());
+    result.setCreated(reEvents.get(0).getCreated());
+    result.setFlowAction(reEvents.get(0).getFdrAction());
+    result.setServiceIdentifier(reEvents.get(0).getServiceIdentifier());
+    result.setOrganizationId(reEvents.get(0).getOrganizationId());
+    result.setOrganizationId(
+        reEvents.stream()
+            .filter(s -> s.getOrganizationId() != null)
+            .findAny()
+            .map(ReEventEntity::getOrganizationId)
+            .orElse(null));
     return result;
   }
 }

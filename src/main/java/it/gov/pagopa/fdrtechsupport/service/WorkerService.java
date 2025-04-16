@@ -3,10 +3,10 @@ package it.gov.pagopa.fdrtechsupport.service;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsOnSingleDateResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.models.*;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.ReEventRepository;
 import it.gov.pagopa.fdrtechsupport.repository.storage.FdR1HistoryRepository;
@@ -51,28 +51,6 @@ public class WorkerService {
   @Inject ReEventEntityMapper reEventMapper;
 
   @Inject ClientResponseMapper clientResponseMapper;
-
-  private List<FdrEventEntity> find(
-      DateRequest reDates,
-      Optional<String> pspId,
-      Optional<String> flowName,
-      Optional<String> organizationId,
-      Optional<List<String>> actions,
-      Optional<String> eventAndStatus) {
-    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
-    // log.infof("Querying re table storage");
-    reStorageEvents.addAll(
-        fdrTableRepository.findWithParams(
-            reDates.getFrom(),
-            reDates.getTo(),
-            pspId,
-            flowName,
-            organizationId,
-            actions,
-            eventAndStatus));
-    // log.infof("Done querying re table storage");
-    return reStorageEvents;
-  }
 
   public MultipleFlowsResponse searchFlowByPsp(
       String pspId, String flowName, String organizationId, LocalDate dateFrom, LocalDate dateTo) {
@@ -166,63 +144,44 @@ public class WorkerService {
         .build();
   }
 
-  public MultipleFlowsResponse getFdrActions(
-      String pspId,
-      Optional<String> flowName,
-      Optional<String> organizationId,
-      Optional<List<String>> actions,
-      LocalDate dateFrom,
-      LocalDate dateTo) {
+  public MultipleFlowsOnSingleDateResponse searchFlowOperations(
+      String pspId, String organizationId, List<String> actions, String flowName, LocalDate date) {
 
-    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
-    List<FdrEventEntity> reStorageEvents =
-        find(
+    // check dates and get valid ones
+    DateRequest dateRequest = DateUtil.getValidDateRequest(date, date, dateRangeLimit);
+
+    // retrieve RE events from MongoDB, then check if something is found
+    List<ReEventEntity> reEvents =
+        reEventRepository.find(
             dateRequest,
-            Optional.of(pspId),
-            flowName,
-            organizationId,
-            actions,
+            Optional.ofNullable(pspId),
+            Optional.ofNullable(flowName),
+            Optional.ofNullable(organizationId),
+            Optional.of(actions),
             Optional.of("interface"));
-
-    if (reStorageEvents.isEmpty()) {
+    if (reEvents.isEmpty()) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    Map<String, List<FdrEventEntity>> reGroups =
-        reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
+    // grouping RE events by flow name and sort them by creation date
+    Map<String, List<ReEventEntity>> reEventGroups =
+        reEvents.stream().collect(Collectors.groupingBy(ReEventEntity::getFdr));
+    reEventGroups
+        .values()
+        .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
+    log.debug(
+        "Found [{}] different flow names in [{}] total events!",
+        reEventGroups.size(),
+        reEvents.size());
 
-    // log.infof("found %d different flowNames in %d events", reGroups.size(),
-    // reStorageEvents.size());
-
+    // map the element and return the required result
     List<FlowBaseInfo> collect =
-        reGroups.keySet().stream()
-            .map(
-                fn -> {
-                  List<FdrEventEntity> events = reGroups.get(fn);
-                  FlowActionInfo fdrInfo = new FlowActionInfo();
-                  List<FdrEventEntity> ordered =
-                      events.stream()
-                          .sorted(Comparator.comparing(FdrEventEntity::getCreated))
-                          .toList();
-                  fdrInfo.setFdr(ordered.get(0).getFdr());
-                  fdrInfo.setCreated(ordered.get(0).getCreated());
-                  fdrInfo.setFlowAction(ordered.get(0).getFdrAction());
-                  fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
-                  fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
-                  fdrInfo.setOrganizationId(
-                      ordered.stream()
-                          .filter(s -> s.getOrganizationId() != null)
-                          .findAny()
-                          .map(FdrEventEntity::getOrganizationId)
-                          .orElse(null));
-                  return fdrInfo;
-                })
+        reEventGroups.values().stream()
+            .map(eventGroup -> reEventMapper.toFlowActionInfo(eventGroup))
             .collect(Collectors.toList());
-
-    return MultipleFlowsResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(collect.stream().sorted(Comparator.comparing(FlowBaseInfo::getCreated)).toList())
+    return MultipleFlowsOnSingleDateResponse.builder()
+        .date(dateRequest.getFrom())
+        .data(collect)
         .build();
   }
 
