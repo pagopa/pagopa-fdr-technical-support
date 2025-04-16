@@ -1,5 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.service.middleware.mapper;
 
+import it.gov.pagopa.fdrtechsupport.models.FlowBaseInfo;
 import it.gov.pagopa.fdrtechsupport.models.FlowRevisionInfo;
 import it.gov.pagopa.fdrtechsupport.models.RevisionInfo;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
@@ -12,10 +13,10 @@ import org.mapstruct.factory.Mappers;
 @Mapper(componentModel = ComponentModel.JAKARTA)
 public interface ReEventEntityMapper {
 
-
   ReEventEntityMapper INSTANCE = Mappers.getMapper(ReEventEntityMapper.class);
 
-  default FlowRevisionInfo toFlowRevisionInfo(String flowName, List<ReEventEntity> reEvents, boolean isOld) {
+  default FlowRevisionInfo toFlowRevisionInfo(
+      String flowName, List<ReEventEntity> reEvents, boolean isOld) {
 
     FlowRevisionInfo result = new FlowRevisionInfo();
     result.setFdr(flowName);
@@ -26,16 +27,32 @@ public interface ReEventEntityMapper {
 
     List<RevisionInfo> revisions;
     if (isOld) {
-      revisions = reEvents.stream()
-          .map(reEvent -> new RevisionInfo("NA", reEvent.getCreated()))
-          .toList();
+      revisions =
+          reEvents.stream().map(reEvent -> new RevisionInfo("NA", reEvent.getCreated())).toList();
     } else {
-      revisions = reEvents.stream()
-          .map(reEvent -> new RevisionInfo(reEvent.getRevision().toString(), reEvent.getCreated()))
-          .toList();
+      revisions =
+          reEvents.stream()
+              .map(
+                  reEvent ->
+                      new RevisionInfo(reEvent.getRevision().toString(), reEvent.getCreated()))
+              .toList();
     }
     result.getRevisions().addAll(revisions);
 
+    return result;
+  }
+
+  default FlowBaseInfo toFlowBaseInfo(List<ReEventEntity> reEvents) {
+
+    FlowBaseInfo result = new FlowBaseInfo();
+    result.setFdr(reEvents.get(0).getFdr());
+    result.setCreated(reEvents.get(0).getCreated());
+    result.setOrganizationId(
+        reEvents.stream()
+            .filter(s -> s.getOrganizationId() != null)
+            .findAny()
+            .map(ReEventEntity::getOrganizationId)
+            .orElseGet(() -> null));
     return result;
   }
 }
