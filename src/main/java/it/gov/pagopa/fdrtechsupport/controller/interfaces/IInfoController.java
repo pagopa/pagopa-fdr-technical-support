@@ -1,6 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
 import it.gov.pagopa.fdrtechsupport.controller.model.common.response.InfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.error.response.ProblemJson;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -11,7 +12,6 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.openapi.quarkus.api_fdr_json.model.ErrorResponse;
 
 @Path("/info")
 @Tag(name = "Info", description = "Info operations")
@@ -38,7 +38,7 @@ public interface IInfoController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = ErrorResponse.class),
+                    schema = @Schema(implementation = ProblemJson.class),
                     example = "..."))
       })
   InfoResponse healthCheck();
