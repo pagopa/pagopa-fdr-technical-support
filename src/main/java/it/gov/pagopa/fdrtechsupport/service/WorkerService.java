@@ -1,6 +1,5 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
-import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
 import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
@@ -47,17 +46,11 @@ public class WorkerService {
 
   @Inject FdrTableRepository fdrTableRepository;
 
-  @RestClient FdrOldRestClient fdrOldRestClient;
-
   @RestClient FdrRestClient fdrClient;
 
   @Inject ReEventEntityMapper reEventMapper;
 
   @Inject ClientResponseMapper clientResponseMapper;
-
-  private FlowRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
-    return FlowRevisionInfo.builder().build();
-  }
 
   private List<FdrEventEntity> find(
       DateRequest reDates,
