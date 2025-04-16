@@ -3,7 +3,7 @@
   "info": {
     "title": "Fdr technical support - Api (local) ${service}",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "1.0.14-4-PAGOPA-2696"
+    "version": "1.0.14-5-PAGOPA-2696"
   },
   "servers": [
     {
