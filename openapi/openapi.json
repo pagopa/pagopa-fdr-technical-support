@@ -3,7 +3,7 @@
   "info": {
     "title": "Fdr technical support - Api (local) ${service}",
     "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "1.0.13-2-PAGOPA-2473-workload-identity-new-runner"
+    "version": "1.0.13-3-PAGOPA-2696"
   },
   "servers": [
     {
