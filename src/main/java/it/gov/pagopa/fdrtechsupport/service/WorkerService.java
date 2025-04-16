@@ -6,7 +6,6 @@ import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiv
 import it.gov.pagopa.fdrtechsupport.controller.model.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.controller.model.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.models.*;
-import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
@@ -47,8 +46,6 @@ public class WorkerService {
   @Inject FdR3HistoryRepository fdr3HistoryRepository;
 
   @Inject FdrTableRepository fdrTableRepository;
-
-  @Inject FdrHistoryTableRepository fdrHistoryTableRepository;
 
   @RestClient FdrOldRestClient fdrOldRestClient;
 
