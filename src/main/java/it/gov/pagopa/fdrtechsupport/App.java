@@ -61,9 +61,12 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                 @Server(url = "http://localhost:8080", description = "Localhost base URL"),
                 @Server(url = "https://{host}/technical-support/api/v1", description = "Base URL",
                         variables = {
-                                @ServerVariable(name = "host",
+                                @ServerVariable(
+                                        name = "host",
+                                        description = "Environment host",
                                         enumeration = {"api.dev.platform.pagopa.it", "api.uat.platform.pagopa.it", "api.platform.pagopa.it"},
-                                        defaultValue = "api.dev.platform.pagopa.it")})
+                                        defaultValue = "api.dev.platform.pagopa.it")
+                })
         }
 )
 public class App extends Application {
