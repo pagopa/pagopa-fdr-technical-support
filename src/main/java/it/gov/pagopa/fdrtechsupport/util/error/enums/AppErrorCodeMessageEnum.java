@@ -5,7 +5,7 @@ import it.gov.pagopa.fdrtechsupport.util.logging.AppMessageUtil;
 import org.jboss.resteasy.reactive.RestResponse;
 
 public enum AppErrorCodeMessageEnum {
-    DATE_BAD_REQUEST("0400", "bad.request", RestResponse.Status.BAD_REQUEST, "An error occurred while validating the provided dates"),
+    DATE_BAD_REQUEST("0400", "bad.request", RestResponse.Status.BAD_REQUEST, "An error occurred while validating the provided dates. Date from and date to must be either null o filled in, if present, date from must be less than date to"),
     FLOW_NOT_FOUND("0404", "flow.not.found", RestResponse.Status.NOT_FOUND, "An error occurred during the search of flow. The needed flow does not exists in current environment"),
     FLOW_NOT_FOUND_CLIENT("1404", "flow.not.found", RestResponse.Status.NOT_FOUND, "An error occurred during the search of flow. The needed flow was not found"),
     UNAUTHORIZED_CLIENT("1401", "system.error", RestResponse.Status.INTERNAL_SERVER_ERROR, "An error occurred while invoking external services"),
