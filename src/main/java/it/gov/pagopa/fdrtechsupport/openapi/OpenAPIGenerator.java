@@ -104,7 +104,7 @@ public class OpenAPIGenerator implements OASFilter {
 
                 Class<?> controllerClass =
                         Class.forName(
-                                "it.gov.pagopa.fdr.controller.interfaces.controller."
+                                "it.gov.pagopa.fdrtechsupport.controller.interfaces."
                                         + operationIdMethodReference[0]);
                 Optional<Method> method =
                         Arrays.stream(controllerClass.getMethods())

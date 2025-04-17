@@ -35,7 +35,7 @@ public interface IPSPController {
     @GET
     @Path("/{pspId}")
     @Operation(
-            operationId = "PSPController_searchFlowByPsp",
+            operationId = "IPSPController_searchFlowByPsp",
             summary = "This API allow to retrieve a list of FdR for a specific PSP",
             description = "Retrieves a list of FdR for a given Payment Service Provider (PSP) within a specified date range, " +
                     " optionally filtered by flow name. If no dates are specified, data from the last 7 days is returned.")
@@ -92,7 +92,7 @@ public interface IPSPController {
     @GET
     @Path("/{pspId}/iuv/{iuv}")
     @Operation(
-            operationId = "PSPController_searchFlowByPspAndIuv",
+            operationId = "IPSPController_searchFlowByPspAndIuv",
             summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
             description = "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range." +
                     " If no dates are specified, data from the last 7 days is returned.")
@@ -144,7 +144,7 @@ public interface IPSPController {
     @GET
     @Path("/{pspId}/iur/{iur}")
     @Operation(
-            operationId = "PSPController_searchFlowByPspAndIur",
+            operationId = "IPSPController_searchFlowByPspAndIur",
             summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
             description = "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range." +
                     " If no dates are specified, data from the last 7 days is returned.")

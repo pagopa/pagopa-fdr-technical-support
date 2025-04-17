@@ -2,6 +2,44 @@
 openapi: 3.1.0
 components:
   schemas:
+    FdrBaseInfo:
+      type: object
+      properties:
+        fdr:
+          type: string
+        created:
+          type: string
+        organizationId:
+          type: string
+    FdrFullInfoResponse:
+      type: object
+      properties:
+        dateFrom:
+          $ref: "#/components/schemas/LocalDate"
+        dateTo:
+          $ref: "#/components/schemas/LocalDate"
+        data:
+          type: string
+    FrResponse:
+      type: object
+      properties:
+        dateFrom:
+          $ref: "#/components/schemas/LocalDate"
+        dateTo:
+          $ref: "#/components/schemas/LocalDate"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FdrBaseInfo"
+    FrSingleDateResponse:
+      type: object
+      properties:
+        date:
+          $ref: "#/components/schemas/LocalDate"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FdrBaseInfo"
     InfoResponse:
       type: object
       properties:
@@ -58,18 +96,38 @@ components:
       description: Default app exception for status 400
       content:
         application/json:
+          example:
+            httpStatusCode: 400
+            httpStatusDescription: Bad Request
+            appErrorCode: FDR-XXXX
+            errors:
+              - path: <detail.path.if-exist>
+                message: <detail.message>
           schema:
             $ref: "#/components/schemas/ProblemJson"
     ErrorResponse404:
       description: Default app exception for status 404
       content:
         application/json:
+          example:
+            httpStatusCode: 404
+            httpStatusDescription: Not Found
+            appErrorCode: FDR-XXXX
+            errors:
+              - message: <detail.message>
           schema:
             $ref: "#/components/schemas/ProblemJson"
     ErrorResponse500:
       description: Internal Server Error
       content:
         application/json:
+          example:
+            errorId: 50905466-1881-457b-b42f-fb7b2bfb1610
+            httpStatusCode: 500
+            httpStatusDescription: Internal Server Error
+            appErrorCode: FDR-0500
+            errors:
+              - message: An unexpected error has occurred. Please contact support.
           schema:
             $ref: "#/components/schemas/ProblemJson"
   securitySchemes:
@@ -86,20 +144,20 @@ info:
     <details><summary>Details</summary>
     NAME | CODE | ERROR MESSAGE TEMPLATE | DESCRIPTION
     - | - | - | -
-    **FDR-0400** | *DATE_BAD_REQUEST* | Bad request | An error occurred while validating the provided dates
+    **FDR-0400** | *DATE_BAD_REQUEST* | Bad request | An error occurred while validating the provided dates. <br>Date from and date to must be either null o filled <br>in, if present, date from must be less than date to
     **FDR-0404** | *FLOW_NOT_FOUND* | No flow found | An error occurred during the search of flow. The needed <br>flow does not exists in current environment
     **FDR-1404** | *FLOW_NOT_FOUND_CLIENT* | No flow found | An error occurred during the search of flow. The needed <br>flow was not found
     **FDR-1401** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services
     **FDR-0500** | *ERROR* | An unexpected error has occurred. Please contact support | An error occurred during computation. This could be <br>caused by an applicative error and it is probably required <br>to open an issue.
     **FDR-0400** | *BAD_REQUEST* | Bad request | A generic 'Bad Request' error is occurred during request <br>validation
-    **FDR-0401** | *BAD_REQUEST_INPUT_JSON* | bad.request.inputJson | A generic error occurred during execution of request <br>syntactic validation
-    **FDR-0402** | *BAD_REQUEST_INPUT_JSON_INSTANT* | bad.request.inputJson.instant | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>date values
-    **FDR-0403** | *BAD_REQUEST_INPUT_JSON_ENUM* | bad.request.inputJson.enum | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>enumerative values
-    **FDR-0404** | *BAD_REQUEST_INPUT_JSON_DESERIALIZE_<br>ERROR* | bad.request.inputJson.deserialize | An error occurred during execution of deserialization <br>of request from a JSON string
-    **FDR-0405** | *BAD_REQUEST_INPUT_JSON_NON_VALID_<br>FORMAT* | bad.request.inputJson.notValidJsonFormat | An error occurred during execution of analysis of JSON <br>request, in particular regarding its format
-    **FDR-0406** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type Xml or Json
+    **FDR-0401** | *BAD_REQUEST_INPUT_JSON* | Bad request. Field [%] is equals to [%] but this is <br>not a valid value. | A generic error occurred during execution of request <br>syntactic validation
+    **FDR-0402** | *BAD_REQUEST_INPUT_JSON_INSTANT* | Bad request. Field [%] is equals to [%] but it is expected <br>to be in ISO-8601 format [yyyy-MM-ddTHH:mm:ssZ] (example: <br>[2025-01-01T12:00:00.123000Z]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>date values
+    **FDR-0403** | *BAD_REQUEST_INPUT_JSON_ENUM* | Bad request. Field [%] is equals to [%] but it is expected <br>to be one of the following values: [%]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>enumerative values
+    **FDR-0404** | *BAD_REQUEST_INPUT_JSON_DESERIALIZE_<br>ERROR* | Bad request. Field [%] generate a deserialization error. <br>Please, set the correct value. | An error occurred during execution of deserialization <br>of request from a JSON string
+    **FDR-0405** | *BAD_REQUEST_INPUT_JSON_NON_VALID_<br>FORMAT* | Bad request. The format of JSON request is not valid. | An error occurred during execution of analysis of JSON <br>request, in particular regarding its format
+    **FDR-0406** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json
   termsOfService: https://www.pagopa.gov.it/
-  title: fdr-techical-support API
+  title: Fdr technical support - Api
   version: 1.0.14
 servers:
   - url: http://localhost:8080
@@ -128,7 +186,7 @@ paths:
       description: |-
         ## Description:
         Get health check and deployment-related information
-      operationId: InfoController_healthCheck
+      operationId: IInfoController_healthCheck
       tags:
         - Info
       responses:
@@ -139,221 +197,508 @@ paths:
               schema:
                 $ref: "#/components/schemas/InfoResponse"
         "500":
-          description: Internal Server Error
-          content:
-            application/json:
-              example: '...'
-              schema:
-                $ref: "#/components/schemas/ProblemJson"
+          $ref: "#/components/responses/ErrorResponse500"
   /organizations/{organizationId}/flows/{flowId}:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve all revision of a FdR for a specific CI
+      description: |
         ## Description:
-        ...
-      operationId: OrganizationsController_getRevisions
+        Retrieves a list of revision of a FdR for a given flow name and Creditor Institution (CI) within a specified date range. If no dates are specified, data from the last 7 days is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+        **FDR-0404** | 404 | No flow found
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IOrganizationController_getRevisions
       tags:
         - Organization
       parameters:
-        - name: flowId
-          in: path
+        - description: "The flow name, used as a search filter"
+          example: 2025-01-0188888888888-0001
           required: true
+          name: flowId
+          in: path
           schema:
             type: string
-        - name: organizationId
-          in: path
+        - description: "The organization fiscal code, used as a search filter"
+          example: "99999999999"
           required: true
+          name: organizationId
+          in: path
           schema:
             type: string
-        - name: dateFrom
+        - description: The starting date for retrieving flows
+          example: 2025-03-10
+          name: dateFrom
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: dateTo
+        - description: The ending date for retrieving flows
+          example: 2025-03-10
+          name: dateTo
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "404":
+          $ref: "#/components/responses/ErrorResponse404"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /organizations/{organizationId}/psps/{pspId}/download:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a list of download tentative of FdR for
+        a specific date
+      description: |
         ## Description:
-        ...
-      operationId: OrganizationsController_getDownloads
+        Retrieves a list of download tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+        **FDR-0404** | 404 | No flow found
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IOrganizationController_getDownloads
       tags:
         - Organization
       parameters:
-        - name: organizationId
-          in: path
+        - description: "The organization fiscal code, used as a search filter"
+          example: "99999999999"
           required: true
+          name: organizationId
+          in: path
           schema:
             type: string
-        - name: pspId
-          in: path
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: date
+        - description: The date for retrieving FdR download tentative
+          example: 2025-03-10
+          name: date
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrSingleDateResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "404":
+          $ref: "#/components/responses/ErrorResponse404"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /organizations/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a revision of a FdR for a specific CI and
+        PSP
+      description: |
         ## Description:
-        ...
-      operationId: OrganizationsController_getFlow
+        Retrieves a specific revision of a FdR for a given Creditor Institution (CI), Payment Service Provider (PSP), flow name, and revision number within a specified date range. If no dates are specified, data from the last 7 days is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+        **FDR-0406** | 400 | Invalid file type specified.
+        **FDR-1401** | 500 | An unexpected error has occurred. Please contact support
+        **FDR-1404** | 404 | No flow found
+        **FDR-0500** | 500 | An unexpected error has occurred. Please contact support
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IOrganizationController_getFlow
       tags:
         - Organization
       parameters:
-        - name: flowId
-          in: path
+        - description: "The flow name, used as a search filter"
+          example: 2025-01-0188888888888-0001
           required: true
+          name: flowId
+          in: path
           schema:
             type: string
-        - name: organizationId
-          in: path
+        - description: "The organization fiscal code, used as a search filter"
+          example: "99999999999"
           required: true
+          name: organizationId
+          in: path
           schema:
             type: string
-        - name: pspId
-          in: path
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: revision
-          in: path
+        - description: "The FdR revision, used as a search filter"
+          example: "1"
           required: true
+          name: revision
+          in: path
           schema:
             type: string
-        - name: dateFrom
+        - description: The starting date for retrieving flows
+          example: 2025-03-10
+          name: dateFrom
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: dateTo
+        - description: The ending date for retrieving flows
+          example: 2025-03-10
+          name: dateTo
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: fileType
+        - description: "The expected FdR format, based of this parameter the flow is\
+          \ retrieved from FdR-1 (xml) or FdR-3 (json)"
+          example: xml
+          name: fileType
           in: query
           schema:
             type: string
-      responses: { }
+            default: json
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FdrFullInfoResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "404":
+          $ref: "#/components/responses/ErrorResponse404"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /organizations/{organizationId}/psps/{pspId}/upload:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a list of upload tentative of FdR for a
+        specific date
+      description: |
         ## Description:
-        ...
-      operationId: OrganizationsController_getUploads
+        Retrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+        **FDR-0404** | 404 | No flow found
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IOrganizationController_getUploads
       tags:
         - Organization
       parameters:
-        - name: organizationId
-          in: path
+        - description: "The organization fiscal code, used as a search filter"
+          example: "99999999999"
           required: true
+          name: organizationId
+          in: path
           schema:
             type: string
-        - name: pspId
-          in: path
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: date
+        - description: The date for retrieving FdR upload tentative
+          example: 2025-03-10
+          name: date
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "404":
+          $ref: "#/components/responses/ErrorResponse404"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /psps/{pspId}:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a list of FdR for a specific PSP
+      description: |
         ## Description:
-        ...
-      operationId: PSPController_searchFlowByPsp
+        Retrieves a list of FdR for a given Payment Service Provider (PSP) within a specified date range,  optionally filtered by flow name. If no dates are specified, data from the last 7 days is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IPSPController_searchFlowByPsp
       tags:
         - PSP
       parameters:
-        - name: pspId
-          in: path
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: dateFrom
+        - description: The starting date for retrieving flows
+          example: 2025-03-10
+          name: dateFrom
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: dateTo
+        - description: The ending date for retrieving flows
+          example: 2025-03-10
+          name: dateTo
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: flowId
+        - description: "The flow name, used as a search filter"
+          example: 2025-01-0188888888888-0001
+          name: flowId
           in: query
           schema:
             type: string
-        - name: organizationId
+        - description: "The organization fiscal code, used as a search filter"
+          example: "99999999999"
+          name: organizationId
           in: query
           schema:
             type: string
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /psps/{pspId}/iur/{iur}:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a list of FdR for a specific PSP and IUV
+      description: |
         ## Description:
-        ...
-      operationId: PSPController_searchFlowByPspAndIur
+        Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IPSPController_searchFlowByPspAndIur
       tags:
         - PSP
       parameters:
-        - name: iur
+        - description: "The payment's IUR code, used as a search filter"
+          example: "17854456582215"
+          name: iur
           in: path
           required: true
           schema:
             type: string
-        - name: pspId
-          in: path
+            pattern: "^(.{1,35})$"
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: dateFrom
+        - description: The starting date for retrieving flows
+          example: 2025-03-10
+          name: dateFrom
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: dateTo
+        - description: The ending date for retrieving flows
+          example: 2025-03-10
+          name: dateTo
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"
   /psps/{pspId}/iuv/{iuv}:
     get:
-      summary: '...'
-      description: |-
+      summary: This API allow to retrieve a list of FdR for a specific PSP and IUV
+      description: |
         ## Description:
-        ...
-      operationId: PSPController_searchFlowByPspAndIuv
+        Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.
+
+        ## Error codes:
+        APPLICATIVE CODE | HTTP CODE | MESSAGE
+        - | - | -
+        **FDR-0400** | 400 | Bad request
+
+
+        ## API properties:
+        PROPERTY | VALUE
+        - | -
+        ***Internal*** | Y
+        ***External*** | Y
+        ***Synchronous*** | Synchronous
+        ***Authorization*** | N
+        ***Authentication*** | Y (Subscription Key)
+        ***TPS*** | 1.0/sec
+        ***Idempotency*** | Y
+        ***Stateless*** | Y
+        ***Read/Write Intensive*** | Read
+        ***Cacheable*** | Y
+      operationId: IPSPController_searchFlowByPspAndIuv
       tags:
         - PSP
       parameters:
-        - name: iuv
+        - description: "The payment's IUV code, used as a search filter"
+          example: "17854456582215"
+          name: iuv
           in: path
           required: true
           schema:
             type: string
-        - name: pspId
-          in: path
+            pattern: "^(.{1,35})$"
+        - description: "The PSP identifier, used as a search filter"
+          example: "88888888888"
           required: true
+          name: pspId
+          in: path
           schema:
             type: string
-        - name: dateFrom
+        - description: The starting date for retrieving flows
+          example: 2025-03-10
+          name: dateFrom
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-        - name: dateTo
+        - description: The ending date for retrieving flows
+          example: 2025-03-10
+          name: dateTo
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
-      responses: { }
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/FrResponse"
+        "400":
+          $ref: "#/components/responses/ErrorResponse400"
+        "500":
+          $ref: "#/components/responses/ErrorResponse500"

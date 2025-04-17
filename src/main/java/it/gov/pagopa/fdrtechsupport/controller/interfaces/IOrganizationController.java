@@ -34,7 +34,7 @@ public interface IOrganizationController {
     @GET
     @Path("/{organizationId}/flows/{flowId}")
     @Operation(
-            operationId = "OrganizationsController_getRevisions",
+            operationId = "IOrganizationController_getRevisions",
             summary = "This API allow to retrieve all revision of a FdR for a specific CI",
             description = "Retrieves a list of revision of a FdR for a given flow name and Creditor Institution (CI) " +
                     "within a specified date range. If no dates are specified, data from the last 7 days is returned.")
@@ -90,7 +90,7 @@ public interface IOrganizationController {
     @GET
     @Path("/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}")
     @Operation(
-            operationId = "OrganizationsController_getFlow",
+            operationId = "IOrganizationController_getFlow",
             summary = "This API allow to retrieve a revision of a FdR for a specific CI and PSP",
             description = "Retrieves a specific revision of a FdR for a given Creditor Institution (CI), " +
                     "Payment Service Provider (PSP), flow name, and revision number within a specified date range." +
@@ -167,7 +167,7 @@ public interface IOrganizationController {
     @GET
     @Path("/{organizationId}/psps/{pspId}/download")
     @Operation(
-            operationId = "OrganizationsController_getDownloads",
+            operationId = "IOrganizationController_getDownloads",
             summary = "This API allow to retrieve a list of download tentative of FdR for a specific date",
             description = "Retrieves a list of download tentative of FdR for a given Creditor Institution (CI) and " +
                     "Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.")
@@ -217,7 +217,7 @@ public interface IOrganizationController {
     @GET
     @Path("/{organizationId}/psps/{pspId}/upload")
     @Operation(
-            operationId = "OrganizationsController_getUploads",
+            operationId = "IOrganizationController_getUploads",
             summary = "This API allow to retrieve a list of upload tentative of FdR for a specific date",
             description = "Retrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and " +
                     "Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.")
