@@ -16,7 +16,7 @@ import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 @Path("/")
 @ClientHeaderParam(
     name = "Ocp-Apim-Subscription-Key",
-    value = "${quarkus.rest-client.fdr.subscription-key}")
+    value = "${rest-client.fdr.subscription-key}")
 @RegisterRestClient(configKey = "fdr")
 public interface FdrRestClient {
 
