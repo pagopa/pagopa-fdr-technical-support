@@ -1,7 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
 import it.gov.pagopa.fdrtechsupport.controller.model.response.InfoResponse;
-import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;
@@ -32,14 +31,7 @@ public interface IInfoController {
                             @Content(
                                     mediaType = MediaType.APPLICATION_JSON,
                                     schema = @Schema(implementation = InfoResponse.class))),
-                    @APIResponse(
-                            responseCode = "500",
-                            description = "Internal Server Error",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = ProblemJson.class),
-                                    example = "..."))
+                    @APIResponse(ref = "#/components/responses/ErrorResponse500"),
             })
     InfoResponse healthCheck();
 }
