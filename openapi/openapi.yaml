@@ -162,7 +162,7 @@ info:
 servers:
   - url: http://localhost:8080
     description: Localhost base URL
-  - url: "https://{host}/technical-support/api/v1"
+  - url: "https://{host}/technical-support/fdr/api/v1"
     description: Base URL
     variables:
       host:

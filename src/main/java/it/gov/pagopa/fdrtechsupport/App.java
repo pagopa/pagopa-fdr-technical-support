@@ -97,7 +97,7 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                 description = "placeholder-for-replace"),
         servers = {
                 @Server(url = "http://localhost:8080", description = "Localhost base URL"),
-                @Server(url = "https://{host}/technical-support/api/v1", description = "Base URL",
+                @Server(url = "https://{host}/technical-support/fdr/api/v1", description = "Base URL",
                         variables = {
                                 @ServerVariable(
                                         name = "host",
