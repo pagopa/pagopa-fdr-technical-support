@@ -1,45 +1,98 @@
 {
-  "openapi": "3.0.3",
-  "info": {
-    "title": "Fdr technical support - Api (local) ${service}",
-    "termsOfService": "https://www.pagopa.gov.it/",
-    "version": "1.0.14-6-PAGOPA-2696"
+  "openapi" : "3.0.3",
+  "info" : {
+    "title" : "fdr-techical-support API",
+    "version" : "1.0.14-6-PAGOPA-2696"
   },
-  "servers": [
-    {
-      "url": "${host}/technical-support/api/v1 - APIM"
-    }
-  ],
-  "tags": [
-    {
-      "name": "Info",
-      "description": "Info operations"
-    }
-  ],
-  "paths": {
-    "/info": {
-      "get": {
-        "tags": [
-          "Info"
-        ],
-        "summary": "Get info of FDR",
-        "responses": {
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+  "servers" : [ {
+    "url" : "http://localhost:8080",
+    "description" : "Auto generated value"
+  }, {
+    "url" : "http://0.0.0.0:8080",
+    "description" : "Auto generated value"
+  } ],
+  "tags" : [ {
+    "name" : "Info",
+    "description" : "Info operations"
+  }, {
+    "name" : "Organization",
+    "description" : "APIs for inspecting creditor institution usage of flows"
+  }, {
+    "name" : "PSP",
+    "description" : "APIs for inspecting PSP usage of flows"
+  } ],
+  "paths" : {
+    "/info" : {
+      "get" : {
+        "tags" : [ "Info" ],
+        "summary" : "Health-check",
+        "description" : "Get health check and deployment-related information",
+        "operationId" : "InfoController_healthCheck",
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InfoResponse"
                 }
               }
             }
           },
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InfoResponse"
+          "500" : {
+            "description" : "Internal Server Error",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/ProblemJson"
+                },
+                "example" : "..."
+              }
+            }
+          }
+        }
+      }
+    },
+    "/organizations/{organizationId}/flows/{flowId}" : {
+      "get" : {
+        "tags" : [ "Organization" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "OrganizationsController_getRevisions",
+        "parameters" : [ {
+          "name" : "flowId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "organizationId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -47,80 +100,47 @@
         }
       }
     },
-    "/organizations/{organizationId}/flows/{fdr}": {
-      "get": {
-        "tags": [
-          "Org Resource"
-        ],
-        "parameters": [
-          {
-            "name": "fdr",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/download" : {
+      "get" : {
+        "tags" : [ "Organization" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "OrganizationsController_getDownloads",
+        "parameters" : [ {
+          "name" : "organizationId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+        }, {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "date",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "flowName",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -128,140 +148,66 @@
         }
       }
     },
-    "/organizations/{organizationId}/psps/{psp}/download": {
-      "get": {
-        "tags": [
-          "Org Resource"
-        ],
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "psp",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}" : {
+      "get" : {
+        "tags" : [ "Organization" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "OrganizationsController_getFlow",
+        "parameters" : [ {
+          "name" : "flowId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
+        }, {
+          "name" : "organizationId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        }
-      }
-    },
-    "/organizations/{organizationId}/psps/{psp}/flows/{fdr}/revisions/{revision}": {
-      "get": {
-        "tags": [
-          "Org Resource"
-        ],
-        "parameters": [
-          {
-            "name": "fdr",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "psp",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "revision",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "fileType",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+        }, {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not Found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+        }, {
+          "name" : "revision",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "fileType",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FlowContentResponse"
                 }
               }
             }
@@ -269,135 +215,47 @@
         }
       }
     },
-    "/organizations/{organizationId}/psps/{psp}/upload": {
-      "get": {
-        "tags": [
-          "Org Resource"
-        ],
-        "parameters": [
-          {
-            "name": "organizationId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "psp",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/upload" : {
+      "get" : {
+        "tags" : [ "Organization" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "OrganizationsController_getUploads",
+        "parameters" : [ {
+          "name" : "organizationId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
+        }, {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        }
-      }
-    },
-    "/psps/{pspId}": {
-      "get": {
-        "tags": [
-          "Psp Resource"
-        ],
-        "parameters": [
-          {
-            "name": "pspId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "fdr",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "organizationId",
-            "in": "query",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
+        }, {
+          "name" : "date",
+          "in" : "query",
+          "required" : true,
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Not found.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+        }, {
+          "name" : "flowName",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -405,80 +263,51 @@
         }
       }
     },
-    "/psps/{pspId}/iur/{iur}": {
-      "get": {
-        "tags": [
-          "Psp Resource"
-        ],
-        "parameters": [
-          {
-            "name": "iur",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pspId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/psps/{pspId}" : {
+      "get" : {
+        "tags" : [ "PSP" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "PSPController_searchFlowByPsp",
+        "parameters" : [ {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+        }, {
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "flowId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "organizationId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -486,80 +315,93 @@
         }
       }
     },
-    "/psps/{pspId}/iuv/{iuv}": {
-      "get": {
-        "tags": [
-          "Psp Resource"
-        ],
-        "parameters": [
-          {
-            "name": "iuv",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "pspId",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
+    "/psps/{pspId}/iur/{iur}" : {
+      "get" : {
+        "tags" : [ "PSP" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "PSPController_searchFlowByPspAndIuv",
+        "parameters" : [ {
+          "name" : "iur",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
+                }
+              }
             }
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad request.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
-                }
-              }
-            }
-          },
-          "500": {
-            "description": "Service unavailable.",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/ProblemJson"
+        }
+      }
+    },
+    "/psps/{pspId}/iuv/{iuv}" : {
+      "get" : {
+        "tags" : [ "PSP" ],
+        "summary" : "...",
+        "description" : "...",
+        "operationId" : "PSPController_searchFlowByPspAndIuv",
+        "parameters" : [ {
+          "name" : "iuv",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "pspId",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "OK",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -568,117 +410,125 @@
       }
     }
   },
-  "components": {
-    "schemas": {
-      "ErrorCode": {
-        "type": "object",
-        "properties": {
-          "code": {
-            "type": "string",
-            "example": "FDR-0500"
+  "components" : {
+    "schemas" : {
+      "FlowBaseInfo" : {
+        "type" : "object",
+        "properties" : {
+          "fdr" : {
+            "type" : "string"
           },
-          "description": {
-            "type": "string",
-            "example": "An unexpected error has occurred. Please contact support."
+          "created" : {
+            "type" : "string"
           },
-          "statusCode": {
-            "format": "int32",
-            "type": "integer",
-            "example": 500
+          "organizationId" : {
+            "type" : "string"
           }
         }
       },
-      "FdrBaseInfo": {
-        "type": "object",
-        "properties": {
-          "fdr": {
-            "type": "string"
+      "FlowContentResponse" : {
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "created": {
-            "type": "string"
+          "dateTo" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "organizationId": {
-            "type": "string"
+          "data" : {
+            "type" : "string"
           }
         }
       },
-      "FrResponse": {
-        "type": "object",
-        "properties": {
-          "dateFrom": {
-            "$ref": "#/components/schemas/LocalDate"
+      "InfoResponse" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "description" : "The identificative name of the deployed application",
+            "type" : "string",
+            "example" : "pagopa-fdr-technical-support"
           },
-          "dateTo": {
-            "$ref": "#/components/schemas/LocalDate"
+          "version" : {
+            "description" : "The current version of the deployed application",
+            "type" : "string",
+            "example" : "1.2.3"
           },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FdrBaseInfo"
+          "environment" : {
+            "description" : "The current environment where the application is deployed",
+            "type" : "string",
+            "example" : "dev"
+          },
+          "description" : {
+            "description" : "The descriptive information related to the info response",
+            "type" : "string",
+            "example" : "FDR Technical Support"
+          }
+        }
+      },
+      "LocalDate" : {
+        "format" : "date",
+        "type" : "string",
+        "example" : "2022-03-10"
+      },
+      "MultipleFlowsOnSingleDateResponse" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          },
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowBaseInfo"
             }
           }
         }
       },
-      "InfoResponse": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "example": "pagopa-fdr"
+      "MultipleFlowsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "version": {
-            "type": "string",
-            "example": "1.2.3"
+          "dateTo" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "environment": {
-            "type": "string",
-            "example": "dev"
-          },
-          "description": {
-            "type": "string",
-            "example": "FDR - Flussi di rendicontazione"
-          },
-          "errorCodes": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/ErrorCode"
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowBaseInfo"
             }
           }
         }
       },
-      "LocalDate": {
-        "format": "date",
-        "type": "string",
-        "example": "2022-03-10"
-      },
-      "ProblemJson": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "description": "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable",
-            "type": "string"
+      "ProblemJson" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "description" : "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable",
+            "type" : "string"
           },
-          "status": {
-            "format": "int32",
-            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.",
-            "maximum": 600,
-            "minimum": 100,
-            "type": "integer",
-            "example": 200
+          "status" : {
+            "format" : "int32",
+            "description" : "The HTTP status code generated by the origin server for this occurrence of the problem.",
+            "maximum" : 600,
+            "minimum" : 100,
+            "type" : "integer",
+            "example" : 200
           },
-          "details": {
-            "description": "A human readable explanation specific to this occurrence of the problem.",
-            "type": "string",
-            "example": "There was an error processing the request"
+          "details" : {
+            "description" : "A human readable explanation specific to this occurrence of the problem.",
+            "type" : "string",
+            "example" : "There was an error processing the request"
           }
         }
       }
     },
-    "securitySchemes": {
-      "SecurityScheme": {
-        "type": "http",
-        "description": "Authentication",
-        "scheme": "basic"
+    "securitySchemes" : {
+      "SecurityScheme" : {
+        "type" : "http",
+        "description" : "Authentication",
+        "scheme" : "basic"
       }
     }
   }
