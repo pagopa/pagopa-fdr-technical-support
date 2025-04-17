@@ -62,8 +62,9 @@ microservice-chart:
     APP_ENVIRONMENT: "prod"
     TZ: "Europe/Rome"
     OTEL_ENDPOINT: "http://otel-collector.elastic-system.svc.cluster.local:4317"
-    FDR_ENDPOINT: "https://api.platform.pagopa.it/fdr/service-internal/v1"
+    FDR_ENDPOINT: "https://api.platform.pagopa.it/fdr-internal/service/v1"
     LOG_LEVEL: "INFO"
+    QUERY_LOG_LEVEL: "OFF"
     RE_EVENTS_DATE_RANGE_LIMIT: "7"
   envFieldRef:
     APP_NAME: "metadata.labels['app.kubernetes.io/instance']"
