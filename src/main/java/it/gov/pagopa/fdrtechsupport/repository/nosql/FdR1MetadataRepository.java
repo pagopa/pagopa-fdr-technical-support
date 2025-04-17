@@ -23,10 +23,7 @@ public class FdR1MetadataRepository extends Repository
       Optional<String> organizationId) {
 
     // set standard clauses on query
-    StringBuilder query =
-        new StringBuilder(
-            "SELECT m FROM FdR1MetadataEntity m WHERE m.flowDate >= :dateFrom AND m.flowDate <="
-                + " :dateTo");
+    StringBuilder query = new StringBuilder("m.flowDate >= :dateFrom AND m.flowDate <= :dateTo");
     Parameters params =
         new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
 

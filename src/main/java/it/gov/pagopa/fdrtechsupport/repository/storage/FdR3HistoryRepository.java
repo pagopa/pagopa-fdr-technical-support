@@ -18,23 +18,28 @@ public class FdR3HistoryRepository {
   @ConfigProperty(name = "blob-storage.fdr3.container-name")
   private String blobContainerName;
 
-  private final BlobServiceClient blobServiceClient;
+  private BlobServiceClient blobServiceClient;
 
-  public FdR3HistoryRepository() {
+  private BlobServiceClient getBlobServiceClient() {
 
-    this.blobServiceClient = new BlobServiceClientBuilder()
-        .connectionString(blobConnectionString)
-        .buildClient();
+    if (this.blobServiceClient == null) {
+      this.blobServiceClient =
+          new BlobServiceClientBuilder().connectionString(blobConnectionString).buildClient();
+    }
+    return this.blobServiceClient;
   }
 
   public String getByFlowNameAndPspIdAndRevision(String flowName, String pspId, String revision) {
 
-    String fileName = String.format(AppConstant.HISTORICAL_FDR3_FILENAME_TEMPLATE, flowName, pspId, revision);
+    String fileName =
+        String.format(AppConstant.HISTORICAL_FDR3_FILENAME_TEMPLATE, flowName, pspId, revision);
     log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
-    byte[] byteArray = this.blobServiceClient.getBlobContainerClient(blobContainerName)
-        .getBlobClient(fileName)
-        .downloadContent()
-        .toBytes();
+    byte[] byteArray =
+        getBlobServiceClient()
+            .getBlobContainerClient(blobContainerName)
+            .getBlobClient(fileName)
+            .downloadContent()
+            .toBytes();
     return StringUtil.decompressGZip(byteArray);
   }
 }

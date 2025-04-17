@@ -92,9 +92,7 @@ public class WorkerService {
 
     // map the element and return the required result
     List<FlowBaseInfo> collect =
-        reEventGroups.values().stream()
-            .map(reEventMapper::toFlowBaseInfo)
-            .collect(Collectors.toList());
+        reEventGroups.values().stream().map(reEventMapper::toFlowBaseInfo).toList();
     return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
