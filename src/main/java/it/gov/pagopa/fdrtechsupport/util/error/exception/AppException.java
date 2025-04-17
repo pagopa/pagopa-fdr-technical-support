@@ -1,9 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.util.error.exception;
 
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
-import lombok.Getter;
-
 import java.io.Serializable;
+import lombok.Getter;
 
 @Getter
 public class AppException extends RuntimeException {
