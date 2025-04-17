@@ -20,7 +20,7 @@ public enum AppErrorCodeMessageEnum {
             "0404", "bad.request.inputJson.deserialize", RestResponse.Status.BAD_REQUEST, "An error occurred during execution of deserialization of request from a JSON string"),
     BAD_REQUEST_INPUT_JSON_NON_VALID_FORMAT(
             "0405", "bad.request.inputJson.notValidJsonFormat", RestResponse.Status.BAD_REQUEST, "An error occurred during execution of analysis of JSON request, in particular regarding its format"),
-    INVALID_FILE_TYPE("0406", "bad.request.invalidFileType", RestResponse.Status.BAD_REQUEST, "An error occurred while validating the provided file type. The file must be of type Xml or Json");
+    INVALID_FILE_TYPE("0406", "bad.request.invalidFileType", RestResponse.Status.BAD_REQUEST, "An error occurred while validating the provided file type. The file must be of type xml or json");
 
     private final String errorCode;
     private final String errorMessageKey;
