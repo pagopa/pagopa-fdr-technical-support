@@ -15,27 +15,27 @@ import org.eclipse.microprofile.openapi.annotations.security.SecurityScheme;
 import org.eclipse.microprofile.openapi.annotations.servers.Server;
 import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
 
-
 @OpenAPIDefinition(
-        components =
+    components =
         @Components(
-                securitySchemes = {
-                        @SecurityScheme(
-                                securitySchemeName = "ApiKey",
-                                apiKeyName = "Ocp-Apim-Subscription-Key",
-                                in = SecuritySchemeIn.HEADER,
-                                type = SecuritySchemeType.APIKEY)
-                },
-                responses = {
-                        @APIResponse(
-                                name = "ErrorResponse500",
-                                responseCode = "500",
-                                description = "Internal Server Error",
-                                content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON,
-                                        schema = @Schema(implementation = ProblemJson.class),
-                                        example = """
+            securitySchemes = {
+              @SecurityScheme(
+                  securitySchemeName = "ApiKey",
+                  apiKeyName = "Ocp-Apim-Subscription-Key",
+                  in = SecuritySchemeIn.HEADER,
+                  type = SecuritySchemeType.APIKEY)
+            },
+            responses = {
+              @APIResponse(
+                  name = "ErrorResponse500",
+                  responseCode = "500",
+                  description = "Internal Server Error",
+                  content =
+                      @Content(
+                          mediaType = MediaType.APPLICATION_JSON,
+                          schema = @Schema(implementation = ProblemJson.class),
+                          example =
+                              """
                                                   {
                                                   "errorId": "50905466-1881-457b-b42f-fb7b2bfb1610",
                                                   "httpStatusCode": 500,
@@ -48,15 +48,16 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                                                   ]
                                                 }\
                                                 """)),
-                        @APIResponse(
-                                name = "ErrorResponse400",
-                                responseCode = "400",
-                                description = "Default app exception for status 400",
-                                content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON,
-                                        schema = @Schema(implementation = ProblemJson.class),
-                                        example = """
+              @APIResponse(
+                  name = "ErrorResponse400",
+                  responseCode = "400",
+                  description = "Default app exception for status 400",
+                  content =
+                      @Content(
+                          mediaType = MediaType.APPLICATION_JSON,
+                          schema = @Schema(implementation = ProblemJson.class),
+                          example =
+                              """
                                                 {
                                                   "httpStatusCode": 400,
                                                   "httpStatusDescription": "Bad Request",
@@ -69,15 +70,16 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                                                   ]
                                                 }\
                                                 """)),
-                        @APIResponse(
-                                name = "ErrorResponse404",
-                                responseCode = "404",
-                                description = "Default app exception for status 404",
-                                content =
-                                @Content(
-                                        mediaType = MediaType.APPLICATION_JSON,
-                                        schema = @Schema(implementation = ProblemJson.class),
-                                        example = """
+              @APIResponse(
+                  name = "ErrorResponse404",
+                  responseCode = "404",
+                  description = "Default app exception for status 404",
+                  content =
+                      @Content(
+                          mediaType = MediaType.APPLICATION_JSON,
+                          schema = @Schema(implementation = ProblemJson.class),
+                          example =
+                              """
                                                 {
                                                   "httpStatusCode": 404,
                                                   "httpStatusDescription": "Not Found",
@@ -88,24 +90,28 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                                                     }
                                                   ]
                                                 }\
-                                                """
-                                ))
-                }),
-        info = @Info(
-                title = "Fdr technical support - Api",
-                version = "",
-                description = "placeholder-for-replace"),
-        servers = {
-                @Server(url = "http://localhost:8080", description = "Localhost base URL"),
-                @Server(url = "https://{host}/technical-support/fdr/api/v1", description = "Base URL",
-                        variables = {
-                                @ServerVariable(
-                                        name = "host",
-                                        description = "Environment host",
-                                        enumeration = {"api.dev.platform.pagopa.it", "api.uat.platform.pagopa.it", "api.platform.pagopa.it"},
-                                        defaultValue = "api.dev.platform.pagopa.it")
-                        })
-        }
-)
-public class App extends Application {
-}
+                                                """))
+            }),
+    info =
+        @Info(
+            title = "Fdr technical support - Api",
+            version = "",
+            description = "placeholder-for-replace"),
+    servers = {
+      @Server(url = "http://localhost:8080", description = "Localhost base URL"),
+      @Server(
+          url = "https://{host}/technical-support/fdr/api/v1",
+          description = "Base URL",
+          variables = {
+            @ServerVariable(
+                name = "host",
+                description = "Environment host",
+                enumeration = {
+                  "api.dev.platform.pagopa.it",
+                  "api.uat.platform.pagopa.it",
+                  "api.platform.pagopa.it"
+                },
+                defaultValue = "api.dev.platform.pagopa.it")
+          })
+    })
+public class App extends Application {}

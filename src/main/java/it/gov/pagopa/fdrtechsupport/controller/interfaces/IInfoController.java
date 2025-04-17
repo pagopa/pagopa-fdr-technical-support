@@ -16,22 +16,22 @@ import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 @Tag(name = "Info", description = "Info operations")
 public interface IInfoController {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(
-            operationId = "IInfoController_healthCheck",
-            summary = "Health-check",
-            description = "Get health check and deployment-related information")
-    @APIResponses(
-            value = {
-                    @APIResponse(
-                            responseCode = "200",
-                            description = "Success",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = InfoResponse.class))),
-                    @APIResponse(ref = "#/components/responses/ErrorResponse500"),
-            })
-    InfoResponse healthCheck();
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Operation(
+      operationId = "IInfoController_healthCheck",
+      summary = "Health-check",
+      description = "Get health check and deployment-related information")
+  @APIResponses(
+      value = {
+        @APIResponse(
+            responseCode = "200",
+            description = "Success",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = InfoResponse.class))),
+        @APIResponse(ref = "#/components/responses/ErrorResponse500"),
+      })
+  InfoResponse healthCheck();
 }
