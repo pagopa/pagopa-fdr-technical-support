@@ -2,8 +2,11 @@ package it.gov.pagopa.fdrtechsupport.repository.storage;
 
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import com.azure.storage.blob.models.BlobStorageException;
 import it.gov.pagopa.fdrtechsupport.util.common.StringUtil;
 import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
+import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -34,12 +37,16 @@ public class FdR3HistoryRepository {
     String fileName =
         String.format(AppConstant.HISTORICAL_FDR3_FILENAME_TEMPLATE, flowName, pspId, revision);
     log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
-    byte[] byteArray =
-        getBlobServiceClient()
-            .getBlobContainerClient(blobContainerName)
-            .getBlobClient(fileName)
-            .downloadContent()
-            .toBytes();
-    return StringUtil.decompressGZip(byteArray);
+    try {
+      byte[] byteArray =
+          getBlobServiceClient()
+              .getBlobContainerClient(blobContainerName)
+              .getBlobClient(fileName)
+              .downloadContent()
+              .toBytes();
+      return StringUtil.decompressGZip(byteArray);
+    } catch (BlobStorageException e) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    }
   }
 }

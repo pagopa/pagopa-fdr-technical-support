@@ -2,7 +2,6 @@ package it.gov.pagopa.fdrtechsupport.util.common;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Base64;
 import java.util.zip.GZIPInputStream;
 
 public class StringUtil {
@@ -14,8 +13,8 @@ public class StringUtil {
 
     } else {
 
-      byte[] compressedData = Base64.getDecoder().decode(gzipContent);
-      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(compressedData);
+      // byte[] compressedData = Base64.getDecoder().decode(gzipContent);
+      ByteArrayInputStream byteArrayInputStream = new ByteArrayInputStream(gzipContent);
 
       try (GZIPInputStream gzipInputStream = new GZIPInputStream(byteArrayInputStream)) {
 

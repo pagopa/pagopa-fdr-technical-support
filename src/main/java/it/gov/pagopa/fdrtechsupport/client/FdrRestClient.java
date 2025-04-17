@@ -23,7 +23,7 @@ public interface FdrRestClient {
   @ClientExceptionMapper
   static RuntimeException toException(Response response) {
     return switch (response.getStatus()) {
-      case 404 -> new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT);
+      case 404 -> new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
       case 401 -> new AppException(AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT);
       default -> new AppException(AppErrorCodeMessageEnum.ERROR);
     };
@@ -34,8 +34,8 @@ public interface FdrRestClient {
   PaginatedFlowsBySenderAndReceiverResponse getFlowByIuv(
       @PathParam("pspId") String pspId,
       @PathParam("iuv") String iuv,
-      @QueryParam("createdFrom") LocalDateTime createdFrom,
-      @QueryParam("createdTo") LocalDateTime createdTo,
+      @QueryParam("dateFrom") String createdFrom,
+      @QueryParam("dateTo") String createdTo,
       @QueryParam("page") Integer pageNumber,
       @QueryParam("size") Integer pageSize);
 

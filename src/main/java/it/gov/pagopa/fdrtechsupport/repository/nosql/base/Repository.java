@@ -42,4 +42,3 @@ public abstract class Repository {
     return sort;
   }
 }
-

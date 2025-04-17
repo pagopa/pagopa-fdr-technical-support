@@ -1,12 +1,9 @@
 package it.gov.pagopa.fdrtechsupport.repository.nosql;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.panache.common.Parameters;
-import io.quarkus.panache.common.Sort;
-import io.quarkus.panache.common.Sort.Direction;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdR1MetadataEntity;
+import it.gov.pagopa.fdrtechsupport.repository.nosql.base.NoSQLQueryBuilder;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.base.Repository;
-import it.gov.pagopa.fdrtechsupport.repository.nosql.base.SortField;
 import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
@@ -23,33 +20,22 @@ public class FdR1MetadataRepository extends Repository
       Optional<String> organizationId) {
 
     // set standard clauses on query
-    StringBuilder query = new StringBuilder("m.flowDate >= :dateFrom AND m.flowDate <= :dateTo");
-    Parameters params =
-        new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
+    NoSQLQueryBuilder queryBuilder = NoSQLQueryBuilder.startQuery();
+    queryBuilder.andInDateRange(
+        "PartitionKey", "dateFrom", reDates.getFrom(), "dateTo", reDates.getTo().plusDays(1));
 
     // set flow name clause on query
-    if (flowName.isPresent()) {
-      query.append(" and fdr = :flowName");
-      params.and("flowName", flowName.get());
-    }
+    flowName.ifPresent(value -> queryBuilder.andEquals("flowId", "flowName", value));
 
     // set PSP Identifier clause on query
-    if (pspId.isPresent()) {
-      query.append(" and pspId = :pspId");
-      params.and("pspId", pspId.get());
-    }
+    pspId.ifPresent(value -> queryBuilder.andEquals("psp", "pspId", value));
 
     // set organization Identifier clause on query
-    if (organizationId.isPresent()) {
-      query.append(" and organizationId = :organizationId");
-      params.and("organizationId", organizationId.get());
-    }
-
-    // define sort order on query
-    Sort sort = getSort(SortField.of("flowDate", Direction.Ascending));
+    organizationId.ifPresent(
+        value -> queryBuilder.andEquals("creditorInstitution", "orgId", value));
 
     // finally, execute the complete query
-    return FdR1MetadataEntity.findByQuery(query.toString(), sort, params)
+    return FdR1MetadataEntity.findByQuery(queryBuilder.getQuery(), queryBuilder.getParameters())
         .project(FdR1MetadataEntity.class)
         .list();
   }

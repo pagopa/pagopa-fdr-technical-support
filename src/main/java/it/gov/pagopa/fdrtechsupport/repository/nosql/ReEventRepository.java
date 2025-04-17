@@ -1,8 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.repository.nosql;
 
 import io.quarkus.hibernate.orm.panache.PanacheRepository;
-import io.quarkus.panache.common.Parameters;
 import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
+import it.gov.pagopa.fdrtechsupport.repository.nosql.base.NoSQLQueryBuilder;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.base.Repository;
 import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -21,53 +21,39 @@ public class ReEventRepository extends Repository implements PanacheRepository<R
       Optional<String> eventAndStatus) {
 
     // set standard clauses on query
-    StringBuilder query =
-        new StringBuilder(
-            "p.created >= :dateFrom AND p.created <= :dateTo");
-    Parameters params =
-        new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
+    NoSQLQueryBuilder queryBuilder = NoSQLQueryBuilder.startQuery();
+    queryBuilder.andInDateRange(
+        "PartitionKey", "dateFrom", reDates.getFrom(), "dateTo", reDates.getTo().plusDays(1));
 
     // set 'event-and-status' clause on query
     if (eventAndStatus.isPresent()) {
       String lowerCaseEventAndStatus = eventAndStatus.get().toLowerCase();
       if (lowerCaseEventAndStatus.equals("internalpublished")) {
-        query.append(" and eventType = :eventType and fdrStatus = :fdrStatus");
-        params.and("eventType", "INTERNAL");
-        params.and("fdrStatus", "PUBLISHED");
+        queryBuilder
+            .andEquals("eventType", "type", "INTERNAL")
+            .andEquals("fdrStatus", "status", "PUBLISHED");
       } else if (lowerCaseEventAndStatus.equals("interface")) {
-        query.append(" and eventType = :eventType");
-        params.and("eventType", "INTERFACE");
+        queryBuilder.andEquals("eventType", "type", "INTERFACE");
       }
     }
 
     // set PSP Identifier clause on query
-    if (pspId.isPresent()) {
-      query.append(" and pspId = :pspId");
-      params.and("pspId", pspId.get());
-    }
+    pspId.ifPresent(value -> queryBuilder.andEquals("pspId", "pspId", value));
 
     // set organization Identifier clause on query
-    if (organizationId.isPresent()) {
-      query.append(" and organizationId = :organizationId");
-      params.and("organizationId", organizationId.get());
-    }
+    organizationId.ifPresent(value -> queryBuilder.andEquals("organizationId", "orgId", value));
 
     // set action clause on query
-    if (actions.isPresent()) {
-      query.append(" and action in :actions");
-      params.and("actions", actions.get());
-    }
+    actions.ifPresent(value -> queryBuilder.andIn("fdrAction", "actions", value));
 
     // set flow name clause on query
-    if (flowName.isPresent()) {
-      query.append(" and fdr = :flowName");
-      params.and("flowName", flowName.get());
-    } else {
-      query.append(" and fdr != :flowName");
-      params.and("flowName", "");
-    }
+    flowName.ifPresentOrElse(
+        value -> queryBuilder.andEquals("fdr", "flowName", value),
+        () -> queryBuilder.andNotNull("fdr"));
 
     // finally, execute the complete query
-    return ReEventEntity.findByQuery(query.toString(), params).project(ReEventEntity.class).list();
+    return ReEventEntity.findByQuery(queryBuilder.getQuery(), queryBuilder.getParameters())
+        .project(ReEventEntity.class)
+        .list();
   }
 }

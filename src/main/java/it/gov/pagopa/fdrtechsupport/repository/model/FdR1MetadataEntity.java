@@ -5,7 +5,6 @@ import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.PanacheQuery;
 import io.quarkus.mongodb.panache.common.MongoEntity;
 import io.quarkus.panache.common.Parameters;
-import io.quarkus.panache.common.Sort;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
@@ -30,8 +29,8 @@ public class FdR1MetadataEntity extends PanacheMongoEntity {
 
   private BlobRefEntity blobBodyRef;
 
-
-  public static PanacheQuery<PanacheMongoEntityBase> findByQuery(String query, Sort sort, Parameters parameters) {
-    return find(query, sort, parameters.map());
+  public static PanacheQuery<PanacheMongoEntityBase> findByQuery(
+      String query, Parameters parameters) {
+    return find(query, parameters.map());
   }
 }

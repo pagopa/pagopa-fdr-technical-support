@@ -1,8 +1,5 @@
 package it.gov.pagopa.fdrtechsupport.repository.model;
 
-import static io.quarkus.mongodb.panache.PanacheMongoEntityBase.find;
-
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import io.quarkus.mongodb.panache.PanacheMongoEntity;
 import io.quarkus.mongodb.panache.PanacheMongoEntityBase;
 import io.quarkus.mongodb.panache.PanacheQuery;
@@ -38,12 +35,8 @@ public class ReEventEntity extends PanacheMongoEntity {
 
   private String httpType;
 
-  // private String httpMethod;
-  // private String httpUrl;
-  // private String fdrPhisicalDelete;
-
-
-  public static PanacheQuery<PanacheMongoEntityBase> findByQuery(String query, Parameters parameters) {
+  public static PanacheQuery<PanacheMongoEntityBase> findByQuery(
+      String query, Parameters parameters) {
     return find(query, parameters.map());
   }
 }

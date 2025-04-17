@@ -21,6 +21,7 @@ import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -73,7 +74,7 @@ public class WorkerService {
             Optional.ofNullable(pspId),
             Optional.ofNullable(flowName),
             Optional.ofNullable(organizationId),
-            Optional.of(List.of("PUBLISH")),
+            Optional.of(List.of("PUBLISH", "nodoInviaFlussoRendicontazione")),
             Optional.of("internalPublished"));
     if (reEvents.isEmpty()) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
@@ -81,7 +82,9 @@ public class WorkerService {
 
     // grouping RE events by flow name and sort them by creation date
     Map<String, List<ReEventEntity>> reEventGroups =
-        reEvents.stream().collect(Collectors.groupingBy(ReEventEntity::getFdr));
+        reEvents.stream()
+            .filter(event -> event.getFdr() != null)
+            .collect(Collectors.groupingBy(ReEventEntity::getFdr));
     reEventGroups
         .values()
         .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
@@ -108,9 +111,18 @@ public class WorkerService {
         DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
 
     // call FdR-Fase3 API in order to retrieve required response, searching by IUV
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     PaginatedFlowsBySenderAndReceiverResponse response =
         fdrClient.getFlowByIuv(
-            pspId, iuv, dateTimeRequest.getFrom(), dateTimeRequest.getTo(), 0, 1000);
+            pspId,
+            iuv,
+            formatter.format(dateTimeRequest.getFrom()),
+            formatter.format(dateTimeRequest.getTo()),
+            1,
+            1000);
+    if (response == null) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    }
 
     // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
