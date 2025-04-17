@@ -24,15 +24,23 @@ public class FdR1HistoryRepository {
   @ConfigProperty(name = "blob-storage.fdr1.container-name")
   private String blobContainerName;
 
-  private final BlobServiceClient blobServiceClient;
+  private BlobServiceClient blobServiceClient;
 
   private final FdR1MetadataRepository fdr1MetadataRepository;
 
   public FdR1HistoryRepository(FdR1MetadataRepository fdr1MetadataRepository) {
 
     this.fdr1MetadataRepository = fdr1MetadataRepository;
-    this.blobServiceClient =
-        new BlobServiceClientBuilder().connectionString(blobConnectionString).buildClient();
+  }
+
+  private BlobServiceClient getBlobServiceClient() {
+
+    if (this.blobServiceClient == null) {
+      this.blobServiceClient = new BlobServiceClientBuilder()
+          .connectionString(blobConnectionString)
+          .buildClient();
+    }
+    return this.blobServiceClient;
   }
 
   public String getByFlowNameAndPspIdAndRevision(
@@ -49,7 +57,7 @@ public class FdR1HistoryRepository {
     if (fileName != null) {
       log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
       byte[] byteArray =
-          this.blobServiceClient
+          getBlobServiceClient()
               .getBlobContainerClient(blobContainerName)
               .getBlobClient(fileName)
               .downloadContent()

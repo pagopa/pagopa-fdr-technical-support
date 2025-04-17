@@ -23,7 +23,7 @@ public class ReEventRepository extends Repository implements PanacheRepository<R
     // set standard clauses on query
     StringBuilder query =
         new StringBuilder(
-            "SELECT e FROM ReEventEntity e WHERE p.created >= :dateFrom AND p.created <= :dateTo");
+            "p.created >= :dateFrom AND p.created <= :dateTo");
     Parameters params =
         new Parameters().and("dateFrom", reDates.getFrom()).and("dateTo", reDates.getTo());
 
