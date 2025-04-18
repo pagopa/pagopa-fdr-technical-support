@@ -9,7 +9,6 @@ import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.Response;
-import java.time.LocalDateTime;
 import org.eclipse.microprofile.rest.client.annotation.ClientHeaderParam;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
@@ -44,8 +43,8 @@ public interface FdrRestClient {
   PaginatedFlowsBySenderAndReceiverResponse getFlowByIur(
       @PathParam("pspId") String pspId,
       @PathParam("iur") String iur,
-      @QueryParam("createdFrom") LocalDateTime createdFrom,
-      @QueryParam("createdTo") LocalDateTime createdTo,
+      @QueryParam("createdFrom") String createdFrom,
+      @QueryParam("createdTo") String createdTo,
       @QueryParam("page") Integer pageNumber,
       @QueryParam("size") Integer pageSize);
 }

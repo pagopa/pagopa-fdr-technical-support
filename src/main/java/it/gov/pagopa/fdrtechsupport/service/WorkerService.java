@@ -145,9 +145,15 @@ public class WorkerService {
         DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
 
     // call FdR-Fase3 API in order to retrieve required response, searching by IUR
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
     PaginatedFlowsBySenderAndReceiverResponse response =
         fdrClient.getFlowByIur(
-            pspId, iur, dateTimeRequest.getFrom(), dateTimeRequest.getTo(), 0, 1000);
+            pspId,
+            iur,
+            formatter.format(dateTimeRequest.getFrom()),
+            formatter.format(dateTimeRequest.getTo()),
+            0,
+            1000);
 
     // map the element and return the required result
     List<FlowBaseInfo> dataResponse =
