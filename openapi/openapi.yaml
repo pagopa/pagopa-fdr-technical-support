@@ -2,24 +2,24 @@
 openapi: 3.0.3
 info:
   title: fdr-techical-support API
-  version: 1.0.14-6-PAGOPA-2696
+  version: 1.0.14-8-PAGOPA-2696
 servers:
-- url: http://localhost:8080
-  description: Auto generated value
-- url: http://0.0.0.0:8080
-  description: Auto generated value
+  - url: http://localhost:8080
+    description: Auto generated value
+  - url: http://0.0.0.0:8080
+    description: Auto generated value
 tags:
-- name: Info
-  description: Info operations
-- name: Organization
-  description: APIs for inspecting creditor institution usage of flows
-- name: PSP
-  description: APIs for inspecting PSP usage of flows
+  - name: Info
+    description: Info operations
+  - name: Organization
+    description: APIs for inspecting creditor institution usage of flows
+  - name: PSP
+    description: APIs for inspecting PSP usage of flows
 paths:
   /info:
     get:
       tags:
-      - Info
+        - Info
       summary: Health-check
       description: Get health check and deployment-related information
       operationId: InfoController_healthCheck
@@ -40,29 +40,29 @@ paths:
   /organizations/{organizationId}/flows/{flowId}:
     get:
       tags:
-      - Organization
+        - Organization
       summary: '...'
       description: '...'
       operationId: OrganizationsController_getRevisions
       parameters:
-      - name: flowId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: organizationId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: dateFrom
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: dateTo
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
+        - name: flowId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: dateTo
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
       responses:
         "200":
           description: OK
@@ -73,30 +73,30 @@ paths:
   /organizations/{organizationId}/psps/{pspId}/download:
     get:
       tags:
-      - Organization
+        - Organization
       summary: '...'
       description: '...'
       operationId: OrganizationsController_getDownloads
       parameters:
-      - name: organizationId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: date
-        in: query
-        required: true
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: flowName
-        in: query
-        schema:
-          type: string
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: flowName
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -107,43 +107,43 @@ paths:
   /organizations/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}:
     get:
       tags:
-      - Organization
+        - Organization
       summary: '...'
       description: '...'
       operationId: OrganizationsController_getFlow
       parameters:
-      - name: flowId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: organizationId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: revision
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: dateFrom
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: dateTo
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: fileType
-        in: query
-        schema:
-          type: string
+        - name: flowId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: revision
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: dateTo
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: fileType
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -154,30 +154,30 @@ paths:
   /organizations/{organizationId}/psps/{pspId}/upload:
     get:
       tags:
-      - Organization
+        - Organization
       summary: '...'
       description: '...'
       operationId: OrganizationsController_getUploads
       parameters:
-      - name: organizationId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: date
-        in: query
-        required: true
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: flowName
-        in: query
-        schema:
-          type: string
+        - name: organizationId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: date
+          in: query
+          required: true
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: flowName
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -188,32 +188,32 @@ paths:
   /psps/{pspId}:
     get:
       tags:
-      - PSP
+        - PSP
       summary: '...'
       description: '...'
       operationId: PSPController_searchFlowByPsp
       parameters:
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: dateFrom
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: dateTo
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: flowId
-        in: query
-        schema:
-          type: string
-      - name: organizationId
-        in: query
-        schema:
-          type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: dateTo
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: flowId
+          in: query
+          schema:
+            type: string
+        - name: organizationId
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: OK
@@ -224,29 +224,29 @@ paths:
   /psps/{pspId}/iur/{iur}:
     get:
       tags:
-      - PSP
+        - PSP
       summary: '...'
       description: '...'
       operationId: PSPController_searchFlowByPspAndIuv
       parameters:
-      - name: iur
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: dateFrom
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: dateTo
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
+        - name: iur
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: dateTo
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
       responses:
         "200":
           description: OK
@@ -257,29 +257,29 @@ paths:
   /psps/{pspId}/iuv/{iuv}:
     get:
       tags:
-      - PSP
+        - PSP
       summary: '...'
       description: '...'
       operationId: PSPController_searchFlowByPspAndIuv
       parameters:
-      - name: iuv
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: pspId
-        in: path
-        required: true
-        schema:
-          type: string
-      - name: dateFrom
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
-      - name: dateTo
-        in: query
-        schema:
-          $ref: '#/components/schemas/LocalDate'
+        - name: iuv
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: pspId
+          in: path
+          required: true
+          schema:
+            type: string
+        - name: dateFrom
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
+        - name: dateTo
+          in: query
+          schema:
+            $ref: '#/components/schemas/LocalDate'
       responses:
         "200":
           description: OK
@@ -354,21 +354,17 @@ components:
       type: object
       properties:
         title:
-          description: "A short, summary of the problem type. Written in english and\
-            \ readable for engineers (usually not suited for non technical stakeholders\
-            \ and not localized); example: Service Unavailable"
+          description: "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
           type: string
         status:
           format: int32
-          description: The HTTP status code generated by the origin server for this
-            occurrence of the problem.
+          description: The HTTP status code generated by the origin server for this occurrence of the problem.
           maximum: 600
           minimum: 100
           type: integer
           example: 200
         details:
-          description: A human readable explanation specific to this occurrence of
-            the problem.
+          description: A human readable explanation specific to this occurrence of the problem.
           type: string
           example: There was an error processing the request
   securitySchemes:
