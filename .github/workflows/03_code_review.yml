@@ -34,13 +34,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@b134fb7af9a4d8b9b933eafb5cf5e12d88ee8ff1
+        uses: pagopa/github-actions-template/maven-code-review@525266fb788f4da438e5919fcf660fe8637271ed # 2.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
           project_key: ${{env.PROJECT_KEY}}
-          coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/model/**,**/entities/*,org/openapi/**,**/enums/**,**/constant/**,**/util/openapi/**,**/util/error/exception/persistence/**,**/**Enum.java,**/**Constants.java"
+          coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/entities/*"
           coverage_report_path: "target/jacoco-report/jacoco.xml"
-          cpd_exclusions: "**/model/**,**/models/**,**/entities/*"
+          cpd_exclusions: "**/models/**,**/entities/*"
           java_distribution: "graalvm"
           java_version: "17.0.7"

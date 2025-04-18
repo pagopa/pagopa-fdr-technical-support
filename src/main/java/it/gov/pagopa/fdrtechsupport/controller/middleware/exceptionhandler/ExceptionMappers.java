@@ -8,7 +8,6 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException;
 import it.gov.pagopa.fdrtechsupport.controller.model.error.response.ProblemJson;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
-import jakarta.inject.Inject;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.UnexpectedTypeException;
 import jakarta.ws.rs.WebApplicationException;
@@ -24,7 +23,11 @@ import org.jboss.resteasy.reactive.server.ServerExceptionMapper;
 
 public class ExceptionMappers {
 
-  @Inject Logger log;
+  Logger log;
+
+  public ExceptionMappers(Logger log) {
+    this.log = log;
+  }
 
   @ServerExceptionMapper
   public Response mapWebApplicationException(WebApplicationException webApplicationException) {
@@ -42,7 +45,6 @@ public class ExceptionMappers {
   public RestResponse<ProblemJson> mapAppException(AppException appEx) {
     AppErrorCodeMessageEnum codeMessage = appEx.getCodeMessage();
     RestResponse.Status status = codeMessage.httpStatus();
-    String message = codeMessage.message(appEx.getArgs());
 
     ProblemJson errorResponse =
         ProblemJson.builder()

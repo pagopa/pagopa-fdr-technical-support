@@ -1,8 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.util.error.exception;
 
-import java.io.Serializable;
-
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
+import java.io.Serializable;
 import lombok.Getter;
 
 @Getter

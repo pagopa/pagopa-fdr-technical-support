@@ -6,7 +6,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import joptsimple.internal.Strings;
 import lombok.Getter;
 
 public class NoSQLQueryBuilder {
@@ -67,7 +66,7 @@ public class NoSQLQueryBuilder {
 
   public String getQuery() {
 
-    String concatenatedClauses = Strings.join(this.queryClauses, ", ");
+    String concatenatedClauses = String.join(", ", this.queryClauses);
     return "{ " + concatenatedClauses + " }";
   }
 }
