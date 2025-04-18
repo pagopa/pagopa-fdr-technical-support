@@ -43,8 +43,8 @@ public interface FdrRestClient {
   PaginatedFlowsBySenderAndReceiverResponse getFlowByIur(
       @PathParam("pspId") String pspId,
       @PathParam("iur") String iur,
-      @QueryParam("createdFrom") String createdFrom,
-      @QueryParam("createdTo") String createdTo,
+      @QueryParam("dateFrom") String createdFrom,
+      @QueryParam("dateTo") String createdTo,
       @QueryParam("page") Integer pageNumber,
       @QueryParam("size") Integer pageSize);
 }
