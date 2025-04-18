@@ -260,7 +260,7 @@
             <configuration>
               <executable>/bin/bash</executable>
               <arguments>
-                <argument>openapi/generate_openapi_infra.sh</argument>
+                <argument>./generate_openapi_infra.sh</argument>
               </arguments>
             </configuration>
           </execution>

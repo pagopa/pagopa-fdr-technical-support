@@ -18,5 +18,5 @@ jq '
       .openapi = "3.0.1"
     else . end
   )
-' openapi/openapi.json  > infra/api/openapi.json
+' openapi/openapi.json  > openapi/openapi_infra.json
 
