@@ -111,7 +111,7 @@ public class WorkerService {
         DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
 
     // call FdR-Fase3 API in order to retrieve required response, searching by IUV
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     PaginatedFlowsBySenderAndReceiverResponse response =
         fdrClient.getFlowByIuv(
             pspId,
@@ -145,7 +145,7 @@ public class WorkerService {
         DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
 
     // call FdR-Fase3 API in order to retrieve required response, searching by IUR
-    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
     PaginatedFlowsBySenderAndReceiverResponse response =
         fdrClient.getFlowByIur(
             pspId,
