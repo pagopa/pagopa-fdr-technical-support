@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "fdr-techical-support API",
-    "version": "1.0.14-8-PAGOPA-2696"
+    "version": "1.0.14-9-PAGOPA-2696"
   },
   "servers": [
     {
