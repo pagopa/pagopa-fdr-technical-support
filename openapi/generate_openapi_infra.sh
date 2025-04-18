@@ -5,7 +5,10 @@ if [[ "$(pwd)" =~ .*"openapi".* ]]; then
 fi
 
 jq '
-# Remove API descriptions
+  # Convert a containing-comma string in an array
+  ($tags | split(",")) as $tagsArray |
+
+  # Remove API descriptions
   walk(
     if type == "object" then
       del(.info.description, .requestBody.required, .exclusiveMinimum, .get.description, .post.description, .put.description, .delete.description)
@@ -18,5 +21,5 @@ jq '
       .openapi = "3.0.1"
     else . end
   )
-' openapi/openapi.json  > openapi/openapi_infra.json
+' openapi/openapi.json  > infra/api/openapi.json
 
