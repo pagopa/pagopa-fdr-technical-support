@@ -41,7 +41,7 @@ module "api_v1" {
   service_url = local.service_url
 
   content_format = "openapi"
-  content_value  = templatefile("../openapi/openapi.json", {
+  content_value  = templatefile("../openapi/openapi_infra.json", {
     host = local.host,
     service = local.apim.product_id
   })

@@ -11,35 +11,27 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
 import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import org.openapi.quarkus.api_fdr_json.model.ErrorResponse;
 
 @Path("/info")
 @Tag(name = "Info", description = "Info operations")
 public interface IInfoController {
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Operation(
-            operationId = "InfoController_healthCheck",
-            summary = "Health-check",
-            description = "Get health check and deployment-related information")
-    @APIResponses(
-            value = {
-                    @APIResponse(
-                            responseCode = "200",
-                            description = "Success",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = InfoResponse.class))),
-                    @APIResponse(
-                            responseCode = "500",
-                            description = "Internal Server Error",
-                            content =
-                            @Content(
-                                    mediaType = MediaType.APPLICATION_JSON,
-                                    schema = @Schema(implementation = ErrorResponse.class),
-                                    example = "..."))
-            })
-    InfoResponse healthCheck();
+  @GET
+  @Produces(MediaType.APPLICATION_JSON)
+  @Operation(
+      operationId = "IInfoController_healthCheck",
+      summary = "Health-check",
+      description = "Get health check and deployment-related information")
+  @APIResponses(
+      value = {
+        @APIResponse(
+            responseCode = "200",
+            description = "Success",
+            content =
+                @Content(
+                    mediaType = MediaType.APPLICATION_JSON,
+                    schema = @Schema(implementation = InfoResponse.class))),
+        @APIResponse(ref = "#/components/responses/ErrorResponse500"),
+      })
+  InfoResponse healthCheck();
 }
