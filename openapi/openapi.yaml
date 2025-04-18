@@ -154,7 +154,7 @@ info:
     **FDR-0406** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json
   termsOfService: https://www.pagopa.gov.it/
   title: Fdr technical support - Api
-  version: 1.1.0-3-PAGOPA-2696
+  version: 1.1.0-4-PAGOPA-2696
 servers:
   - url: http://localhost:8080
     description: Localhost base URL
