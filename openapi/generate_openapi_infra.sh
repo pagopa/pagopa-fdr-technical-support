@@ -5,9 +5,6 @@ if [[ "$(pwd)" =~ .*"openapi".* ]]; then
 fi
 
 jq '
-  # Convert a containing-comma string in an array
-  ($tags | split(",")) as $tagsArray |
-
   # Remove API descriptions
   walk(
     if type == "object" then
