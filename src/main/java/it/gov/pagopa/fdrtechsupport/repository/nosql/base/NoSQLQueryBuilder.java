@@ -16,7 +16,7 @@ public class NoSQLQueryBuilder {
 
   private static final String NOT_NULL_CLAUSE_TEMPLATE = "'%s': {'$ne' : null}";
 
-  private static final String IN_CLAUSE_TEMPLATE = "'%s': {'$in' : [:%s]}";
+  private static final String IN_CLAUSE_TEMPLATE = "'%s': {'$in' : :%s}";
 
   private List<String> queryClauses;
 
