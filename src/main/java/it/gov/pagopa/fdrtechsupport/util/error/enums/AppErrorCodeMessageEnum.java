@@ -9,12 +9,14 @@ public enum AppErrorCodeMessageEnum {
       "0400",
       "bad.request",
       RestResponse.Status.BAD_REQUEST,
-      "An error occurred while validating the provided dates. Date from and date to must be either null o filled in, if present, date from must be less than date to"),
+      "An error occurred while validating the provided dates. Date from and date to must be either"
+          + " null o filled in, if present, date from must be less than date to"),
   FLOW_NOT_FOUND(
       "0404",
       "flow.not.found",
       RestResponse.Status.NOT_FOUND,
-      "An error occurred during the search of flow. The needed flow does not exists in current environment"),
+      "An error occurred during the search of flow. The needed flow does not exists in current"
+          + " environment"),
   FLOW_NOT_FOUND_CLIENT(
       "1404",
       "flow.not.found",
@@ -29,7 +31,8 @@ public enum AppErrorCodeMessageEnum {
       "0500",
       "system.error",
       RestResponse.Status.INTERNAL_SERVER_ERROR,
-      "An error occurred during computation. This could be caused by an applicative error and it is probably required to open an issue."),
+      "An error occurred during computation. This could be caused by an applicative error and it is"
+          + " probably required to open an issue."),
   BAD_REQUEST(
       "0400",
       "bad.request",
@@ -44,12 +47,14 @@ public enum AppErrorCodeMessageEnum {
       "0402",
       "bad.request.inputJson.instant",
       RestResponse.Status.BAD_REQUEST,
-      "An error occurred during execution of request syntactic validation, in particular regarding the analysis of date values"),
+      "An error occurred during execution of request syntactic validation, in particular regarding"
+          + " the analysis of date values"),
   BAD_REQUEST_INPUT_JSON_ENUM(
       "0403",
       "bad.request.inputJson.enum",
       RestResponse.Status.BAD_REQUEST,
-      "An error occurred during execution of request syntactic validation, in particular regarding the analysis of enumerative values"),
+      "An error occurred during execution of request syntactic validation, in particular regarding"
+          + " the analysis of enumerative values"),
   BAD_REQUEST_INPUT_JSON_DESERIALIZE_ERROR(
       "0404",
       "bad.request.inputJson.deserialize",
@@ -59,12 +64,14 @@ public enum AppErrorCodeMessageEnum {
       "0405",
       "bad.request.inputJson.notValidJsonFormat",
       RestResponse.Status.BAD_REQUEST,
-      "An error occurred during execution of analysis of JSON request, in particular regarding its format"),
+      "An error occurred during execution of analysis of JSON request, in particular regarding its"
+          + " format"),
   INVALID_FILE_TYPE(
       "0406",
       "bad.request.invalidFileType",
       RestResponse.Status.BAD_REQUEST,
-      "An error occurred while validating the provided file type. The file must be of type xml or json");
+      "An error occurred while validating the provided file type. The file must be of type xml or"
+          + " json");
 
   private final String errorCode;
   private final String errorMessageKey;

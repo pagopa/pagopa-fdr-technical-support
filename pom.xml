@@ -5,7 +5,7 @@
 
   <groupId>it.gov.pagopa</groupId>
   <artifactId>fdr-techical-support</artifactId>
-  <version>1.1.0</version>
+  <version>1.1.0-6-PAGOPA-2696</version>
 
   <properties>
     <compiler-plugin.version>3.12.1</compiler-plugin.version>
@@ -124,10 +124,17 @@
       <artifactId>azure-storage-blob</artifactId>
       <version>12.22.3</version>
     </dependency>
+
+    <!-- -->
     <dependency>
       <groupId>io.quarkus</groupId>
       <artifactId>quarkus-mongodb-panache</artifactId>
     </dependency>
+    <dependency>
+      <groupId>io.quarkus</groupId>
+      <artifactId>quarkus-hibernate-orm-panache</artifactId>
+    </dependency>
+
     <dependency>
       <groupId>org.testcontainers</groupId>
       <artifactId>junit-jupiter</artifactId>
@@ -235,6 +242,26 @@
                 <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                 <maven.home>${maven.home}</maven.home>
               </systemPropertyVariables>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>exec-maven-plugin</artifactId>
+        <version>3.0.0</version>
+        <executions>
+          <execution>
+            <id>autogenerate-openapi-for-infra</id>
+            <phase>package</phase>
+            <goals>
+              <goal>exec</goal>
+            </goals>
+            <configuration>
+              <executable>/bin/bash</executable>
+              <arguments>
+                <argument>./generate_openapi_infra.sh</argument>
+              </arguments>
             </configuration>
           </execution>
         </executions>

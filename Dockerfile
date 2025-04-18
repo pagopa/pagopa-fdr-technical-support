@@ -1,8 +1,11 @@
 ## Stage 1 : build with maven builder image with native capabilities
 FROM quay.io/quarkus/ubi-quarkus-graalvmce-builder-image:22.3-java17@sha256:6e0894685358782ce5fee88537bcbb6c31256f1c7b4566182a56da934d03bb5f AS build
+USER root
+RUN microdnf install -y jq
 COPY --chown=quarkus:quarkus mvnw /code/mvnw
 COPY --chown=quarkus:quarkus .mvn /code/.mvn
 COPY --chown=quarkus:quarkus pom.xml /code/
+COPY --chown=quarkus:quarkus generate_openapi_infra.sh /code/
 USER quarkus
 WORKDIR /code
 RUN chmod +x ./mvnw && ./mvnw -B org.apache.maven.plugins:maven-dependency-plugin:3.1.2:go-offline

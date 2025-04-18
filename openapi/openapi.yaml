@@ -2,7 +2,7 @@
 openapi: 3.1.0
 components:
   schemas:
-    FdrBaseInfo:
+    FlowBaseInfo:
       type: object
       properties:
         fdr:
@@ -11,7 +11,7 @@ components:
           type: string
         organizationId:
           type: string
-    FdrFullInfoResponse:
+    FlowContentResponse:
       type: object
       properties:
         dateFrom:
@@ -20,26 +20,6 @@ components:
           $ref: "#/components/schemas/LocalDate"
         data:
           type: string
-    FrResponse:
-      type: object
-      properties:
-        dateFrom:
-          $ref: "#/components/schemas/LocalDate"
-        dateTo:
-          $ref: "#/components/schemas/LocalDate"
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/FdrBaseInfo"
-    FrSingleDateResponse:
-      type: object
-      properties:
-        date:
-          $ref: "#/components/schemas/LocalDate"
-        data:
-          type: array
-          items:
-            $ref: "#/components/schemas/FdrBaseInfo"
     InfoResponse:
       type: object
       properties:
@@ -68,6 +48,26 @@ components:
       format: date
       examples:
         - 2022-03-10
+    MultipleFlowsOnSingleDateResponse:
+      type: object
+      properties:
+        date:
+          $ref: "#/components/schemas/LocalDate"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlowBaseInfo"
+    MultipleFlowsResponse:
+      type: object
+      properties:
+        dateFrom:
+          $ref: "#/components/schemas/LocalDate"
+        dateTo:
+          $ref: "#/components/schemas/LocalDate"
+        data:
+          type: array
+          items:
+            $ref: "#/components/schemas/FlowBaseInfo"
     ProblemJson:
       type: object
       properties:
@@ -154,7 +154,7 @@ info:
     **FDR-0406** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json
   termsOfService: https://www.pagopa.gov.it/
   title: Fdr technical support - Api
-  version: 1.1.0
+  version: 1.1.0-6-PAGOPA-2696
 servers:
   - url: http://localhost:8080
     description: Localhost base URL
@@ -257,7 +257,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrResponse"
+                $ref: "#/components/schemas/MultipleFlowsResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "404":
@@ -315,13 +315,19 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
+        - description: "The flow name, used as a search filter"
+          example: 2025-01-0188888888888-0001
+          name: flowName
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrSingleDateResponse"
+                $ref: "#/components/schemas/MultipleFlowsOnSingleDateResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "404":
@@ -415,7 +421,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FdrFullInfoResponse"
+                $ref: "#/components/schemas/FlowContentResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "404":
@@ -473,13 +479,19 @@ paths:
           in: query
           schema:
             $ref: "#/components/schemas/LocalDate"
+        - description: "The flow name, used as a search filter"
+          example: 2025-01-0188888888888-0001
+          name: flowName
+          in: query
+          schema:
+            type: string
       responses:
         "200":
           description: Success
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrResponse"
+                $ref: "#/components/schemas/MultipleFlowsOnSingleDateResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "404":
@@ -553,7 +565,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrResponse"
+                $ref: "#/components/schemas/MultipleFlowsResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "500":
@@ -621,7 +633,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrResponse"
+                $ref: "#/components/schemas/MultipleFlowsResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "500":
@@ -689,7 +701,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/FrResponse"
+                $ref: "#/components/schemas/MultipleFlowsResponse"
         "400":
           $ref: "#/components/responses/ErrorResponse400"
         "500":

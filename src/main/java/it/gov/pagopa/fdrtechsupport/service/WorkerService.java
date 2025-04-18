@@ -1,344 +1,307 @@
 package it.gov.pagopa.fdrtechsupport.service;
 
-import it.gov.pagopa.fdrtechsupport.client.FdrOldRestClient;
 import it.gov.pagopa.fdrtechsupport.client.FdrRestClient;
+import it.gov.pagopa.fdrtechsupport.client.model.PaginatedFlowsBySenderAndReceiverResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowRevisionInfo;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsOnSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.repository.model.ReEventEntity;
+import it.gov.pagopa.fdrtechsupport.repository.nosql.ReEventRepository;
+import it.gov.pagopa.fdrtechsupport.repository.storage.FdR1HistoryRepository;
+import it.gov.pagopa.fdrtechsupport.repository.storage.FdR3HistoryRepository;
+import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ClientResponseMapper;
+import it.gov.pagopa.fdrtechsupport.service.middleware.mapper.ReEventEntityMapper;
+import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
+import it.gov.pagopa.fdrtechsupport.service.model.DateTimeRequest;
+import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
-import it.gov.pagopa.fdrtechsupport.models.*;
-import it.gov.pagopa.fdrtechsupport.repository.FdrHistoryTableRepository;
-import it.gov.pagopa.fdrtechsupport.repository.FdrTableRepository;
-import it.gov.pagopa.fdrtechsupport.repository.model.FdrEventEntity;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
-import org.eclipse.microprofile.config.inject.ConfigProperty;
-import org.eclipse.microprofile.rest.client.inject.RestClient;
-import org.jboss.logging.Logger;
-import org.openapi.quarkus.api_fdr_json.model.FdrByPspIdIuvIurBase;
-import org.openapi.quarkus.api_fdr_nodo_json.model.GetXmlRendicontazioneResponse;
-
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 @ApplicationScoped
+@Slf4j
 public class WorkerService {
 
-  private static final String outcomeOK = "OK";
-  private static final String outcomeKO = "KO";
-
-  @Inject Logger log;
-
-  @ConfigProperty(name = "re-cosmos.day-limit")
-  Integer reCosmosDayLimit;
-
-  @ConfigProperty(name = "date-range-limit")
+  @ConfigProperty(name = "re-events.date-range.limit")
   Integer dateRangeLimit;
 
-  @Inject FdrTableRepository fdrTableRepository;
-  @Inject FdrHistoryTableRepository fdrHistoryTableRepository;
+  private final ReEventRepository reEventRepository;
 
-  @RestClient FdrOldRestClient fdrOldRestClient;
+  private final FdR1HistoryRepository fdr1HistoryRepository;
 
-  @RestClient FdrRestClient fdrRestClient;
+  private final FdR3HistoryRepository fdr3HistoryRepository;
 
-  private FdrRevisionInfo eventTFdrRevisionInfo(FdrEventEntity e) {
-    return FdrRevisionInfo.builder().build();
+  @RestClient @Inject FdrRestClient fdrClient;
+
+  private final ReEventEntityMapper reEventMapper;
+
+  private final ClientResponseMapper clientResponseMapper;
+
+  public WorkerService(
+      ReEventRepository reEventRepository,
+      FdR1HistoryRepository fdr1HistoryRepository,
+      FdR3HistoryRepository fdr3HistoryRepository,
+      ReEventEntityMapper reEventMapper,
+      ClientResponseMapper clientResponseMapper) {
+
+    this.reEventRepository = reEventRepository;
+    this.fdr1HistoryRepository = fdr1HistoryRepository;
+    this.fdr3HistoryRepository = fdr3HistoryRepository;
+    this.reEventMapper = reEventMapper;
+    this.clientResponseMapper = clientResponseMapper;
   }
 
-  private List<FdrEventEntity> find(
-      DateRequest reDates,
-      Optional<String> pspId,
-      Optional<String> flowName,
-      Optional<String> organizationId,
-      Optional<List<String>> actions,
-      Optional<String> eventAndStatus) {
-    List<FdrEventEntity> reStorageEvents = new ArrayList<>();
-    log.infof("Querying re table storage");
-    reStorageEvents.addAll(
-        fdrTableRepository.findWithParams(
-            reDates.getFrom(),
-            reDates.getTo(),
-            pspId,
-            flowName,
-            organizationId,
-            actions,
-            eventAndStatus));
-    log.infof("Done querying re table storage");
-    return reStorageEvents;
-  }
+  public MultipleFlowsResponse searchFlowByPsp(
+      String pspId, String flowName, String organizationId, LocalDate dateFrom, LocalDate dateTo) {
 
-  public FrResponse getFdrByPsp(
-      Optional<String> pspId,
-      Optional<String> flowName,
-      Optional<String> organizationId,
-      LocalDate dateFrom,
-      LocalDate dateTo) {
+    // check dates and get valid ones
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
 
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    List<FdrEventEntity> reStorageEvents =
-        find(
+    // retrieve RE events from MongoDB, then check if something is found
+    List<ReEventEntity> reEvents =
+        reEventRepository.find(
             dateRequest,
-            pspId,
-            flowName,
-            organizationId,
-            Optional.of(List.of("PUBLISH")),
+            Optional.ofNullable(pspId),
+            Optional.ofNullable(flowName),
+            Optional.ofNullable(organizationId),
+            Optional.of(List.of("PUBLISH", "nodoInviaFlussoRendicontazione")),
             Optional.of("internalPublished"));
+    if (reEvents.isEmpty()) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    }
 
-    Map<String, List<FdrEventEntity>> reGroups =
-        reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getFdr));
+    // grouping RE events by flow name and sort them by creation date
+    Map<String, List<ReEventEntity>> reEventGroups =
+        reEvents.stream()
+            .filter(event -> event.getFdr() != null)
+            .collect(Collectors.groupingBy(ReEventEntity::getFdr));
+    reEventGroups
+        .values()
+        .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
+    log.debug(
+        "Found [{}] different flow names in [{}] total events!",
+        reEventGroups.size(),
+        reEvents.size());
 
-    log.infof("found %d different flowNames in %d events", reGroups.size(), reStorageEvents.size());
-
-    List<FdrBaseInfo> collect =
-        reGroups.keySet().stream()
-            .map(
-                fn -> {
-                  List<FdrEventEntity> events = reGroups.get(fn);
-                  FdrBaseInfo fdrInfo = new FdrBaseInfo();
-                  List<FdrEventEntity> ordered =
-                      events.stream()
-                          .sorted(Comparator.comparing(FdrEventEntity::getCreated))
-                          .toList();
-                  fdrInfo.setFdr(ordered.get(0).getFdr());
-                  fdrInfo.setCreated(ordered.get(0).getCreated());
-                  fdrInfo.setOrganizationId(
-                      ordered.stream()
-                          .filter(s -> s.getOrganizationId() != null)
-                          .findAny()
-                          .map(s -> s.getOrganizationId())
-                          .orElseGet(() -> null));
-                  return fdrInfo;
-                })
-            .collect(Collectors.toList());
-
-    return FrResponse.builder()
+    // map the element and return the required result
+    List<FlowBaseInfo> collect =
+        reEventGroups.values().stream().map(reEventMapper::toFlowBaseInfo).toList();
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
         .data(collect)
         .build();
   }
 
-  public FrResponse getFdrByPspAndIuv(
+  public MultipleFlowsResponse searchFlowByPspAndIuv(
       String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    List<FdrByPspIdIuvIurBase> data =
-        fdrHistoryTableRepository.findFlowByPspAndIuvIur(
-            dateRequest, pspId, Optional.of(iuv), Optional.empty());
 
-    List<FdrBaseInfo> dataResponse =
-        data.stream()
-            .map(
-                fn ->
-                    new FdrBaseInfo(
-                        fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
-            .toList();
+    // check dates and get valid ones
+    DateTimeRequest dateTimeRequest =
+        DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
 
-    return FrResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
-        .build();
-  }
-
-  public FrResponse getFdrByPspAndIur(
-      String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    List<FdrByPspIdIuvIurBase> data =
-        fdrHistoryTableRepository.findFlowByPspAndIuvIur(
-            dateRequest, pspId, Optional.empty(), Optional.of(iur));
-
-    List<FdrBaseInfo> dataResponse =
-        data.stream()
-            .map(
-                fn ->
-                    new FdrBaseInfo(
-                        fn.getFdr(), fn.getCreated().toString(), fn.getOrganizationId()))
-            .toList();
-
-    return FrResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(dataResponse.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
-        .build();
-  }
-
-  public FrResponse getFdrActions(
-      String pspId,
-      Optional<String> flowName,
-      Optional<String> organizationId,
-      Optional<List<String>> actions,
-      LocalDate dateFrom,
-      LocalDate dateTo) {
-
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    List<FdrEventEntity> reStorageEvents =
-        find(
-            dateRequest,
-            Optional.of(pspId),
-            flowName,
-            organizationId,
-            actions,
-            Optional.of("interface"));
-
-    if (reStorageEvents.isEmpty()) {
+    // call FdR-Fase3 API in order to retrieve required response, searching by IUV
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    PaginatedFlowsBySenderAndReceiverResponse response =
+        fdrClient.getFlowByIuv(
+            pspId,
+            iuv,
+            formatter.format(dateTimeRequest.getFrom()),
+            formatter.format(dateTimeRequest.getTo()),
+            1,
+            1000);
+    if (response == null) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    Map<String, List<FdrEventEntity>> reGroups =
-        reStorageEvents.stream().collect(Collectors.groupingBy(FdrEventEntity::getSessionId));
-
-    log.infof("found %d different flowNames in %d events", reGroups.size(), reStorageEvents.size());
-
-    List<FdrBaseInfo> collect =
-        reGroups.keySet().stream()
-            .map(
-                fn -> {
-                  List<FdrEventEntity> events = reGroups.get(fn);
-                  FdrActionInfo fdrInfo = new FdrActionInfo();
-                  List<FdrEventEntity> ordered =
-                      events.stream()
-                          .sorted(Comparator.comparing(FdrEventEntity::getCreated))
-                          .toList();
-                  fdrInfo.setFdr(ordered.get(0).getFdr());
-                  fdrInfo.setCreated(ordered.get(0).getCreated());
-                  fdrInfo.setFlowAction(ordered.get(0).getFdrAction());
-                  fdrInfo.setServiceIdentifier(ordered.get(0).getServiceIdentifier());
-                  fdrInfo.setOrganizationId(ordered.get(0).getOrganizationId());
-                  fdrInfo.setOrganizationId(
-                      ordered.stream()
-                          .filter(s -> s.getOrganizationId() != null)
-                          .findAny()
-                          .map(FdrEventEntity::getOrganizationId)
-                          .orElse(null));
-                  return fdrInfo;
-                })
-            .collect(Collectors.toList());
-
-    return FrResponse.builder()
-        .dateFrom(dateRequest.getFrom())
-        .dateTo(dateRequest.getTo())
-        .data(collect.stream().sorted(Comparator.comparing(FdrBaseInfo::getCreated)).toList())
+    // map the element and return the required result
+    List<FlowBaseInfo> dataResponse =
+        response.getData().stream()
+            .map(clientResponseMapper::toFlowBaseInfo)
+            .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
+            .toList();
+    return MultipleFlowsResponse.builder()
+        .dateFrom(dateTimeRequest.getFrom().toLocalDate())
+        .dateTo(dateTimeRequest.getTo().toLocalDate())
+        .data(dataResponse)
         .build();
   }
 
-  /**
-   * Check dates validity
-   *
-   * @param dateFrom
-   * @param dateTo
-   */
-  private DateRequest verifyDate(LocalDate dateFrom, LocalDate dateTo) {
-    if (dateFrom == null && dateTo != null || dateFrom != null && dateTo == null) {
-      throw new AppException(
-          AppErrorCodeMessageEnum.DATE_BAD_REQUEST, "Date from and date to must be both defined");
-    } else if (dateFrom != null && dateFrom.isAfter(dateTo)) {
-      throw new AppException(
-          AppErrorCodeMessageEnum.DATE_BAD_REQUEST, "Date from must be before date to");
+  public MultipleFlowsResponse searchFlowByPspAndIur(
+      String pspId, String iur, LocalDate dateFrom, LocalDate dateTo) {
+
+    // check dates and get valid ones
+    DateTimeRequest dateTimeRequest =
+        DateUtil.getValidDateTimeRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // call FdR-Fase3 API in order to retrieve required response, searching by IUR
+    DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
+    PaginatedFlowsBySenderAndReceiverResponse response =
+        fdrClient.getFlowByIur(
+            pspId,
+            iur,
+            formatter.format(dateTimeRequest.getFrom()),
+            formatter.format(dateTimeRequest.getTo()),
+            1,
+            1000);
+    if (response == null) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
-    if (dateFrom == null) {
-      dateTo = LocalDate.now();
-      dateFrom = dateTo.minusDays(dateRangeLimit);
-    }
-    return DateRequest.builder().from(dateFrom).to(dateTo).build();
+
+    // map the element and return the required result
+    List<FlowBaseInfo> dataResponse =
+        response.getData().stream()
+            .map(clientResponseMapper::toFlowBaseInfo)
+            .sorted(Comparator.comparing(FlowBaseInfo::getCreated))
+            .toList();
+    return MultipleFlowsResponse.builder()
+        .dateFrom(dateTimeRequest.getFrom().toLocalDate())
+        .dateTo(dateTimeRequest.getTo().toLocalDate())
+        .data(dataResponse)
+        .build();
   }
 
-  public FrResponse getRevisions(
+  public MultipleFlowsOnSingleDateResponse searchFlowOperations(
+      String pspId, String organizationId, List<String> actions, String flowName, LocalDate date) {
+
+    // check dates and get valid ones
+    DateRequest dateRequest = DateUtil.getValidDateRequest(date, date, dateRangeLimit);
+
+    // retrieve RE events from MongoDB, then check if something is found
+    List<ReEventEntity> reEvents =
+        reEventRepository.find(
+            dateRequest,
+            Optional.ofNullable(pspId),
+            Optional.ofNullable(flowName),
+            Optional.ofNullable(organizationId),
+            Optional.of(actions),
+            Optional.of("interface"));
+    if (reEvents.isEmpty()) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    }
+
+    // grouping RE events by flow name and sort them by creation date
+    Map<String, List<ReEventEntity>> reEventGroups =
+        reEvents.stream().collect(Collectors.groupingBy(ReEventEntity::getFdr));
+    reEventGroups
+        .values()
+        .forEach(eventGroup -> eventGroup.sort(Comparator.comparing(ReEventEntity::getCreated)));
+    log.debug(
+        "Found [{}] different flow names in [{}] total events!",
+        reEventGroups.size(),
+        reEvents.size());
+
+    // map the element and return the required result
+    List<FlowBaseInfo> collect =
+        reEventGroups.values().stream()
+            .map(reEventMapper::toFlowActionInfo)
+            .collect(Collectors.toList());
+    return MultipleFlowsOnSingleDateResponse.builder()
+        .date(dateRequest.getFrom())
+        .data(collect)
+        .build();
+  }
+
+  public MultipleFlowsResponse getRevisions(
       String organizationId, String flowName, LocalDate dateFrom, LocalDate dateTo) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
-    List<FdrEventEntity> reStorageEvents =
-        find(
+
+    // check dates and get valid ones
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // retrieve RE events from MongoDB, then check if something is found
+    List<ReEventEntity> reEvents =
+        reEventRepository.find(
             dateRequest,
             Optional.empty(),
-            Optional.of(flowName),
-            Optional.of(organizationId),
+            Optional.ofNullable(flowName),
+            Optional.ofNullable(organizationId),
             Optional.of(List.of("PUBLISH")),
             Optional.of("internalPublished"));
-
-    if (reStorageEvents.isEmpty()) {
+    if (reEvents.isEmpty()) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    boolean isOld =
-        reStorageEvents.stream()
-            .anyMatch(
-                s ->
-                    s.getServiceIdentifier() != null && !s.getServiceIdentifier().equals("FDR003"));
+    // check if RE events found are generated not by FDR003 service (a.k.a. FdR-Fase3)
+    boolean isOld = reEvents.stream().anyMatch(s -> !"FDR003".equals(s.getServiceIdentifier()));
 
-    List<FdrEventEntity> flowEvents;
-    if (!isOld) {
+    // If RE events are generated by FdR1 service, get only the INTERN ones
+    List<ReEventEntity> flowEvents;
+    if (isOld) {
       flowEvents =
-          reStorageEvents.stream()
-              .filter(s -> s.getRevision() != null)
-              .sorted(Comparator.comparing(FdrEventEntity::getCreated))
-              .toList();
-    } else {
-      flowEvents =
-          reStorageEvents.stream()
+          reEvents.stream()
               .filter(s -> "INTERN".equals(s.getHttpType()))
-              .sorted(Comparator.comparing(FdrEventEntity::getCreated))
+              .sorted(Comparator.comparing(ReEventEntity::getCreated))
+              .toList();
+    }
+    // If RE events are generated by FdR3 service, get only the ones with valid revision
+    else {
+      flowEvents =
+          reEvents.stream()
+              .filter(s -> s.getRevision() != null)
+              .sorted(Comparator.comparing(ReEventEntity::getCreated))
               .toList();
     }
 
+    // If no valid flow is filtered, throw an exception
     if (flowEvents.isEmpty()) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
 
-    FdrRevisionInfo fdrs = new FdrRevisionInfo();
-    fdrs.setFdr(flowName);
-    fdrs.setOrganizationId(flowEvents.get(0).getOrganizationId());
-    fdrs.setPspId(flowEvents.get(0).getPspId());
-    fdrs.setCreated(flowEvents.get(0).getCreated());
-    fdrs.setRevisions(new ArrayList<>());
-
-    if (!isOld) {
-      flowEvents.forEach(
-          creation ->
-              fdrs.getRevisions()
-                  .add(new RevisionInfo(creation.getRevision().toString(), creation.getCreated())));
-    } else {
-      flowEvents.forEach(
-          creation -> fdrs.getRevisions().add(new RevisionInfo("NA", creation.getCreated())));
-    }
-
-    return FrResponse.builder()
+    // map the element and return the required result
+    FlowRevisionInfo flowRevisionInfo =
+        reEventMapper.toFlowRevisionInfo(flowName, flowEvents, isOld);
+    return MultipleFlowsResponse.builder()
         .dateFrom(dateRequest.getFrom())
         .dateTo(dateRequest.getTo())
-        .data(List.of(fdrs))
+        .data(List.of(flowRevisionInfo))
         .build();
   }
 
-  public FdrFullInfoResponse getFlow(
+  public FlowContentResponse getFlow(
       String organizationId,
-      String psp,
+      String pspId,
       String flowName,
       String revision,
       LocalDate dateFrom,
       LocalDate dateTo,
       String fileType) {
-    DateRequest dateRequest = verifyDate(dateFrom, dateTo);
+
+    // check dates and get valid ones
+    DateRequest dateRequest = DateUtil.getValidDateRequest(dateFrom, dateTo, dateRangeLimit);
+
+    // extract file type default if not set
     fileType = (fileType == null || fileType.isBlank()) ? "json" : fileType;
+
+    // retrieve flow content based on passed file type
+    String flowContent;
     if (fileType.equalsIgnoreCase("json")) {
-      log.infof("Querying history table storage");
-      String flow =
-          fdrHistoryTableRepository.getBlobByNameAndRevision(dateRequest, flowName, revision);
-      log.infof("Done querying history table storage");
-      return FdrFullInfoResponse.builder()
-          .dateFrom(dateRequest.getFrom())
-          .dateTo(dateRequest.getTo())
-          .data(flow)
-          .build();
+      flowContent =
+          fdr3HistoryRepository.getByFlowNameAndPspIdAndRevision(flowName, pspId, revision);
+
     } else if (fileType.equalsIgnoreCase("xml")) {
-      GetXmlRendicontazioneResponse getXmlRendicontazioneResponse =
-          fdrOldRestClient.nodoChiediFlussoRendicontazione(organizationId, flowName);
-      return FdrFullInfoResponse.builder()
-          .dateFrom(dateRequest.getFrom())
-          .dateTo(dateRequest.getTo())
-          .data(getXmlRendicontazioneResponse.getXmlRendicontazione())
-          .build();
+      flowContent =
+          fdr1HistoryRepository.getByFlowNameAndPspIdAndRevision(
+              dateRequest, flowName, pspId, organizationId, revision);
+
     } else {
       throw new AppException(AppErrorCodeMessageEnum.INVALID_FILE_TYPE);
     }
+
+    // map the element and return the required result
+    return FlowContentResponse.builder()
+        .dateFrom(dateRequest.getFrom())
+        .dateTo(dateRequest.getTo())
+        .data(flowContent)
+        .build();
   }
 }

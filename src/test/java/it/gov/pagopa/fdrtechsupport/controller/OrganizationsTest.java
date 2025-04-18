@@ -17,7 +17,7 @@ import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
 import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
@@ -83,7 +83,7 @@ class OrganizationsTest {
         .getBlobClient(fileName)
         .upload(BinaryData.fromString("jsonzip"));
 
-    FdrFullInfoResponse res =
+    FlowContentResponse res =
         given()
             .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
             .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
@@ -93,7 +93,7 @@ class OrganizationsTest {
             .then()
             .statusCode(200)
             .extract()
-            .as(new TypeRef<FdrFullInfoResponse>() {});
+            .as(new TypeRef<FlowContentResponse>() {});
     assertThat(new String(Base64.getDecoder().decode(res.getData())), equalTo("jsonzip"));
   }
 
@@ -109,7 +109,7 @@ class OrganizationsTest {
             AppConstantTestHelper.newTableFdrPublish(
                 LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, "", ""));
 
-    FdrFullInfoResponse res =
+    FlowContentResponse res =
         given()
             .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
             .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
@@ -119,7 +119,7 @@ class OrganizationsTest {
             .then()
             .statusCode(200)
             .extract()
-            .as(new TypeRef<FdrFullInfoResponse>() {});
+            .as(new TypeRef<FlowContentResponse>() {});
     String data = res.getData();
     assertThat(res.getData(), equalTo("<xml>test</xml>"));
   }

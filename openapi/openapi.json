@@ -2,7 +2,7 @@
   "openapi": "3.1.0",
   "components": {
     "schemas": {
-      "FdrBaseInfo": {
+      "FlowBaseInfo": {
         "type": "object",
         "properties": {
           "fdr": {
@@ -16,7 +16,7 @@
           }
         }
       },
-      "FdrFullInfoResponse": {
+      "FlowContentResponse": {
         "type": "object",
         "properties": {
           "dateFrom": {
@@ -27,37 +27,6 @@
           },
           "data": {
             "type": "string"
-          }
-        }
-      },
-      "FrResponse": {
-        "type": "object",
-        "properties": {
-          "dateFrom": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "dateTo": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FdrBaseInfo"
-            }
-          }
-        }
-      },
-      "FrSingleDateResponse": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FdrBaseInfo"
-            }
           }
         }
       },
@@ -100,6 +69,37 @@
         "examples": [
           "2022-03-10"
         ]
+      },
+      "MultipleFlowsOnSingleDateResponse": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowBaseInfo"
+            }
+          }
+        }
+      },
+      "MultipleFlowsResponse": {
+        "type": "object",
+        "properties": {
+          "dateFrom": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "dateTo": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowBaseInfo"
+            }
+          }
+        }
       },
       "ProblemJson": {
         "type": "object",
@@ -204,7 +204,7 @@
     "description": "Technical support API for FDR (aka \"Flussi di Rendicontazione\")\n\n## OPERATIONAL ERROR CODES\n\n<details><summary>Details</summary>\nNAME | CODE | ERROR MESSAGE TEMPLATE | DESCRIPTION\n- | - | - | -\n**FDR-0400** | *DATE_BAD_REQUEST* | Bad request | An error occurred while validating the provided dates. <br>Date from and date to must be either null o filled <br>in, if present, date from must be less than date to\n**FDR-0404** | *FLOW_NOT_FOUND* | No flow found | An error occurred during the search of flow. The needed <br>flow does not exists in current environment\n**FDR-1404** | *FLOW_NOT_FOUND_CLIENT* | No flow found | An error occurred during the search of flow. The needed <br>flow was not found\n**FDR-1401** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services\n**FDR-0500** | *ERROR* | An unexpected error has occurred. Please contact support | An error occurred during computation. This could be <br>caused by an applicative error and it is probably required <br>to open an issue.\n**FDR-0400** | *BAD_REQUEST* | Bad request | A generic 'Bad Request' error is occurred during request <br>validation\n**FDR-0401** | *BAD_REQUEST_INPUT_JSON* | Bad request. Field [%] is equals to [%] but this is <br>not a valid value. | A generic error occurred during execution of request <br>syntactic validation\n**FDR-0402** | *BAD_REQUEST_INPUT_JSON_INSTANT* | Bad request. Field [%] is equals to [%] but it is expected <br>to be in ISO-8601 format [yyyy-MM-ddTHH:mm:ssZ] (example: <br>[2025-01-01T12:00:00.123000Z]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>date values\n**FDR-0403** | *BAD_REQUEST_INPUT_JSON_ENUM* | Bad request. Field [%] is equals to [%] but it is expected <br>to be one of the following values: [%]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>enumerative values\n**FDR-0404** | *BAD_REQUEST_INPUT_JSON_DESERIALIZE_<br>ERROR* | Bad request. Field [%] generate a deserialization error. <br>Please, set the correct value. | An error occurred during execution of deserialization <br>of request from a JSON string\n**FDR-0405** | *BAD_REQUEST_INPUT_JSON_NON_VALID_<br>FORMAT* | Bad request. The format of JSON request is not valid. | An error occurred during execution of analysis of JSON <br>request, in particular regarding its format\n**FDR-0406** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json\n",
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Fdr technical support - Api",
-    "version": "1.1.0"
+    "version": "1.1.0-6-PAGOPA-2696"
   },
   "servers": [
     {
@@ -321,7 +321,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -375,6 +375,15 @@
             "schema": {
               "$ref": "#/components/schemas/LocalDate"
             }
+          },
+          {
+            "description": "The flow name, used as a search filter",
+            "example": "2025-01-0188888888888-0001",
+            "name": "flowName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -383,7 +392,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrSingleDateResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -484,7 +493,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FdrFullInfoResponse"
+                  "$ref": "#/components/schemas/FlowContentResponse"
                 }
               }
             }
@@ -538,6 +547,15 @@
             "schema": {
               "$ref": "#/components/schemas/LocalDate"
             }
+          },
+          {
+            "description": "The flow name, used as a search filter",
+            "example": "2025-01-0188888888888-0001",
+            "name": "flowName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -546,7 +564,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -625,7 +643,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -694,7 +712,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -763,7 +781,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }

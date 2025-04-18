@@ -1,8 +1,7 @@
 package it.gov.pagopa.fdrtechsupport.controller;
 
-
 import it.gov.pagopa.fdrtechsupport.controller.interfaces.IInfoController;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.InfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.common.response.InfoResponse;
 import it.gov.pagopa.fdrtechsupport.service.HealthCheckService;
 
 public class InfoController implements IInfoController {
