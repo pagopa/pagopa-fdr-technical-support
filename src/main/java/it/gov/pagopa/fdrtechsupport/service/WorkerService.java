@@ -152,8 +152,11 @@ public class WorkerService {
             iur,
             formatter.format(dateTimeRequest.getFrom()),
             formatter.format(dateTimeRequest.getTo()),
-            0,
+            1,
             1000);
+    if (response == null) {
+      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+    }
 
     // map the element and return the required result
     List<FlowBaseInfo> dataResponse =

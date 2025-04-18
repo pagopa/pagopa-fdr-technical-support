@@ -40,7 +40,7 @@ public interface IPSPController {
 
   @GET
   @Operation(
-      operationId = "PSPController_searchFlowByPspAndIuv",
+      operationId = "PSPController_searchFlowByPspAndIur",
       summary = "...",
       description = "...")
   @APIResponses(value = {})
