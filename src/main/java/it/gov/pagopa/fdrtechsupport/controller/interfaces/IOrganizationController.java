@@ -114,8 +114,6 @@ public interface IOrganizationController {
       errors = {
         AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
         AppErrorCodeMessageEnum.INVALID_FILE_TYPE,
-        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT,
-        AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT,
         AppErrorCodeMessageEnum.ERROR
       })
   FlowContentResponse getFlow(

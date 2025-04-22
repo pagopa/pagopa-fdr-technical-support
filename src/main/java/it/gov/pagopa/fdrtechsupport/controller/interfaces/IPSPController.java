@@ -111,7 +111,10 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST})
+  @APIAppErrorMetadata(errors = {
+      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+  })
   MultipleFlowsResponse searchFlowByPspAndIuv(
       @RestPath
           @Parameter(
@@ -161,7 +164,10 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST})
+  @APIAppErrorMetadata(errors = {
+      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+  })
   MultipleFlowsResponse searchFlowByPspAndIur(
       @RestPath
           @Parameter(
