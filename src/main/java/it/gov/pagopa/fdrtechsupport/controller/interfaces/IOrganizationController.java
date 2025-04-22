@@ -1,8 +1,8 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FdrFullInfoResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsOnSingleDateResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.openapi.APIAppErrorMetadata;
 import it.gov.pagopa.fdrtechsupport.openapi.APITableMetadata;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
@@ -36,8 +36,9 @@ public interface IOrganizationController {
       operationId = "IOrganizationController_getRevisions",
       summary = "This API allow to retrieve all revision of a FdR for a specific CI",
       description =
-          "Retrieves a list of revision of a FdR for a given flow name and Creditor Institution (CI) "
-              + "within a specified date range. If no dates are specified, data from the last 7 days is returned.")
+          "Retrieves a list of revision of a FdR for a given flow name and Creditor Institution"
+              + " (CI) within a specified date range. If no dates are specified, data from the last"
+              + " 7 days is returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -46,7 +47,7 @@ public interface IOrganizationController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse404"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500"),
@@ -59,7 +60,7 @@ public interface IOrganizationController {
       cacheable = true)
   @APIAppErrorMetadata(
       errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST, AppErrorCodeMessageEnum.FLOW_NOT_FOUND})
-  FrResponse getRevisions(
+  MultipleFlowsResponse getRevisions(
       @RestPath
           @Parameter(
               description = "The organization fiscal code, used as a search filter",
@@ -87,9 +88,9 @@ public interface IOrganizationController {
       operationId = "IOrganizationController_getFlow",
       summary = "This API allow to retrieve a revision of a FdR for a specific CI and PSP",
       description =
-          "Retrieves a specific revision of a FdR for a given Creditor Institution (CI), "
-              + "Payment Service Provider (PSP), flow name, and revision number within a specified date range."
-              + " If no dates are specified, data from the last 7 days is returned.")
+          "Retrieves a specific revision of a FdR for a given Creditor Institution (CI), Payment"
+              + " Service Provider (PSP), flow name, and revision number within a specified date"
+              + " range. If no dates are specified, data from the last 7 days is returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -98,7 +99,7 @@ public interface IOrganizationController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FdrFullInfoResponse.class))),
+                    schema = @Schema(implementation = FlowContentResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse404"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500"),
@@ -113,11 +114,9 @@ public interface IOrganizationController {
       errors = {
         AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
         AppErrorCodeMessageEnum.INVALID_FILE_TYPE,
-        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT,
-        AppErrorCodeMessageEnum.FLOW_NOT_FOUND_CLIENT,
         AppErrorCodeMessageEnum.ERROR
       })
-  FdrFullInfoResponse getFlow(
+  FlowContentResponse getFlow(
       @RestPath
           @Parameter(
               description = "The organization fiscal code, used as a search filter",
@@ -155,7 +154,8 @@ public interface IOrganizationController {
       @RestQuery
           @Parameter(
               description =
-                  "The expected FdR format, based of this parameter the flow is retrieved from FdR-1 (xml) or FdR-3 (json)",
+                  "The expected FdR format, based of this parameter the flow is retrieved from"
+                      + " FdR-1 (xml) or FdR-3 (json)",
               example = "xml")
           @DefaultValue("json")
           String fileType);
@@ -167,8 +167,9 @@ public interface IOrganizationController {
       summary =
           "This API allow to retrieve a list of download tentative of FdR for a specific date",
       description =
-          "Retrieves a list of download tentative of FdR for a given Creditor Institution (CI) and "
-              + "Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.")
+          "Retrieves a list of download tentative of FdR for a given Creditor Institution (CI) and"
+              + " Payment Service Provider (PSP) within the specified date. If no date is"
+              + " specified, data from previous day is returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -177,7 +178,7 @@ public interface IOrganizationController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrSingleDateResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsOnSingleDateResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse404"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500")
@@ -190,7 +191,7 @@ public interface IOrganizationController {
       cacheable = true)
   @APIAppErrorMetadata(
       errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST, AppErrorCodeMessageEnum.FLOW_NOT_FOUND})
-  FrSingleDateResponse getDownloads(
+  MultipleFlowsOnSingleDateResponse getDownloads(
       @RestPath
           @Parameter(
               description = "The organization fiscal code, used as a search filter",
@@ -209,7 +210,12 @@ public interface IOrganizationController {
           @Parameter(
               description = "The date for retrieving FdR download tentative",
               example = "2025-03-10")
-          LocalDate date);
+          LocalDate date,
+      @RestQuery("flowName")
+          @Parameter(
+              description = "The flow name, used as a search filter",
+              example = "2025-01-0188888888888-0001")
+          String flowName);
 
   @GET
   @Path("/{organizationId}/psps/{pspId}/upload")
@@ -217,8 +223,9 @@ public interface IOrganizationController {
       operationId = "IOrganizationController_getUploads",
       summary = "This API allow to retrieve a list of upload tentative of FdR for a specific date",
       description =
-          "Retrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and "
-              + "Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.")
+          "Retrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and"
+              + " Payment Service Provider (PSP) within the specified date. If no date is"
+              + " specified, data from previous day is returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -227,7 +234,7 @@ public interface IOrganizationController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsOnSingleDateResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse404"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500")
@@ -240,7 +247,7 @@ public interface IOrganizationController {
       cacheable = true)
   @APIAppErrorMetadata(
       errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST, AppErrorCodeMessageEnum.FLOW_NOT_FOUND})
-  FrResponse getUploads(
+  MultipleFlowsOnSingleDateResponse getUploads(
       @RestPath
           @Parameter(
               description = "The organization fiscal code, used as a search filter",
@@ -259,5 +266,10 @@ public interface IOrganizationController {
           @Parameter(
               description = "The date for retrieving FdR upload tentative",
               example = "2025-03-10")
-          LocalDate date);
+          LocalDate date,
+      @RestQuery("flowName")
+          @Parameter(
+              description = "The flow name, used as a search filter",
+              example = "2025-01-0188888888888-0001")
+          String flowName);
 }

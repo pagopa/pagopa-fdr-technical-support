@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport;
 
-import it.gov.pagopa.fdrtechsupport.models.ProblemJson;
+import it.gov.pagopa.fdrtechsupport.controller.model.error.response.ProblemJson;
 import jakarta.ws.rs.core.Application;
 import jakarta.ws.rs.core.MediaType;
 import org.eclipse.microprofile.openapi.annotations.Components;
@@ -36,18 +36,18 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                           schema = @Schema(implementation = ProblemJson.class),
                           example =
                               """
-                                                  {
-                                                  "errorId": "50905466-1881-457b-b42f-fb7b2bfb1610",
-                                                  "httpStatusCode": 500,
-                                                  "httpStatusDescription": "Internal Server Error",
-                                                  "appErrorCode": "FDR-0500",
-                                                  "errors": [
-                                                    {
-                                                      "message": "An unexpected error has occurred. Please contact support."
-                                                    }
-                                                  ]
-                                                }\
-                                                """)),
+                                {
+                                "errorId": "50905466-1881-457b-b42f-fb7b2bfb1610",
+                                "httpStatusCode": 500,
+                                "httpStatusDescription": "Internal Server Error",
+                                "appErrorCode": "FDR-0500",
+                                "errors": [
+                                  {
+                                    "message": "An unexpected error has occurred. Please contact support."
+                                  }
+                                ]
+                              }\
+                              """)),
               @APIResponse(
                   name = "ErrorResponse400",
                   responseCode = "400",
@@ -58,18 +58,18 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                           schema = @Schema(implementation = ProblemJson.class),
                           example =
                               """
-                                                {
-                                                  "httpStatusCode": 400,
-                                                  "httpStatusDescription": "Bad Request",
-                                                  "appErrorCode": "FDR-XXXX",
-                                                  "errors": [
-                                                    {
-                                                      "path": "<detail.path.if-exist>",
-                                                      "message": "<detail.message>"
-                                                    }
-                                                  ]
-                                                }\
-                                                """)),
+                              {
+                                "httpStatusCode": 400,
+                                "httpStatusDescription": "Bad Request",
+                                "appErrorCode": "FDR-XXXX",
+                                "errors": [
+                                  {
+                                    "path": "<detail.path.if-exist>",
+                                    "message": "<detail.message>"
+                                  }
+                                ]
+                              }\
+                              """)),
               @APIResponse(
                   name = "ErrorResponse404",
                   responseCode = "404",
@@ -80,17 +80,17 @@ import org.eclipse.microprofile.openapi.annotations.servers.ServerVariable;
                           schema = @Schema(implementation = ProblemJson.class),
                           example =
                               """
-                                                {
-                                                  "httpStatusCode": 404,
-                                                  "httpStatusDescription": "Not Found",
-                                                  "appErrorCode": "FDR-XXXX",
-                                                  "errors": [
-                                                    {
-                                                      "message": "<detail.message>"
-                                                    }
-                                                  ]
-                                                }\
-                                                """))
+                              {
+                                "httpStatusCode": 404,
+                                "httpStatusDescription": "Not Found",
+                                "appErrorCode": "FDR-XXXX",
+                                "errors": [
+                                  {
+                                    "message": "<detail.message>"
+                                  }
+                                ]
+                              }\
+                              """))
             }),
     info =
         @Info(

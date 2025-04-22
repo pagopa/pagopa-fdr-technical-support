@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.InfoResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.common.response.InfoResponse;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.Produces;

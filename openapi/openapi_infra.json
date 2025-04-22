@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "components": {
     "schemas": {
-      "FdrBaseInfo": {
+      "FlowBaseInfo": {
         "type": "object",
         "properties": {
           "fdr": {
@@ -16,7 +16,7 @@
           }
         }
       },
-      "FdrFullInfoResponse": {
+      "FlowContentResponse": {
         "type": "object",
         "properties": {
           "dateFrom": {
@@ -27,37 +27,6 @@
           },
           "data": {
             "type": "string"
-          }
-        }
-      },
-      "FrResponse": {
-        "type": "object",
-        "properties": {
-          "dateFrom": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "dateTo": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FdrBaseInfo"
-            }
-          }
-        }
-      },
-      "FrSingleDateResponse": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
-          },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FdrBaseInfo"
-            }
           }
         }
       },
@@ -100,6 +69,37 @@
         "examples": [
           "2022-03-10"
         ]
+      },
+      "MultipleFlowsOnSingleDateResponse": {
+        "type": "object",
+        "properties": {
+          "date": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowBaseInfo"
+            }
+          }
+        }
+      },
+      "MultipleFlowsResponse": {
+        "type": "object",
+        "properties": {
+          "dateFrom": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "dateTo": {
+            "$ref": "#/components/schemas/LocalDate"
+          },
+          "data": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/FlowBaseInfo"
+            }
+          }
+        }
       },
       "ProblemJson": {
         "type": "object",
@@ -203,7 +203,7 @@
   "info": {
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Fdr technical support - Api",
-    "version": "1.1.0"
+    "version": "1.1.0-6-PAGOPA-2696"
   },
   "servers": [
     {
@@ -211,7 +211,7 @@
       "description": "Localhost base URL"
     },
     {
-      "url": "https://{host}/technical-support/api/v1",
+      "url": "https://{host}/technical-support/fdr/api/v1",
       "description": "Base URL",
       "variables": {
         "host": {
@@ -318,7 +318,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -371,6 +371,15 @@
             "schema": {
               "$ref": "#/components/schemas/LocalDate"
             }
+          },
+          {
+            "description": "The flow name, used as a search filter",
+            "example": "2025-01-0188888888888-0001",
+            "name": "flowName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -379,7 +388,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrSingleDateResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -479,7 +488,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FdrFullInfoResponse"
+                  "$ref": "#/components/schemas/FlowContentResponse"
                 }
               }
             }
@@ -532,6 +541,15 @@
             "schema": {
               "$ref": "#/components/schemas/LocalDate"
             }
+          },
+          {
+            "description": "The flow name, used as a search filter",
+            "example": "2025-01-0188888888888-0001",
+            "name": "flowName",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -540,7 +558,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
@@ -618,7 +636,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -686,7 +704,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
@@ -754,7 +772,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/FrResponse"
+                  "$ref": "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }

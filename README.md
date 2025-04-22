@@ -5,7 +5,7 @@
 
 ---
 ## API Documentation 📖
-See the [OpenAPI 3 here.](https://raw.githubusercontent.com/pagopa/pagopa-fdr-technical-support/openapi/openapi.json)
+See the [OpenAPI 3 here.](https://editor-next.swagger.io/?url=https://raw.githubusercontent.com/pagopa/pagopa-fdr-technical-support/refs/heads/main/openapi/openapi.json)
 
 ---
 

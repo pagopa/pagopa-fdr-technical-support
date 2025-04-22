@@ -1,6 +1,6 @@
 package it.gov.pagopa.fdrtechsupport.controller.interfaces;
 
-import it.gov.pagopa.fdrtechsupport.controller.model.response.FrResponse;
+import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
 import it.gov.pagopa.fdrtechsupport.openapi.APIAppErrorMetadata;
 import it.gov.pagopa.fdrtechsupport.openapi.APITableMetadata;
 import it.gov.pagopa.fdrtechsupport.openapi.APITableMetadata.APISecurityMode;
@@ -37,8 +37,9 @@ public interface IPSPController {
       operationId = "IPSPController_searchFlowByPsp",
       summary = "This API allow to retrieve a list of FdR for a specific PSP",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) within a specified date range, "
-              + " optionally filtered by flow name. If no dates are specified, data from the last 7 days is returned.")
+          "Retrieves a list of FdR for a given Payment Service Provider (PSP) within a specified"
+              + " date range,  optionally filtered by flow name. If no dates are specified, data"
+              + " from the last 7 days is returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -47,7 +48,7 @@ public interface IPSPController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500"),
       })
@@ -58,7 +59,7 @@ public interface IPSPController {
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
   @APIAppErrorMetadata(errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST})
-  FrResponse searchFlowByPsp(
+  MultipleFlowsResponse searchFlowByPsp(
       @RestPath
           @Parameter(
               description = "The PSP identifier, used as a search filter",
@@ -89,8 +90,9 @@ public interface IPSPController {
       operationId = "IPSPController_searchFlowByPspAndIuv",
       summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range."
-              + " If no dates are specified, data from the last 7 days is returned.")
+          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
+              + " specified date range. If no dates are specified, data from the last 7 days is"
+              + " returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -99,7 +101,7 @@ public interface IPSPController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500"),
       })
@@ -109,8 +111,11 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST})
-  FrResponse searchFlowByPspAndIuv(
+  @APIAppErrorMetadata(errors = {
+      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+  })
+  MultipleFlowsResponse searchFlowByPspAndIuv(
       @RestPath
           @Parameter(
               description = "The PSP identifier, used as a search filter",
@@ -138,8 +143,9 @@ public interface IPSPController {
       operationId = "IPSPController_searchFlowByPspAndIur",
       summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range."
-              + " If no dates are specified, data from the last 7 days is returned.")
+          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
+              + " specified date range. If no dates are specified, data from the last 7 days is"
+              + " returned.")
   @APIResponses(
       value = {
         @APIResponse(
@@ -148,7 +154,7 @@ public interface IPSPController {
             content =
                 @Content(
                     mediaType = MediaType.APPLICATION_JSON,
-                    schema = @Schema(implementation = FrResponse.class))),
+                    schema = @Schema(implementation = MultipleFlowsResponse.class))),
         @APIResponse(ref = "#/components/responses/ErrorResponse400"),
         @APIResponse(ref = "#/components/responses/ErrorResponse500"),
       })
@@ -158,8 +164,11 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {AppErrorCodeMessageEnum.DATE_BAD_REQUEST})
-  FrResponse searchFlowByPspAndIur(
+  @APIAppErrorMetadata(errors = {
+      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+  })
+  MultipleFlowsResponse searchFlowByPspAndIur(
       @RestPath
           @Parameter(
               description = "The PSP identifier, used as a search filter",
