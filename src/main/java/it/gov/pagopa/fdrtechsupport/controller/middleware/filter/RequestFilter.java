@@ -22,14 +22,16 @@ public class RequestFilter implements ContainerRequestFilter {
   public void filter(ContainerRequestContext containerRequestContext) throws IOException {
 
     String requestPath = containerRequestContext.getUriInfo().getPath();
-    if (!skippedEndpoints.contains(requestPath)) {
+    // Sanitize the requestPath to prevent log injection
+    String sanitizedRequestPath = requestPath.replaceAll("[\\r\\n]", "");
+    if (!skippedEndpoints.contains(sanitizedRequestPath)) {
 
       long requestStartTime = System.nanoTime();
       containerRequestContext.setProperty("requestStartTime", requestStartTime);
       String requestMethod = containerRequestContext.getMethod();
       MultivaluedMap<String, String> queryParameters =
           containerRequestContext.getUriInfo().getQueryParameters();
-      log.infof("REQ --> %s [uri:%s] [params:%s]", requestMethod, requestPath, queryParameters);
+      log.infof("REQ --> %s [uri:%s] [params:%s]", requestMethod, sanitizedRequestPath, queryParameters);
     }
   }
 }
