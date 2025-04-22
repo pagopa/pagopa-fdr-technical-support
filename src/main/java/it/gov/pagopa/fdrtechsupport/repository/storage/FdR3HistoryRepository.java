@@ -36,7 +36,8 @@ public class FdR3HistoryRepository {
 
     String fileName =
         String.format(AppConstant.HISTORICAL_FDR3_FILENAME_TEMPLATE, flowName, pspId, revision);
-    log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
+    String sanitizedFileName = fileName.replaceAll("[\\r\\n]", "_");
+    log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, sanitizedFileName);
     try {
       byte[] byteArray =
           getBlobServiceClient()
