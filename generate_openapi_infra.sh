@@ -17,6 +17,13 @@ jq '
     if type == "object" and has("openapi") and .openapi == "3.1.0" then
       .openapi = "3.0.1"
     else . end
+  ) |
+
+  walk(
+    if type == "object" then
+      with_entries(if .key == "examples" then .key = "example" else . end)
+        | del(.info.description, .requestBody.required, .exclusiveMinimum, .get.description, .post.description, .put.description, .delete.description)
+    else . end
   )
 ' openapi/openapi.json  > openapi/openapi_infra.json
 
