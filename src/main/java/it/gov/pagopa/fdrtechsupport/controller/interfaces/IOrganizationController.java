@@ -34,9 +34,9 @@ public interface IOrganizationController {
   @Path("/{organizationId}/flows/{flowId}")
   @Operation(
       operationId = "IOrganizationController_getRevisions",
-      summary = "This API allow to retrieve all revision of a FdR for a specific CI",
+      summary = "Retrieve all revision of a FdR for a specific CI",
       description =
-          "Retrieves a list of revision of a FdR for a given flow name and Creditor Institution"
+          "This API permits to retrieve a list of revision of a FdR for a given flow name and Creditor Institution"
               + " (CI) within a specified date range. If no dates are specified, data from the last"
               + " 7 days is returned.")
   @APIResponses(
@@ -86,9 +86,9 @@ public interface IOrganizationController {
   @Path("/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}")
   @Operation(
       operationId = "IOrganizationController_getFlow",
-      summary = "This API allow to retrieve a revision of a FdR for a specific CI and PSP",
+      summary = "Retrieve a revision of a FdR for a specific CI and PSP",
       description =
-          "Retrieves a specific revision of a FdR for a given Creditor Institution (CI), Payment"
+          "This API permits to retrieve a specific revision of a FdR for a given Creditor Institution (CI), Payment"
               + " Service Provider (PSP), flow name, and revision number within a specified date"
               + " range. If no dates are specified, data from the last 7 days is returned.")
   @APIResponses(
@@ -165,9 +165,9 @@ public interface IOrganizationController {
   @Operation(
       operationId = "IOrganizationController_getDownloads",
       summary =
-          "This API allow to retrieve a list of download tentative of FdR for a specific date",
+          "Retrieve a list of download tentative of FdR for a specific date",
       description =
-          "Retrieves a list of download tentative of FdR for a given Creditor Institution (CI) and"
+          "This API permits to retrieve a list of download tentative of FdR for a given Creditor Institution (CI) and"
               + " Payment Service Provider (PSP) within the specified date. If no date is"
               + " specified, data from previous day is returned.")
   @APIResponses(
@@ -221,9 +221,9 @@ public interface IOrganizationController {
   @Path("/{organizationId}/psps/{pspId}/upload")
   @Operation(
       operationId = "IOrganizationController_getUploads",
-      summary = "This API allow to retrieve a list of upload tentative of FdR for a specific date",
+      summary = "Retrieve a list of upload tentative of FdR for a specific date",
       description =
-          "Retrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and"
+          "This API permits to retrieve a list of upload tentative of FdR for a given Creditor Institution (CI) and"
               + " Payment Service Provider (PSP) within the specified date. If no date is"
               + " specified, data from previous day is returned.")
   @APIResponses(

@@ -35,9 +35,9 @@ public interface IPSPController {
   @Path("/{pspId}")
   @Operation(
       operationId = "IPSPController_searchFlowByPsp",
-      summary = "This API allow to retrieve a list of FdR for a specific PSP",
+      summary = "Retrieve a list of FdR for a specific PSP",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) within a specified"
+          "This API permits to retrieve a list of FdR for a given Payment Service Provider (PSP) within a specified"
               + " date range,  optionally filtered by flow name. If no dates are specified, data"
               + " from the last 7 days is returned.")
   @APIResponses(
@@ -88,9 +88,9 @@ public interface IPSPController {
   @Path("/{pspId}/iuv/{iuv}")
   @Operation(
       operationId = "IPSPController_searchFlowByPspAndIuv",
-      summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
+      summary = "Rretrieve a list of FdR for a specific PSP and IUV",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
+          "This API permits to retrieve a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
               + " specified date range. If no dates are specified, data from the last 7 days is"
               + " returned.")
   @APIResponses(
@@ -141,9 +141,9 @@ public interface IPSPController {
   @Path("/{pspId}/iur/{iur}")
   @Operation(
       operationId = "IPSPController_searchFlowByPspAndIur",
-      summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
+      summary = "Retrieve a list of FdR for a specific PSP and IUR",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
+          "This API permits to retrieve a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
               + " specified date range. If no dates are specified, data from the last 7 days is"
               + " returned.")
   @APIResponses(
