@@ -227,8 +227,21 @@ public class WorkerService {
             Optional.ofNullable(organizationId),
             Optional.of(List.of("PUBLISH")),
             Optional.of("internalPublished"));
+
+    // [PIDM-590] As mitigation for missing RE events on FdR3, this fallback is added in order to return FdR1 flows
     if (reEvents.isEmpty()) {
-      throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+      reEvents =
+              reEventRepository.find(
+                      dateRequest,
+                      Optional.empty(),
+                      Optional.ofNullable(flowName),
+                      Optional.ofNullable(organizationId),
+                      Optional.of(List.of("nodoInviaFlussoRendicontazione")),
+                      Optional.of("internalPublished"));
+
+      if (reEvents.isEmpty()) {
+        throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
+      }
     }
 
     // check if RE events found are generated not by FDR003 service (a.k.a. FdR-Fase3)
