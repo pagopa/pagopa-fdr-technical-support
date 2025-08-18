@@ -22,7 +22,10 @@ import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -104,7 +107,7 @@ public class WorkerService {
   }
 
   public MultipleFlowsResponse searchFlowByPspAndIuv(
-      String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
+      String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo, String organizationId) {
 
     // check dates and get valid ones
     DateTimeRequest dateTimeRequest =
@@ -118,6 +121,7 @@ public class WorkerService {
             iuv,
             formatter.format(dateTimeRequest.getFrom()),
             formatter.format(dateTimeRequest.getTo()),
+            organizationId,
             1,
             1000);
     if (response == null) {

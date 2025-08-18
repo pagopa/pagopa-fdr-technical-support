@@ -111,10 +111,11 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {
-      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
-      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
-  })
+  @APIAppErrorMetadata(
+      errors = {
+        AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+      })
   MultipleFlowsResponse searchFlowByPspAndIuv(
       @RestPath
           @Parameter(
@@ -135,7 +136,8 @@ public interface IPSPController {
           LocalDate dateFrom,
       @RestQuery
           @Parameter(description = "The ending date for retrieving flows", example = "2025-03-10")
-          LocalDate dateTo);
+          LocalDate dateTo,
+      @RestQuery @Parameter(description = "The ID of an EC") String organizationId);
 
   @GET
   @Path("/{pspId}/iur/{iur}")
@@ -164,10 +166,11 @@ public interface IPSPController {
       authentication = APISecurityMode.APIKEY,
       readWriteIntense = ReadWrite.READ,
       cacheable = true)
-  @APIAppErrorMetadata(errors = {
-      AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
-      AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
-  })
+  @APIAppErrorMetadata(
+      errors = {
+        AppErrorCodeMessageEnum.DATE_BAD_REQUEST,
+        AppErrorCodeMessageEnum.UNAUTHORIZED_CLIENT
+      })
   MultipleFlowsResponse searchFlowByPspAndIur(
       @RestPath
           @Parameter(
