@@ -143,9 +143,9 @@ public interface IPSPController {
   @Path("/{pspId}/iur/{iur}")
   @Operation(
       operationId = "IPSPController_searchFlowByPspAndIur",
-      summary = "This API allow to retrieve a list of FdR for a specific PSP and IUV",
+      summary = "This API allow to retrieve a list of FdR for a specific PSP and IUR",
       description =
-          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a"
+          "Retrieves a list of FdR for a given Payment Service Provider (PSP) and IUR within a"
               + " specified date range. If no dates are specified, data from the last 7 days is"
               + " returned.")
   @APIResponses(
