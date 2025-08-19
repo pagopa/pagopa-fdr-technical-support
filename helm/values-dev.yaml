@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.1.2-1-PAGOPA-2700-fd-r-3-assistenza-aggiunta-filtri-api'
+    tag: '1.1.2-2-PAGOPA-2700-fd-r-3-assistenza-aggiunta-filtri-api'
   readinessProbe:
     httpGet:
       path: /q/health/ready
