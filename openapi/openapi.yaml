@@ -153,7 +153,7 @@ info:
     **FDR-3000** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services
   termsOfService: https://www.pagopa.gov.it/
   title: Fdr technical support - Api (TEST)
-  version: 1.1.2-1-PAGOPA-2700-fd-r-3-assistenza-aggiunta-filtri-api
+  version: 1.1.2-2-PAGOPA-2700-fd-r-3-assistenza-aggiunta-filtri-api
 servers:
   - url: http://localhost:8080
     description: Localhost base URL
