@@ -31,7 +31,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @QuarkusTestResource(AzuriteResource.class)
 class PspTest {
 
-  @ConfigProperty(name = "fdr-re-table-storage.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
   String connString;
 
   private TableClient tableClient;
