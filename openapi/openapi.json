@@ -1,796 +1,717 @@
 {
-  "openapi": "3.1.0",
-  "components": {
-    "schemas": {
-      "FlowBaseInfo": {
-        "type": "object",
-        "properties": {
-          "fdr": {
-            "type": "string"
+  "openapi" : "3.1.0",
+  "components" : {
+    "schemas" : {
+      "FlowBaseInfo" : {
+        "type" : "object",
+        "properties" : {
+          "fdr" : {
+            "type" : "string"
           },
-          "created": {
-            "type": "string"
+          "created" : {
+            "type" : "string"
           },
-          "organizationId": {
-            "type": "string"
+          "organizationId" : {
+            "type" : "string"
           }
         }
       },
-      "FlowContentResponse": {
-        "type": "object",
-        "properties": {
-          "dateFrom": {
-            "$ref": "#/components/schemas/LocalDate"
+      "FlowContentResponse" : {
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "dateTo": {
-            "$ref": "#/components/schemas/LocalDate"
+          "dateTo" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "data": {
-            "type": "string"
+          "data" : {
+            "type" : "string"
           }
         }
       },
-      "InfoResponse": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "The identificative name of the deployed application",
-            "examples": [
-              "pagopa-fdr-technical-support"
-            ]
+      "InfoResponse" : {
+        "type" : "object",
+        "properties" : {
+          "name" : {
+            "type" : "string",
+            "description" : "The identificative name of the deployed application",
+            "examples" : [ "pagopa-fdr-technical-support" ]
           },
-          "version": {
-            "type": "string",
-            "description": "The current version of the deployed application",
-            "examples": [
-              "1.2.3"
-            ]
+          "version" : {
+            "type" : "string",
+            "description" : "The current version of the deployed application",
+            "examples" : [ "1.2.3" ]
           },
-          "environment": {
-            "type": "string",
-            "description": "The current environment where the application is deployed",
-            "examples": [
-              "dev"
-            ]
+          "environment" : {
+            "type" : "string",
+            "description" : "The current environment where the application is deployed",
+            "examples" : [ "dev" ]
           },
-          "description": {
-            "type": "string",
-            "description": "The descriptive information related to the info response",
-            "examples": [
-              "FDR Technical Support"
-            ]
+          "description" : {
+            "type" : "string",
+            "description" : "The descriptive information related to the info response",
+            "examples" : [ "FDR Technical Support" ]
           }
         }
       },
-      "LocalDate": {
-        "type": "string",
-        "format": "date",
-        "examples": [
-          "2022-03-10"
-        ]
+      "LocalDate" : {
+        "type" : "string",
+        "format" : "date",
+        "examples" : [ "2022-03-10" ]
       },
-      "MultipleFlowsOnSingleDateResponse": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "$ref": "#/components/schemas/LocalDate"
+      "MultipleFlowsOnSingleDateResponse" : {
+        "type" : "object",
+        "properties" : {
+          "date" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FlowBaseInfo"
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowBaseInfo"
             }
           }
         }
       },
-      "MultipleFlowsResponse": {
-        "type": "object",
-        "properties": {
-          "dateFrom": {
-            "$ref": "#/components/schemas/LocalDate"
+      "MultipleFlowsResponse" : {
+        "type" : "object",
+        "properties" : {
+          "dateFrom" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "dateTo": {
-            "$ref": "#/components/schemas/LocalDate"
+          "dateTo" : {
+            "$ref" : "#/components/schemas/LocalDate"
           },
-          "data": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/FlowBaseInfo"
+          "data" : {
+            "type" : "array",
+            "items" : {
+              "$ref" : "#/components/schemas/FlowBaseInfo"
             }
           }
         }
       },
-      "ProblemJson": {
-        "type": "object",
-        "properties": {
-          "title": {
-            "type": "string",
-            "description": "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
+      "ProblemJson" : {
+        "type" : "object",
+        "properties" : {
+          "title" : {
+            "type" : "string",
+            "description" : "A short, summary of the problem type. Written in english and readable for engineers (usually not suited for non technical stakeholders and not localized); example: Service Unavailable"
           },
-          "status": {
-            "type": "integer",
-            "format": "int32",
-            "description": "The HTTP status code generated by the origin server for this occurrence of the problem.",
-            "examples": [
-              200
-            ],
-            "maximum": 600,
-            "minimum": 100
+          "status" : {
+            "type" : "integer",
+            "format" : "int32",
+            "description" : "The HTTP status code generated by the origin server for this occurrence of the problem.",
+            "examples" : [ 200 ],
+            "maximum" : 600,
+            "minimum" : 100
           },
-          "details": {
-            "type": "string",
-            "description": "A human readable explanation specific to this occurrence of the problem.",
-            "examples": [
-              "There was an error processing the request"
-            ]
+          "details" : {
+            "type" : "string",
+            "description" : "A human readable explanation specific to this occurrence of the problem.",
+            "examples" : [ "There was an error processing the request" ]
           }
         }
       }
     },
-    "responses": {
-      "ErrorResponse400": {
-        "description": "Default app exception for status 400",
-        "content": {
-          "application/json": {
-            "example": {
-              "httpStatusCode": 400,
-              "httpStatusDescription": "Bad Request",
-              "appErrorCode": "FDR-XXXX",
-              "errors": [
-                {
-                  "path": "<detail.path.if-exist>",
-                  "message": "<detail.message>"
-                }
-              ]
+    "responses" : {
+      "ErrorResponse400" : {
+        "description" : "Default app exception for status 400",
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "httpStatusCode" : 400,
+              "httpStatusDescription" : "Bad Request",
+              "appErrorCode" : "FDR-XXXX",
+              "errors" : [ {
+                "path" : "<detail.path.if-exist>",
+                "message" : "<detail.message>"
+              } ]
             },
-            "schema": {
-              "$ref": "#/components/schemas/ProblemJson"
+            "schema" : {
+              "$ref" : "#/components/schemas/ProblemJson"
             }
           }
         }
       },
-      "ErrorResponse404": {
-        "description": "Default app exception for status 404",
-        "content": {
-          "application/json": {
-            "example": {
-              "httpStatusCode": 404,
-              "httpStatusDescription": "Not Found",
-              "appErrorCode": "FDR-XXXX",
-              "errors": [
-                {
-                  "message": "<detail.message>"
-                }
-              ]
+      "ErrorResponse404" : {
+        "description" : "Default app exception for status 404",
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "httpStatusCode" : 404,
+              "httpStatusDescription" : "Not Found",
+              "appErrorCode" : "FDR-XXXX",
+              "errors" : [ {
+                "message" : "<detail.message>"
+              } ]
             },
-            "schema": {
-              "$ref": "#/components/schemas/ProblemJson"
+            "schema" : {
+              "$ref" : "#/components/schemas/ProblemJson"
             }
           }
         }
       },
-      "ErrorResponse500": {
-        "description": "Internal Server Error",
-        "content": {
-          "application/json": {
-            "example": {
-              "errorId": "50905466-1881-457b-b42f-fb7b2bfb1610",
-              "httpStatusCode": 500,
-              "httpStatusDescription": "Internal Server Error",
-              "appErrorCode": "FDR-0500",
-              "errors": [
-                {
-                  "message": "An unexpected error has occurred. Please contact support."
-                }
-              ]
+      "ErrorResponse500" : {
+        "description" : "Internal Server Error",
+        "content" : {
+          "application/json" : {
+            "example" : {
+              "errorId" : "50905466-1881-457b-b42f-fb7b2bfb1610",
+              "httpStatusCode" : 500,
+              "httpStatusDescription" : "Internal Server Error",
+              "appErrorCode" : "FDR-0500",
+              "errors" : [ {
+                "message" : "An unexpected error has occurred. Please contact support."
+              } ]
             },
-            "schema": {
-              "$ref": "#/components/schemas/ProblemJson"
+            "schema" : {
+              "$ref" : "#/components/schemas/ProblemJson"
             }
           }
         }
       }
     },
-    "securitySchemes": {
-      "ApiKey": {
-        "type": "apiKey",
-        "name": "Ocp-Apim-Subscription-Key",
-        "in": "header"
+    "securitySchemes" : {
+      "ApiKey" : {
+        "type" : "apiKey",
+        "name" : "Ocp-Apim-Subscription-Key",
+        "in" : "header"
       }
     }
   },
-  "info": {
-    "description": "Technical support API for FDR (aka \"Flussi di Rendicontazione\")\n\n## OPERATIONAL ERROR CODES\n\n<details><summary>Details</summary>\nNAME | CODE | ERROR MESSAGE TEMPLATE | DESCRIPTION\n- | - | - | -\n**FDR-0500** | *ERROR* | An unexpected error has occurred. Please contact support | An error occurred during computation. This could be <br>caused by an applicative error and it is probably required <br>to open an issue.\n**FDR-1000** | *BAD_REQUEST* | Bad request | A generic 'Bad Request' error is occurred during request <br>validation\n**FDR-1001** | *DATE_BAD_REQUEST* | Bad request | An error occurred while validating the provided dates. <br>Date from and date to must be either null o filled <br>in, if present, date from must be less than date to\n**FDR-1002** | *BAD_REQUEST_INPUT_JSON* | Bad request. Field [%] is equals to [%] but this is <br>not a valid value. | A generic error occurred during execution of request <br>syntactic validation\n**FDR-1003** | *BAD_REQUEST_INPUT_JSON_INSTANT* | Bad request. Field [%] is equals to [%] but it is expected <br>to be in ISO-8601 format [yyyy-MM-ddTHH:mm:ssZ] (example: <br>[2025-01-01T12:00:00.123000Z]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>date values\n**FDR-1004** | *BAD_REQUEST_INPUT_JSON_ENUM* | Bad request. Field [%] is equals to [%] but it is expected <br>to be one of the following values: [%]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>enumerative values\n**FDR-1005** | *BAD_REQUEST_INPUT_JSON_DESERIALIZE_<br>ERROR* | Bad request. Field [%] generate a deserialization error. <br>Please, set the correct value. | An error occurred during execution of deserialization <br>of request from a JSON string\n**FDR-1006** | *BAD_REQUEST_INPUT_JSON_NON_VALID_<br>FORMAT* | Bad request. The format of JSON request is not valid. | An error occurred during execution of analysis of JSON <br>request, in particular regarding its format\n**FDR-1007** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json\n**FDR-2000** | *FLOW_NOT_FOUND* | No flow found | An error occurred during the search of flow. The needed <br>flow does not exists in current environment\n**FDR-3000** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services\n",
-    "termsOfService": "https://www.pagopa.gov.it/",
-    "title": "Fdr technical support - Api",
-    "version": "1.1.2"
+  "info" : {
+    "description" : "Technical support API for FDR (aka \"Flussi di Rendicontazione\")\n\n## OPERATIONAL ERROR CODES\n\n<details><summary>Details</summary>\nNAME | CODE | ERROR MESSAGE TEMPLATE | DESCRIPTION\n- | - | - | -\n**FDR-0500** | *ERROR* | An unexpected error has occurred. Please contact support | An error occurred during computation. This could be <br>caused by an applicative error and it is probably required <br>to open an issue.\n**FDR-1000** | *BAD_REQUEST* | Bad request | A generic 'Bad Request' error is occurred during request <br>validation\n**FDR-1001** | *DATE_BAD_REQUEST* | Bad request | An error occurred while validating the provided dates. <br>Date from and date to must be either null o filled <br>in, if present, date from must be less than date to\n**FDR-1002** | *BAD_REQUEST_INPUT_JSON* | Bad request. Field [%] is equals to [%] but this is <br>not a valid value. | A generic error occurred during execution of request <br>syntactic validation\n**FDR-1003** | *BAD_REQUEST_INPUT_JSON_INSTANT* | Bad request. Field [%] is equals to [%] but it is expected <br>to be in ISO-8601 format [yyyy-MM-ddTHH:mm:ssZ] (example: <br>[2025-01-01T12:00:00.123000Z]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>date values\n**FDR-1004** | *BAD_REQUEST_INPUT_JSON_ENUM* | Bad request. Field [%] is equals to [%] but it is expected <br>to be one of the following values: [%]. | An error occurred during execution of request syntactic <br>validation, in particular regarding the analysis of <br>enumerative values\n**FDR-1005** | *BAD_REQUEST_INPUT_JSON_DESERIALIZE_<br>ERROR* | Bad request. Field [%] generate a deserialization error. <br>Please, set the correct value. | An error occurred during execution of deserialization <br>of request from a JSON string\n**FDR-1006** | *BAD_REQUEST_INPUT_JSON_NON_VALID_<br>FORMAT* | Bad request. The format of JSON request is not valid. | An error occurred during execution of analysis of JSON <br>request, in particular regarding its format\n**FDR-1007** | *INVALID_FILE_TYPE* | Invalid file type specified. | An error occurred while validating the provided file <br>type. The file must be of type xml or json\n**FDR-2000** | *FLOW_NOT_FOUND* | No flow found | An error occurred during the search of flow. The needed <br>flow does not exists in current environment\n**FDR-3000** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services\n",
+    "termsOfService" : "https://www.pagopa.gov.it/",
+    "title" : "Fdr technical support - Api (TEST)",
+    "version" : "1.1.2"
   },
-  "servers": [
-    {
-      "url": "http://localhost:8080",
-      "description": "Localhost base URL"
-    },
-    {
-      "url": "https://{host}/technical-support/fdr/api/v1",
-      "description": "Base URL",
-      "variables": {
-        "host": {
-          "description": "Environment host",
-          "enum": [
-            "api.dev.platform.pagopa.it",
-            "api.uat.platform.pagopa.it",
-            "api.platform.pagopa.it"
-          ],
-          "default": "api.dev.platform.pagopa.it"
-        }
+  "servers" : [ {
+    "url" : "http://localhost:8080",
+    "description" : "Localhost base URL"
+  }, {
+    "url" : "https://{host}/technical-support/fdr/api/v1",
+    "description" : "Base URL",
+    "variables" : {
+      "host" : {
+        "description" : "Environment host",
+        "enum" : [ "api.dev.platform.pagopa.it", "api.uat.platform.pagopa.it", "api.platform.pagopa.it" ],
+        "default" : "api.dev.platform.pagopa.it"
       }
     }
-  ],
-  "tags": [
-    {
-      "name": "Info",
-      "description": "Info operations"
-    },
-    {
-      "name": "Organization",
-      "description": "APIs for inspecting creditor institution usage of flows"
-    },
-    {
-      "name": "PSP",
-      "description": "APIs for inspecting PSP usage of flows"
-    }
-  ],
-  "paths": {
-    "/info": {
-      "get": {
-        "summary": "Health-check",
-        "description": "## Description:\nGet health check and deployment-related information",
-        "operationId": "IInfoController_healthCheck",
-        "tags": [
-          "Info"
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/InfoResponse"
+  } ],
+  "tags" : [ {
+    "name" : "Info",
+    "description" : "Info operations"
+  }, {
+    "name" : "Organization",
+    "description" : "APIs for inspecting creditor institution usage of flows"
+  }, {
+    "name" : "PSP",
+    "description" : "APIs for inspecting PSP usage of flows"
+  } ],
+  "paths" : {
+    "/info" : {
+      "get" : {
+        "summary" : "Health-check",
+        "description" : "## Description:\nGet health check and deployment-related information",
+        "operationId" : "IInfoController_healthCheck",
+        "tags" : [ "Info" ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/InfoResponse"
                 }
               }
             }
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/organizations/{organizationId}/flows/{flowId}": {
-      "get": {
-        "summary": "This API allow to retrieve all revision of a FdR for a specific CI",
-        "description": "## Description:\nRetrieves a list of revision of a FdR for a given flow name and Creditor Institution (CI) within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IOrganizationController_getRevisions",
-        "tags": [
-          "Organization"
-        ],
-        "parameters": [
-          {
-            "description": "The flow name, used as a search filter",
-            "example": "2025-01-0188888888888-0001",
-            "required": true,
-            "name": "flowId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The organization fiscal code, used as a search filter",
-            "example": "99999999999",
-            "required": true,
-            "name": "organizationId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The starting date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The ending date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/organizations/{organizationId}/flows/{flowId}" : {
+      "get" : {
+        "summary" : "This API allow to retrieve all revision of a FdR for a specific CI",
+        "description" : "## Description:\nRetrieves a list of revision of a FdR for a given flow name and Creditor Institution (CI) within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IOrganizationController_getRevisions",
+        "tags" : [ "Organization" ],
+        "parameters" : [ {
+          "description" : "The flow name, used as a search filter",
+          "example" : "2025-01-0188888888888-0001",
+          "required" : true,
+          "name" : "flowId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsResponse"
+        }, {
+          "description" : "The organization fiscal code, used as a search filter",
+          "example" : "99999999999",
+          "required" : true,
+          "name" : "organizationId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The starting date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ending date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse404"
+          "404" : {
+            "$ref" : "#/components/responses/ErrorResponse404"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/organizations/{organizationId}/psps/{pspId}/download": {
-      "get": {
-        "summary": "This API allow to retrieve a list of download tentative of FdR for a specific date",
-        "description": "## Description:\nRetrieves a list of download tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IOrganizationController_getDownloads",
-        "tags": [
-          "Organization"
-        ],
-        "parameters": [
-          {
-            "description": "The organization fiscal code, used as a search filter",
-            "example": "99999999999",
-            "required": true,
-            "name": "organizationId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The date for retrieving FdR download tentative",
-            "example": "2025-03-10",
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The flow name, used as a search filter",
-            "example": "2025-01-0188888888888-0001",
-            "name": "flowName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/download" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a list of download tentative of FdR for a specific date",
+        "description" : "## Description:\nRetrieves a list of download tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IOrganizationController_getDownloads",
+        "tags" : [ "Organization" ],
+        "parameters" : [ {
+          "description" : "The organization fiscal code, used as a search filter",
+          "example" : "99999999999",
+          "required" : true,
+          "name" : "organizationId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
+        }, {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The date for retrieving FdR download tentative",
+          "example" : "2025-03-10",
+          "name" : "date",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The flow name, used as a search filter",
+          "example" : "2025-01-0188888888888-0001",
+          "name" : "flowName",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse404"
+          "404" : {
+            "$ref" : "#/components/responses/ErrorResponse404"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/organizations/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}": {
-      "get": {
-        "summary": "This API allow to retrieve a revision of a FdR for a specific CI and PSP",
-        "description": "## Description:\nRetrieves a specific revision of a FdR for a given Creditor Institution (CI), Payment Service Provider (PSP), flow name, and revision number within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-1007** | 400 | Invalid file type specified.\n**FDR-0500** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IOrganizationController_getFlow",
-        "tags": [
-          "Organization"
-        ],
-        "parameters": [
-          {
-            "description": "The flow name, used as a search filter",
-            "example": "2025-01-0188888888888-0001",
-            "required": true,
-            "name": "flowId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The organization fiscal code, used as a search filter",
-            "example": "99999999999",
-            "required": true,
-            "name": "organizationId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The FdR revision, used as a search filter",
-            "example": "1",
-            "required": true,
-            "name": "revision",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The starting date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The ending date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The expected FdR format, based of this parameter the flow is retrieved from FdR-1 (xml) or FdR-3 (json)",
-            "example": "xml",
-            "name": "fileType",
-            "in": "query",
-            "schema": {
-              "type": "string",
-              "default": "json"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/flows/{flowId}/revisions/{revision}" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a revision of a FdR for a specific CI and PSP",
+        "description" : "## Description:\nRetrieves a specific revision of a FdR for a given Creditor Institution (CI), Payment Service Provider (PSP), flow name, and revision number within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-1007** | 400 | Invalid file type specified.\n**FDR-0500** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IOrganizationController_getFlow",
+        "tags" : [ "Organization" ],
+        "parameters" : [ {
+          "description" : "The flow name, used as a search filter",
+          "example" : "2025-01-0188888888888-0001",
+          "required" : true,
+          "name" : "flowId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/FlowContentResponse"
+        }, {
+          "description" : "The organization fiscal code, used as a search filter",
+          "example" : "99999999999",
+          "required" : true,
+          "name" : "organizationId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The FdR revision, used as a search filter",
+          "example" : "1",
+          "required" : true,
+          "name" : "revision",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The starting date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ending date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The expected FdR format, based of this parameter the flow is retrieved from FdR-1 (xml) or FdR-3 (json)",
+          "example" : "xml",
+          "name" : "fileType",
+          "in" : "query",
+          "schema" : {
+            "type" : "string",
+            "default" : "json"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/FlowContentResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse404"
+          "404" : {
+            "$ref" : "#/components/responses/ErrorResponse404"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/organizations/{organizationId}/psps/{pspId}/upload": {
-      "get": {
-        "summary": "This API allow to retrieve a list of upload tentative of FdR for a specific date",
-        "description": "## Description:\nRetrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IOrganizationController_getUploads",
-        "tags": [
-          "Organization"
-        ],
-        "parameters": [
-          {
-            "description": "The organization fiscal code, used as a search filter",
-            "example": "99999999999",
-            "required": true,
-            "name": "organizationId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The date for retrieving FdR upload tentative",
-            "example": "2025-03-10",
-            "name": "date",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The flow name, used as a search filter",
-            "example": "2025-01-0188888888888-0001",
-            "name": "flowName",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+    "/organizations/{organizationId}/psps/{pspId}/upload" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a list of upload tentative of FdR for a specific date",
+        "description" : "## Description:\nRetrieves a list of upload tentative of FdR for a given Creditor Institution (CI) and Payment Service Provider (PSP) within the specified date. If no date is specified, data from previous day is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-2000** | 404 | No flow found\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IOrganizationController_getUploads",
+        "tags" : [ "Organization" ],
+        "parameters" : [ {
+          "description" : "The organization fiscal code, used as a search filter",
+          "example" : "99999999999",
+          "required" : true,
+          "name" : "organizationId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsOnSingleDateResponse"
+        }, {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The date for retrieving FdR upload tentative",
+          "example" : "2025-03-10",
+          "name" : "date",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The flow name, used as a search filter",
+          "example" : "2025-01-0188888888888-0001",
+          "name" : "flowName",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsOnSingleDateResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "404": {
-            "$ref": "#/components/responses/ErrorResponse404"
+          "404" : {
+            "$ref" : "#/components/responses/ErrorResponse404"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/psps/{pspId}": {
-      "get": {
-        "summary": "This API allow to retrieve a list of FdR for a specific PSP",
-        "description": "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) within a specified date range,  optionally filtered by flow name. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IPSPController_searchFlowByPsp",
-        "tags": [
-          "PSP"
-        ],
-        "parameters": [
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The starting date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The ending date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The flow name, used as a search filter",
-            "example": "2025-01-0188888888888-0001",
-            "name": "flowId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The organization fiscal code, used as a search filter",
-            "example": "99999999999",
-            "name": "organizationId",
-            "in": "query",
-            "schema": {
-              "type": "string"
-            }
+    "/psps/{pspId}" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a list of FdR for a specific PSP",
+        "description" : "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) within a specified date range,  optionally filtered by flow name. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IPSPController_searchFlowByPsp",
+        "tags" : [ "PSP" ],
+        "parameters" : [ {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsResponse"
+        }, {
+          "description" : "The starting date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ending date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The flow name, used as a search filter",
+          "example" : "2025-01-0188888888888-0001",
+          "name" : "flowId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The organization fiscal code, used as a search filter",
+          "example" : "99999999999",
+          "name" : "organizationId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/psps/{pspId}/iur/{iur}": {
-      "get": {
-        "summary": "This API allow to retrieve a list of FdR for a specific PSP and IUV",
-        "description": "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-3000** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IPSPController_searchFlowByPspAndIur",
-        "tags": [
-          "PSP"
-        ],
-        "parameters": [
-          {
-            "description": "The payment's IUR code, used as a search filter",
-            "example": "17854456582215",
-            "name": "iur",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^(.{1,35})$"
-            }
-          },
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The starting date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The ending date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/psps/{pspId}/iur/{iur}" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a list of FdR for a specific PSP and IUV",
+        "description" : "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-3000** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IPSPController_searchFlowByPspAndIur",
+        "tags" : [ "PSP" ],
+        "parameters" : [ {
+          "description" : "The payment's IUR code, used as a search filter",
+          "example" : "17854456582215",
+          "name" : "iur",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "pattern" : "^(.{1,35})$"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsResponse"
+        }, {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The starting date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ending date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
     },
-    "/psps/{pspId}/iuv/{iuv}": {
-      "get": {
-        "summary": "This API allow to retrieve a list of FdR for a specific PSP and IUV",
-        "description": "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-3000** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
-        "operationId": "IPSPController_searchFlowByPspAndIuv",
-        "tags": [
-          "PSP"
-        ],
-        "parameters": [
-          {
-            "description": "The payment's IUV code, used as a search filter",
-            "example": "17854456582215",
-            "name": "iuv",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "string",
-              "pattern": "^(.{1,35})$"
-            }
-          },
-          {
-            "description": "The PSP identifier, used as a search filter",
-            "example": "88888888888",
-            "required": true,
-            "name": "pspId",
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "description": "The starting date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateFrom",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
-          },
-          {
-            "description": "The ending date for retrieving flows",
-            "example": "2025-03-10",
-            "name": "dateTo",
-            "in": "query",
-            "schema": {
-              "$ref": "#/components/schemas/LocalDate"
-            }
+    "/psps/{pspId}/iuv/{iuv}" : {
+      "get" : {
+        "summary" : "This API allow to retrieve a list of FdR for a specific PSP and IUV",
+        "description" : "## Description:\nRetrieves a list of FdR for a given Payment Service Provider (PSP) and IUV within a specified date range. If no dates are specified, data from the last 7 days is returned.\n\n## Error codes:\nAPPLICATIVE CODE | HTTP CODE | MESSAGE\n- | - | -\n**FDR-1001** | 400 | Bad request\n**FDR-3000** | 500 | An unexpected error has occurred. Please contact support\n\n\n## API properties:\nPROPERTY | VALUE\n- | -\n***Internal*** | Y\n***External*** | Y\n***Synchronous*** | Synchronous\n***Authorization*** | N\n***Authentication*** | Y (Subscription Key)\n***TPS*** | 1.0/sec\n***Idempotency*** | Y\n***Stateless*** | Y\n***Read/Write Intensive*** | Read\n***Cacheable*** | Y\n",
+        "operationId" : "IPSPController_searchFlowByPspAndIuv",
+        "tags" : [ "PSP" ],
+        "parameters" : [ {
+          "description" : "The payment's IUV code, used as a search filter",
+          "example" : "17854456582215",
+          "name" : "iuv",
+          "in" : "path",
+          "required" : true,
+          "schema" : {
+            "type" : "string",
+            "pattern" : "^(.{1,35})$"
           }
-        ],
-        "responses": {
-          "200": {
-            "description": "Success",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/MultipleFlowsResponse"
+        }, {
+          "description" : "The PSP identifier, used as a search filter",
+          "example" : "88888888888",
+          "required" : true,
+          "name" : "pspId",
+          "in" : "path",
+          "schema" : {
+            "type" : "string"
+          }
+        }, {
+          "description" : "The starting date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateFrom",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ending date for retrieving flows",
+          "example" : "2025-03-10",
+          "name" : "dateTo",
+          "in" : "query",
+          "schema" : {
+            "$ref" : "#/components/schemas/LocalDate"
+          }
+        }, {
+          "description" : "The ID of an EC",
+          "name" : "organizationId",
+          "in" : "query",
+          "schema" : {
+            "type" : "string"
+          }
+        } ],
+        "responses" : {
+          "200" : {
+            "description" : "Success",
+            "content" : {
+              "application/json" : {
+                "schema" : {
+                  "$ref" : "#/components/schemas/MultipleFlowsResponse"
                 }
               }
             }
           },
-          "400": {
-            "$ref": "#/components/responses/ErrorResponse400"
+          "400" : {
+            "$ref" : "#/components/responses/ErrorResponse400"
           },
-          "500": {
-            "$ref": "#/components/responses/ErrorResponse500"
+          "500" : {
+            "$ref" : "#/components/responses/ErrorResponse500"
           }
         }
       }
