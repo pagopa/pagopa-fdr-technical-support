@@ -33,6 +33,9 @@ public class ProblemJson {
   private Integer status;
 
   @JsonProperty("details")
-  @Schema(description = "A human readable explanation specific to this occurrence of the problem. Example = \"There was an error processing the request\"")
+  @Schema(
+      description =
+          "A human readable explanation specific to this occurrence of the problem. Example ="
+              + " \"There was an error processing the request\"")
   private String details;
 }
