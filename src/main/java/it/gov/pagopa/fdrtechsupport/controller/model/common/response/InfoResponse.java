@@ -24,6 +24,9 @@ public class InfoResponse {
       description = "The current environment where the application is deployed, example = \"dev\"")
   private String environment;
 
-  @Schema(description = "The descriptive information related to the info response, example = \"FDR Technical Support\"")
+  @Schema(
+      description =
+          "The descriptive information related to the info response, example = \"FDR Technical"
+              + " Support\"")
   private String description;
 }
