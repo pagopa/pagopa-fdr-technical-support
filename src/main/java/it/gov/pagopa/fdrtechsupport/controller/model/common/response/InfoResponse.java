@@ -11,7 +11,10 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 @JsonPropertyOrder({"name", "version", "environment", "description"})
 public class InfoResponse {
 
-  @Schema(description = "The identificative name of the deployed application, example = \"pagopa-fdr-technical-support\"")
+  @Schema(
+      description =
+          "The identificative name of the deployed application, example ="
+              + " \"pagopa-fdr-technical-support\"")
   private String name;
 
   @Schema(description = "The current version of the deployed application, example = \"1.2.3\"")
