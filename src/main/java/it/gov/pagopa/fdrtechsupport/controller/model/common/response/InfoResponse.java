@@ -20,7 +20,8 @@ public class InfoResponse {
   @Schema(description = "The current version of the deployed application, example = \"1.2.3\"")
   private String version;
 
-  @Schema(description = "The current environment where the application is deployed, example = \"dev\"")
+  @Schema(
+      description = "The current environment where the application is deployed, example = \"dev\"")
   private String environment;
 
   @Schema(description = "The descriptive information related to the info response, example = \"FDR Technical Support\"")
