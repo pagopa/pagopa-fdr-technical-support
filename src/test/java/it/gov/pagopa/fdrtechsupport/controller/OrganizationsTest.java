@@ -34,10 +34,10 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @QuarkusTestResource(AzuriteResource.class)
 class OrganizationsTest {
 
-  @ConfigProperty(name = "fdr-history-table-storage.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
   String connString;
 
-  @ConfigProperty(name = "fdr-history-blob-storage.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
   String blobConnString;
 
   private TableClient tableClient;

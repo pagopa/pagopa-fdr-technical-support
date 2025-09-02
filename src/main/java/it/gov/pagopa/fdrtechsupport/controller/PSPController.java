@@ -22,9 +22,9 @@ public class PSPController implements IPSPController {
 
   @Override
   public MultipleFlowsResponse searchFlowByPspAndIuv(
-      String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo) {
+      String pspId, String iuv, LocalDate dateFrom, LocalDate dateTo, String organizationId) {
 
-    return workerService.searchFlowByPspAndIuv(pspId, iuv, dateFrom, dateTo);
+    return workerService.searchFlowByPspAndIuv(pspId, iuv, dateFrom, dateTo, organizationId);
   }
 
   @Override

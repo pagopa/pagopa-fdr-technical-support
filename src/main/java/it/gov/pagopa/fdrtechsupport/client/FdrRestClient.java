@@ -35,6 +35,7 @@ public interface FdrRestClient {
       @PathParam("iuv") String iuv,
       @QueryParam("createdFrom") String createdFrom,
       @QueryParam("createdTo") String createdTo,
+      @QueryParam("organizationId") String organizationId,
       @QueryParam("page") Integer pageNumber,
       @QueryParam("size") Integer pageSize);
 

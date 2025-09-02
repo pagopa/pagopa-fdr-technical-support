@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.1.2'
+    tag: '1.1.2-3-PAGOPA-2700-fd-r-3-assistenza-aggiunta-filtri-api'
   readinessProbe:
     httpGet:
       path: /q/health/ready
@@ -62,7 +62,7 @@ microservice-chart:
     TZ: "Europe/Rome"
     OTEL_ENDPOINT: "http://otel-collector.elastic-system.svc.cluster.local:4317"
     FDR_ENDPOINT: "https://api.platform.pagopa.it/fdr-internal/service/v1"
-    LOG_LEVEL: "INFO"
+    LOG_LEVEL: "ERROR"
     QUERY_LOG_LEVEL: "OFF"
     RE_EVENTS_DATE_RANGE_LIMIT: "7"
   envFieldRef:

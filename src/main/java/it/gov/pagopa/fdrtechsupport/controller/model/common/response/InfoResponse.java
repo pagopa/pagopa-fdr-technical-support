@@ -12,20 +12,21 @@ import org.eclipse.microprofile.openapi.annotations.media.Schema;
 public class InfoResponse {
 
   @Schema(
-      example = "pagopa-fdr-technical-support",
-      description = "The identificative name of the deployed application")
+      description =
+          "The identificative name of the deployed application, example ="
+              + " \"pagopa-fdr-technical-support\"")
   private String name;
 
-  @Schema(example = "1.2.3", description = "The current version of the deployed application")
+  @Schema(description = "The current version of the deployed application, example = \"1.2.3\"")
   private String version;
 
   @Schema(
-      example = "dev",
-      description = "The current environment where the application is deployed")
+      description = "The current environment where the application is deployed, example = \"dev\"")
   private String environment;
 
   @Schema(
-      example = "FDR Technical Support",
-      description = "The descriptive information related to the info response")
+      description =
+          "The descriptive information related to the info response, example = \"FDR Technical"
+              + " Support\"")
   private String description;
 }

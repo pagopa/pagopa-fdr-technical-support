@@ -32,7 +32,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 // @QuarkusTestResource(MongoResource.class)
 public class GetByPspAndIuvTest {
 
-  @ConfigProperty(name = "fdr-history-table-storage.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
   String connString;
 
   public static final String url = "/psps/%s/iuv/%s";

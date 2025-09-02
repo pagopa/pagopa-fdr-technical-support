@@ -28,7 +28,7 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
 public class GetByPspAndIurTest {
-  @ConfigProperty(name = "fdr-history-table-storage.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
   String connString;
 
   public static final String url = "/psps/%s/iur/%s";
