@@ -256,7 +256,86 @@ class FdR1HistoryRepositoryTest {
 
     assertEquals(AppErrorCodeMessageEnum.FLOW_NOT_FOUND, ex.getCodeMessage());
   }
+  
+  @Test
+  @DisplayName("all flowDate equal -> revision=3 selects the correct element deterministically")
+  void revision3_allFlowDateEqual_selectsThird() throws Exception {
 
+    String flowName = "2025-10-06UNCRITMM-r17ty6c9thyu";
+    String pspId = "UNCRITMM";
+    String orgId = "06322711216";
+
+    DateRequest dr = DateUtil.getValidDateRequest(
+        LocalDate.of(2025, 10, 5),
+        LocalDate.of(2025, 10, 14),
+        30
+    );
+
+    String sameDate = "2025-10-06T00:00:00Z";
+
+    String file1 = flowName + "_rev1.xml.zip";
+    String file2 = flowName + "_rev2.xml.zip";
+    String file3 = flowName + "_rev3.xml.zip";
+
+    container.getBlobClient(file3)
+        .upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
+
+    // all flowDates are the same, but the order of the list defines the revision
+    when(fdr1MetadataRepository.find(
+        any(DateRequest.class),
+        eq(Optional.of(flowName)),
+        eq(Optional.of(pspId)),
+        eq(Optional.of(orgId))
+    )).thenReturn(new ArrayList<>(List.of(
+        meta(sameDate, file1), // rev1
+        meta(sameDate, file2), // rev2
+        meta(sameDate, file3)  // rev3 → must be selected
+    )));
+
+    String out = fdr1HistoryRepository.getByFlowNameAndPspIdAndRevision(
+        dr, flowName, pspId, orgId, "3"
+    );
+
+    assertTrue(out.contains("REV3"));
+  }
+  
+  @Test
+  @DisplayName("all flowDate equal -> selected revision depends on returned order (shows non-determinism)")
+  void allFlowDateEqual_revisionDependsOnOrder() throws Exception {
+    String flowName = "2025-10-06UNCRITMM-r17ty6c9thyu";
+    String pspId = "UNCRITMM";
+    String orgId = "06322711216";
+    DateRequest dr = DateUtil.getValidDateRequest(LocalDate.of(2025,10,5), LocalDate.of(2025,10,14), 30);
+
+    String sameDate = "2025-10-06T00:00:00Z";
+    String file1 = flowName + "_rev1.xml.zip";
+    String file2 = flowName + "_rev2.xml.zip";
+    String file3 = flowName + "_rev3.xml.zip";
+
+    container.getBlobClient(file1).upload(BinaryData.fromBytes(gzip("<soap>REV1</soap>")), true);
+    container.getBlobClient(file2).upload(BinaryData.fromBytes(gzip("<soap>REV2</soap>")), true);
+    container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
+
+    // order A -> revision=3 returns REV3
+    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+        .thenReturn(new ArrayList<>(List.of(
+            meta(sameDate, file1),
+            meta(sameDate, file2),
+            meta(sameDate, file3)
+        )));
+    String outA = fdr1HistoryRepository.getByFlowNameAndPspIdAndRevision(dr, flowName, pspId, orgId, "3");
+    assertTrue(outA.contains("REV3"));
+
+    // order B -> revision=3 returns REV1 (because null discrimination and stable sort preserve order)
+    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+        .thenReturn(new ArrayList<>(List.of(
+            meta(sameDate, file3),
+            meta(sameDate, file2),
+            meta(sameDate, file1)
+        )));
+    String outB = fdr1HistoryRepository.getByFlowNameAndPspIdAndRevision(dr, flowName, pspId, orgId, "3");
+    assertTrue(outB.contains("REV1"));
+  }
 
 
   // ---------------- helpers ----------------

@@ -137,6 +137,50 @@ class OrganizationsFlowXmlTest {
         // error handled as INVALID_BLOB_CONTENT
         .statusCode(anyOf(is(404), is(500)));
   }
+  
+  @SneakyThrows
+  @Test
+  @DisplayName("getFlow xml - all flowDate equal - revision 3 correctly selected")
+  void getFlowXmlRevision3_allFlowDateEqual_ok() {
+
+    String flowName = "2025-10-06UNCRITMM-r17ty6c9thyu";
+    String orgId = "06322711216";
+    String pspId = "UNCRITMM";
+    String revision = "3";
+
+    String sameDate = "2025-10-06T00:00:00Z";
+
+    String file1 = flowName + "_rev1.xml.zip";
+    String file2 = flowName + "_rev2.xml.zip";
+    String file3 = flowName + "_rev3.xml.zip";
+
+    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+        .thenReturn(new ArrayList<>(List.of(
+            meta(sameDate, file1),
+            meta(sameDate, file2),
+            meta(sameDate, file3) // rev3
+        )));
+
+    container.getBlobClient(file3)
+        .upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
+
+    String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s"
+        .formatted(orgId, pspId, flowName, revision);
+
+    FlowContentResponse res =
+        given()
+            .param("dateFrom", "2025-10-05")
+            .param("dateTo", "2025-10-14")
+            .param("fileType", "xml")
+            .when()
+            .get(url)
+            .then()
+            .statusCode(200)
+            .extract()
+            .as(new TypeRef<FlowContentResponse>() {});
+
+    assertThat(res.getData(), containsString("REV3"));
+  }
 
   private static byte[] gzip(String s) throws Exception {
     ByteArrayOutputStream bos = new ByteArrayOutputStream();
