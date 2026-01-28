@@ -66,6 +66,11 @@ public enum AppErrorCodeMessageEnum {
       RestResponse.Status.NOT_FOUND,
       "An error occurred during the search of flow. The needed flow does not exists in current"
           + " environment"),
+  INVALID_BLOB_CONTENT(
+	  "2001",
+	  "invalid.blob.content",
+	  RestResponse.Status.INTERNAL_SERVER_ERROR,
+	  "Flow content is present but invalid/corrupted"),
 
   // client errors
   UNAUTHORIZED_CLIENT(
