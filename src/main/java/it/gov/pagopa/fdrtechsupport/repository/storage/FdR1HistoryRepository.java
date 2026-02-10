@@ -81,11 +81,7 @@ public class FdR1HistoryRepository {
       Integer revision) {
 
     List<FdR1MetadataEntity> entities =
-        fdr1MetadataRepository.find(
-            dateRequest,
-            flowName,
-            pspId,
-            organizationId);
+        fdr1MetadataRepository.find(dateRequest, flowName, pspId, organizationId);
 
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 
