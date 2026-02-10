@@ -83,9 +83,9 @@ public class FdR1HistoryRepository {
     List<FdR1MetadataEntity> entities =
         fdr1MetadataRepository.find(
             dateRequest,
-            Optional.ofNullable(flowName),
-            Optional.ofNullable(pspId),
-            Optional.ofNullable(organizationId));
+            flowName,
+            pspId,
+            organizationId);
 
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 
