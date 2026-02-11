@@ -7,7 +7,6 @@ import it.gov.pagopa.fdrtechsupport.repository.nosql.base.Repository;
 import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.List;
-import java.util.Optional;
 
 @ApplicationScoped
 public class FdR1MetadataRepository extends Repository
@@ -24,7 +23,7 @@ public class FdR1MetadataRepository extends Repository
         .andEquals("flowId", "flowName", flowName)
         .andEquals("psp", "pspId", pspId)
         .andEquals("creditorInstitution", "orgId", organizationId)
-        .andEquals("pspCreditorInstitution", "pspIdOrgId", pspId + organizationId);
+        .andEquals("pspCreditorInstitution", "pspCreditorInstitution", pspId + organizationId);
 
     // finally, execute the complete query
     return FdR1MetadataEntity.findByQuery(queryBuilder.getQuery(), queryBuilder.getParameters())

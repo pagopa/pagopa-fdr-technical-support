@@ -13,7 +13,6 @@ import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
