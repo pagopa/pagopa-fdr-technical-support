@@ -2,14 +2,9 @@ package it.gov.pagopa.fdrtechsupport.controller;
 
 import static io.restassured.RestAssured.given;
 import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PA_CODE;
-import static it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper.PSP_CODE;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.equalTo;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import com.azure.core.util.BinaryData;
-import com.azure.data.tables.TableClient;
-import com.azure.data.tables.TableServiceClient;
-import com.azure.data.tables.TableServiceClientBuilder;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
@@ -18,11 +13,13 @@ import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
-import it.gov.pagopa.fdrtechsupport.util.AppConstantTestHelper;
 import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
+import it.gov.pagopa.fdrtechsupport.util.MongoTestResource;
+import it.gov.pagopa.fdrtechsupport.util.ObjectMapperUtil;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
+import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
 import java.time.LocalDate;
-import java.util.Base64;
+import java.time.Month;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.DisplayName;
@@ -32,32 +29,26 @@ import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 @QuarkusTest
 @QuarkusTestResource(MockServerTestResource.class)
 @QuarkusTestResource(AzuriteResource.class)
+@QuarkusTestResource(MongoTestResource.class)
 class OrganizationsTest {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  private static final String PSP_CODE = "88888888888";
+  private static final String ORG_ID = "77777777777";
+
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   String connString;
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
-  String blobConnString;
+  @ConfigProperty(name = "blob-storage.fdr3.container-name")
+  String fdr3ContainerName;
 
-  private TableClient tableClient;
-  private BlobServiceClient blobServiceClient = null;
+  @ConfigProperty(name = "blob-storage.fdr1.container-name")
+  String fdr1ContainerName;
 
-  private TableClient getTableClient() {
-    if (tableClient == null) {
-      TableServiceClient tableServiceClient =
-          new TableServiceClientBuilder().connectionString(connString).buildClient();
-      tableServiceClient.createTableIfNotExists("fdrpublish");
-      tableClient = tableServiceClient.getTableClient("fdrpublish");
-    }
-    return tableClient;
-  }
-
-  private BlobContainerClient getBlobContainerClient(String containerName) {
-    blobServiceClient =
-        new BlobServiceClientBuilder().connectionString(blobConnString).buildClient();
-    blobServiceClient.createBlobContainerIfNotExists(containerName);
-    return blobServiceClient.getBlobContainerClient(containerName);
+  private BlobContainerClient getBlobContainerClient(String blobContainerName) {
+    BlobServiceClient blobServiceClient =
+        new BlobServiceClientBuilder().connectionString(connString).buildClient();
+    blobServiceClient.createBlobContainerIfNotExists(blobContainerName);
+    return blobServiceClient.getBlobContainerClient(blobContainerName);
   }
 
   @SneakyThrows
@@ -65,28 +56,21 @@ class OrganizationsTest {
   @DisplayName("get fdr json")
   void getFdrJson() {
     String flowName = RandomStringUtils.randomAlphabetic(20);
-    String containerName = "fdrhistory";
-    String fileName = flowName + ".json.zip";
+    String revision = "1";
+    String fileName =
+        String.format(AppConstant.HISTORICAL_FDR3_FILENAME_TEMPLATE, flowName, PSP_CODE, revision);
     String url =
-        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
-    getTableClient()
-        .createEntity(
-            AppConstantTestHelper.newTableFdrPublish(
-                LocalDate.now().minusDays(100),
-                PA_CODE,
-                PSP_CODE,
-                flowName,
-                1,
-                containerName,
-                fileName));
-    getBlobContainerClient(containerName)
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s"
+            .formatted(PA_CODE, PSP_CODE, flowName, revision);
+
+    getBlobContainerClient(fdr3ContainerName)
         .getBlobClient(fileName)
-        .upload(BinaryData.fromString("jsonzip"));
+        .upload(BinaryData.fromStream(ObjectMapperUtil.readFromFile("FDR3.gz")));
 
     FlowContentResponse res =
         given()
-            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
-            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
+            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(1)))
+            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(1)))
             .param("fileType", "json")
             .when()
             .get(url)
@@ -94,25 +78,28 @@ class OrganizationsTest {
             .statusCode(200)
             .extract()
             .as(new TypeRef<FlowContentResponse>() {});
-    assertThat(new String(Base64.getDecoder().decode(res.getData())), equalTo("jsonzip"));
+
+    assertEquals("Test FDR 3", res.getData());
   }
 
   @SneakyThrows
   @Test
   @DisplayName("get fdr xml")
   void getFdrXml() {
-    String flowName = RandomStringUtils.randomAlphabetic(20);
+    String flowName = "2026-01-1188888888888-664371785";
+    String fileName = flowName + "_cf48692b-5269-4cf5-a6ed-8de6c83c6097.xml.zip";
     String url =
-        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(PA_CODE, PSP_CODE, flowName, 1);
-    getTableClient()
-        .createEntity(
-            AppConstantTestHelper.newTableFdrPublish(
-                LocalDate.now().minusDays(100), PA_CODE, PSP_CODE, flowName, 1, "", ""));
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s".formatted(ORG_ID, PSP_CODE, flowName, 1);
+    LocalDate date = LocalDate.of(2026, Month.JANUARY, 11);
+
+    getBlobContainerClient(fdr1ContainerName)
+        .getBlobClient(fileName)
+        .upload(BinaryData.fromStream(ObjectMapperUtil.readFromFile("FDR1.gz")));
 
     FlowContentResponse res =
         given()
-            .param("dateFrom", DateUtil.format(LocalDate.now().minusDays(101)))
-            .param("dateTo", DateUtil.format(LocalDate.now().minusDays(99)))
+            .param("dateFrom", DateUtil.format(date.minusDays(1)))
+            .param("dateTo", DateUtil.format(date.plusDays(1)))
             .param("fileType", "xml")
             .when()
             .get(url)
@@ -120,7 +107,7 @@ class OrganizationsTest {
             .statusCode(200)
             .extract()
             .as(new TypeRef<FlowContentResponse>() {});
-    String data = res.getData();
-    assertThat(res.getData(), equalTo("<xml>test</xml>"));
+
+    assertEquals("Test FDR 1", res.getData());
   }
 }

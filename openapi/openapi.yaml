@@ -148,7 +148,7 @@ info:
     **FDR-2000** | *FLOW_NOT_FOUND* | No flow found | An error occurred during the search of flow. The needed <br>flow does not exists in current environment
     **FDR-3000** | *UNAUTHORIZED_CLIENT* | An unexpected error has occurred. Please contact support | An error occurred while invoking external services
   termsOfService: https://www.pagopa.gov.it/
-  title: Fdr technical support - Api (DEV)
+  title: Fdr technical support - Api
   version: 1.1.6
 servers:
   - url: http://localhost:8080

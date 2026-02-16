@@ -1,10 +1,10 @@
 package it.gov.pagopa.fdrtechsupport.util;
 
 import io.quarkus.test.common.QuarkusTestResourceLifecycleManager;
-import java.util.HashMap;
 import java.util.Map;
 import lombok.SneakyThrows;
 import org.testcontainers.containers.GenericContainer;
+import org.testcontainers.shaded.com.google.common.collect.ImmutableMap;
 import org.testcontainers.utility.DockerImageName;
 
 public class AzuriteResource implements QuarkusTestResourceLifecycleManager {
@@ -27,9 +27,8 @@ public class AzuriteResource implements QuarkusTestResourceLifecycleManager {
             + "/devstoreaccount1;TableEndpoint=http://127.0.0.1:"
             + azurite.getMappedPort(10002)
             + "/devstoreaccount1;";
-    Map<String, String> conf = new HashMap<>();
-    conf.put("mockserver.azurite.connection-string", connectStr);
-    return conf;
+
+    return ImmutableMap.of("blob-storage.fdr.connection-string", connectStr);
   }
 
   @Override

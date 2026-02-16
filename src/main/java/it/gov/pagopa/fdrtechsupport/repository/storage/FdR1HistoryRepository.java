@@ -20,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 public class FdR1HistoryRepository {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   private String blobConnectionString;
 
   @ConfigProperty(name = "blob-storage.fdr1.container-name")

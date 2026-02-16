@@ -15,7 +15,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 public class FdR3HistoryRepository {
 
-  @ConfigProperty(name = "blob-storage.fdr3.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   private String blobConnectionString;
 
   @ConfigProperty(name = "blob-storage.fdr3.container-name")

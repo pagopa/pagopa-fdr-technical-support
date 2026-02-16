@@ -1,210 +1,153 @@
-[{
-  "id": "old flow",
-  "httpRequest": {
-    "path": "/internal/organizations/.*?/fdrs/.*?"
-  },
-  "httpResponse": {
-    "body": { "xmlRendicontazione":"<xml>test</xml>"}
-  }
-},{
-  "id": "new flow",
-  "httpRequest": {
-    "path": "/internal/history/organizations/.*?/fdrs/.*?/revisions/.*?/psps/.*?/payments"
-  },
-  "httpResponse": {
-    "body": {
-      "type": "JSON",
-      "json": {
-        "count": 1,
-        "metadata": {
-          "pageSize": 1000,
-          "pageNumber": 1,
-          "totPage": 2
-        },
-        "data": [
-          {
-            "iuv": "iuv",
-            "iur": "iur",
-            "index": 1,
-            "pay": 22.00,
-            "payStatus": "EXECUTED",
-            "payDate": "2023-02-03T12:00:30.900000Z"
-          }
-        ]
-      },
-      "contentType": "application/json"
-    }
-  }
-},
+[
   {
-  "id": "1",
-  "httpRequest": {
-    "path": "/internal/psps/.*?/iuv/.*?",
-    "queryStringParameters": [
-      {
-        "name": "pageNumber",
-        "values": ["1"]
-      },
-      {
-        "name": "dateFrom",
-        "values": ["2022-07-27T00:00"]
-      },
-      {
-        "name": "dateTo",
-        "values": ["2022-07-27T23:59:59.999999999"]
+    "id": "old flow",
+    "httpRequest": {
+      "path": "/internal/organizations/.*?/fdrs/.*?"
+    },
+    "httpResponse": {
+      "body": {
+        "xmlRendicontazione": "<xml>test</xml>"
       }
-    ]
+    }
   },
-  "httpResponse": {
-    "body": {
-      "type": "JSON",
-      "json": {
-        "metadata": {
-          "pageSize": 1,
-          "pageNumber": 1,
-          "totPage": 2
+  {
+    "id": "new flow",
+    "httpRequest": {
+      "path": "/internal/history/organizations/.*?/fdrs/.*?/revisions/.*?/psps/.*?/payments"
+    },
+    "httpResponse": {
+      "body": {
+        "type": "JSON",
+        "json": {
+          "count": 1,
+          "metadata": {
+            "pageSize": 1000,
+            "pageNumber": 1,
+            "totPage": 2
+          },
+          "data": [
+            {
+              "iuv": "iuv",
+              "iur": "iur",
+              "index": 1,
+              "pay": 22.00,
+              "payStatus": "EXECUTED",
+              "payDate": "2023-02-03T12:00:30.900000Z"
+            }
+          ]
         },
-        "count": 100,
-        "data": [
-          {
-            "pspId": "string",
-            "organizationId": "string",
-            "fdr": "string",
-            "revision": 0,
-            "created": "2022-07-27T16:15:50Z"
-          }
-        ]
-      },
-      "contentType": "application/json"
+        "contentType": "application/json"
+      }
+    }
+  },
+  {
+    "id": "1",
+    "httpRequest": {
+      "path": "/internal/psps/.*?/iuv/.*?",
+      "queryStringParameters": [
+        {
+          "name": "page",
+          "values": [
+            "1"
+          ]
+        },
+        {
+          "name": "size",
+          "values": [
+            "1000"
+          ]
+        },
+        {
+          "name": "createdFrom",
+          "values": [
+            "2022-07-27T00:00:00Z"
+          ]
+        },
+        {
+          "name": "createdTo",
+          "values": [
+            "2022-07-27T23:59:59Z"
+          ]
+        }
+      ]
+    },
+    "httpResponse": {
+      "body": {
+        "type": "JSON",
+        "json": {
+          "metadata": {
+            "pageSize": 1,
+            "pageNumber": 1,
+            "totPage": 2
+          },
+          "count": 100,
+          "data": [
+            {
+              "pspId": "string",
+              "organizationId": "string",
+              "fdr": "GetFdrByPspAndIuv_FDR_name",
+              "revision": 0,
+              "created": "2022-07-27T16:15:50Z"
+            }
+          ]
+        },
+        "contentType": "application/json"
+      }
+    }
+  },
+  {
+    "id": "4",
+    "httpRequest": {
+      "path": "/internal/psps/.*?/iur/.*?",
+      "queryStringParameters": [
+        {
+          "name": "page",
+          "values": [
+            "1"
+          ]
+        },
+        {
+          "name": "size",
+          "values": [
+            "1000"
+          ]
+        },
+        {
+          "name": "createdFrom",
+          "values": [
+            "2022-07-27T00:00:00Z"
+          ]
+        },
+        {
+          "name": "createdTo",
+          "values": [
+            "2022-07-27T23:59:59Z"
+          ]
+        }
+      ]
+    },
+    "httpResponse": {
+      "body": {
+        "type": "JSON",
+        "json": {
+          "metadata": {
+            "pageSize": 1,
+            "pageNumber": 1,
+            "totPage": 1
+          },
+          "count": 100,
+          "data": [
+            {
+              "pspId": "string4",
+              "organizationId": "string4",
+              "fdr": "GetFdrByPspAndIur_FDR_name",
+              "revision": 0,
+              "created": "2022-07-27T10:13:16Z"
+            }
+          ]
+        },
+        "contentType": "application/json"
+      }
     }
   }
-},
-{
-  "id": "2",
-  "httpRequest": {
-    "path": "/internal/psps/.*?/iuv/.*?",
-    "queryStringParameters": [
-      {
-        "name": "pageNumber",
-        "values": ["2"]
-      },
-      {
-        "name": "dateFrom",
-        "values": ["2022-07-27T00:00"]
-      },
-      {
-        "name": "dateTo",
-        "values": ["2022-07-27T23:59:59.999999999"]
-      }
-    ]
-  },
-  "httpResponse": {
-    "body": {
-      "type": "JSON",
-      "json": {
-        "metadata": {
-          "pageSize": 1,
-          "pageNumber": 2,
-          "totPage": 2
-        },
-        "count": 100,
-        "data": [
-          {
-            "pspId": "string2",
-            "organizationId": "string2",
-            "fdr": "string2",
-            "revision": 1,
-            "created": "2022-07-27T18:44:10Z"
-          }
-        ]
-      },
-      "contentType": "application/json"
-    }
-  }
-},
-{
-  "id": "3",
-  "httpRequest": {
-    "path": "/internal/psps/.*?/iuv/.*?",
-    "queryStringParameters": [
-      {
-        "name": "pageNumber",
-        "values": ["1"]
-      },
-      {
-        "name": "dateFrom",
-        "values": ["2022-07-28T00:00"]
-      },
-      {
-        "name": "dateTo",
-        "values": ["2022-07-28T23:59:59.999999999"]
-      }
-    ]
-  },
-  "httpResponse": {
-    "body": {
-      "type": "JSON",
-      "json": {
-        "metadata": {
-          "pageSize": 1,
-          "pageNumber": 1,
-          "totPage": 1
-        },
-        "count": 100,
-        "data": [
-          {
-            "pspId": "string3",
-            "organizationId": "string3",
-            "fdr": "string3",
-            "revision": 0,
-            "created": "2022-07-28T18:44:10Z"
-          }
-        ]
-      },
-      "contentType": "application/json"
-    }
-  }
-},
-{
-  "id": "4",
-  "httpRequest": {
-    "path": "/internal/psps/.*?/iur/.*?",
-    "queryStringParameters": [
-      {
-        "name": "pageNumber",
-        "values": ["1"]
-      },
-      {
-        "name": "dateFrom",
-        "values": ["2022-07-27T00:00"]
-      },
-      {
-        "name": "dateTo",
-        "values": ["2022-07-27T23:59:59.999999999"]
-      }
-    ]
-  },
-  "httpResponse": {
-    "body": {
-      "type": "JSON",
-      "json": {
-        "metadata": {
-          "pageSize": 1,
-          "pageNumber": 1,
-          "totPage": 1
-        },
-        "count": 100,
-        "data": [
-          {
-            "pspId": "string4",
-            "organizationId": "string4",
-            "fdr": "string4",
-            "revision": 0,
-            "created": "2022-07-27T10:13:16Z"
-          }
-        ]
-      },
-      "contentType": "application/json"
-    }
-  }
-}]
+]
