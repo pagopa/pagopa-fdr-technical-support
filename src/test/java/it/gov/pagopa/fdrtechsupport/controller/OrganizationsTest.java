@@ -8,13 +8,11 @@ import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentResponse;
-import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-import it.gov.pagopa.fdrtechsupport.util.MongoTestResource;
+import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import it.gov.pagopa.fdrtechsupport.util.ObjectMapperUtil;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import it.gov.pagopa.fdrtechsupport.util.constant.AppConstant;
@@ -27,9 +25,7 @@ import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @QuarkusTest
-@QuarkusTestResource(MockServerTestResource.class)
-@QuarkusTestResource(AzuriteResource.class)
-@QuarkusTestResource(MongoTestResource.class)
+@QuarkusTestResource(value = ContainersTestResource.class)
 class OrganizationsTest {
 
   private static final String PSP_CODE = "88888888888";

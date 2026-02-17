@@ -7,7 +7,6 @@ import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.greaterThan;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
@@ -16,11 +15,13 @@ import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlo
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
+
+import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
 @QuarkusTest
-@QuarkusTestResource(MockServerTestResource.class)
+@QuarkusTestResource(value = ContainersTestResource.class)
 public class GetByPspAndIuvTest {
 
   public static final String URL = "/psps/%s/iuv/%s";
