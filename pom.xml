@@ -147,13 +147,11 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>1.18.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>azure</artifactId>
-            <version>1.18.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
