@@ -43,4 +43,5 @@ jobs:
           coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/entities/*"
           coverage_report_path: "target/jacoco-report/jacoco.xml"
           cpd_exclusions: "**/models/**,**/entities/*"
+          java_distribution: "graalvm"
           java_version: "17.0.7"
