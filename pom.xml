@@ -140,18 +140,42 @@
 
         <dependency>
             <groupId>org.testcontainers</groupId>
+            <artifactId>testcontainers</artifactId>
+            <version>1.19.8</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testcontainers</groupId>
             <artifactId>junit-jupiter</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>testcontainers</artifactId>
+                    <groupId>org.testcontainers</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>testcontainers</artifactId>
+                    <groupId>org.testcontainers</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mockserver</artifactId>
             <scope>test</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>testcontainers</artifactId>
+                    <groupId>org.testcontainers</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
@@ -216,14 +240,9 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>${surefire-plugin.version}</version>
                 <configuration>
-                    <environmentVariables>
-                        <DOCKER_HOST>unix:///var/run/docker.sock</DOCKER_HOST>
-                        <DOCKER_API_VERSION>1.44</DOCKER_API_VERSION>
-                    </environmentVariables>
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
-                        <org.testcontainers.dockerclient.provider>org.testcontainers.dockerclient.UnixSocketClientProviderStrategy</org.testcontainers.dockerclient.provider>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
