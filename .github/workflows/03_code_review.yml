@@ -33,11 +33,6 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Debug Docker
-        run: |
-          which docker
-          docker version
-          docker info
 
       - name: Code Review
         uses: pagopa/github-actions-template/maven-code-review@525266fb788f4da438e5919fcf660fe8637271ed # 2.2
@@ -48,5 +43,4 @@ jobs:
           coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/entities/*"
           coverage_report_path: "target/jacoco-report/jacoco.xml"
           cpd_exclusions: "**/models/**,**/entities/*"
-          java_distribution: "graalvm"
           java_version: "17.0.7"
