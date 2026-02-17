@@ -223,6 +223,7 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <org.testcontainers.dockerclient.provider>org.testcontainers.dockerclient.UnixSocketClientProviderStrategy</org.testcontainers.dockerclient.provider>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
