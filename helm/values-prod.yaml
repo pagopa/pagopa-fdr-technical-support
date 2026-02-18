@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.1.6'
+    tag: '1.1.6-1-PIDM-1502-fix-xml-flow-retrieve'
   readinessProbe:
     httpGet:
       path: /q/health/ready

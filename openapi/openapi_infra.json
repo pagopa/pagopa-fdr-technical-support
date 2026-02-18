@@ -182,7 +182,7 @@
   "info": {
     "termsOfService": "https://www.pagopa.gov.it/",
     "title": "Fdr technical support - Api (TEST)",
-    "version": "1.1.6"
+    "version": "1.1.6-1-PIDM-1502-fix-xml-flow-retrieve"
   },
   "servers": [
     {
