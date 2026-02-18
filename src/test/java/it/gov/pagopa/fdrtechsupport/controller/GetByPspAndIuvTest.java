@@ -12,11 +12,10 @@ import io.quarkus.test.junit.QuarkusTest;
 import io.restassured.common.mapper.TypeRef;
 import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowBaseInfo;
 import it.gov.pagopa.fdrtechsupport.controller.model.report.response.MultipleFlowsResponse;
+import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.List;
-
-import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.shaded.org.apache.commons.lang3.RandomStringUtils;
 
