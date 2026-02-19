@@ -2,25 +2,16 @@ name: Code Review
 
 on:
   pull_request:
-    branches:
-      - main
-    types:
-      - opened
-      - synchronize
-      - reopened
+    branches: [main]
+    types: [opened, synchronize, reopened]
   push:
-    branches:
-      - main
+    branches: [main]
   workflow_dispatch:
 
 env:
   PROJECT_KEY: pagopa_pagopa-fdr-technical-support
   DOCKER_API_VERSION: "1.44"
   DOCKER_HOST: "unix:///var/run/docker.sock"
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   code-review:
@@ -50,25 +41,23 @@ jobs:
           key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
           restore-keys: ${{ runner.os }}-m2
 
-      - name: Cache SonarCloud packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.sonar/cache
-          key: ${{ runner.os }}-sonar
-          restore-keys: ${{ runner.os }}-sonar
-
-      - name: Prepare Docker Environment
+      - name: Force Testcontainers Configuration
         shell: bash
         run: |
-          # Esportiamo nuovamente per sicurezza nel GITHUB_ENV del runner
-          echo "DOCKER_HOST=unix:///var/run/docker.sock" >> $GITHUB_ENV
-          echo "DOCKER_API_VERSION=1.44" >> $GITHUB_ENV
+          # Creiamo il file di properties globale che Testcontainers legge sempre
+          echo "docker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy" > $HOME/.testcontainers.properties
+          echo "docker.host=unix:///var/run/docker.sock" >> $HOME/.testcontainers.properties
+          echo "org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version=1.44" >> $HOME/.testcontainers.properties
+          cat $HOME/.testcontainers.properties # Debug per verifica
 
       - name: Build and analyze
         shell: bash
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          # Ripetiamo le env anche qui per sicurezza dei fork
+          DOCKER_API_VERSION: "1.44"
+          DOCKER_HOST: "unix:///var/run/docker.sock"
         run: |
           mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
             -Dsonar.organization=pagopa \
@@ -78,7 +67,4 @@ jobs:
             -Dsonar.cpd.exclusions="**/models/**,**/entities/*" \
             -Dsonar.host.url=https://sonarcloud.io \
             -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || format('-Dsonar.branch.name={0}', github.head_ref) }} \
-            -Dtestcontainers.reuse.enable=true \
-            -Ddocker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy \
-            -Dorg.testcontainers.dockerclient.DockerClientProviderStrategy.api.version=1.44
+            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || format('-Dsonar.branch.name={0}', github.head_ref) }}
