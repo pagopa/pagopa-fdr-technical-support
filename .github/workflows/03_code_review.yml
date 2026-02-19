@@ -29,9 +29,10 @@ jobs:
     name: Code Review
     runs-on: ubuntu-22.04
 
+
     steps:
       - name: Code Review
-        uses: pagopa/github-actions-template/maven-code-review@github-actions-template
+        uses: pagopa/github-actions-template/maven-code-review@maven-docker-api-version
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           sonar_token: ${{ secrets.SONAR_TOKEN }}
