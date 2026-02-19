@@ -33,6 +33,23 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>com.github.docker-java</groupId>
+                <artifactId>docker-java-api</artifactId>
+                <version>3.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.docker-java</groupId>
+                <artifactId>docker-java-transport-zerodep</artifactId>
+                <version>3.4.0</version>
+            </dependency>
+            <dependency>
+                <groupId>${quarkus.platform.group-id}</groupId>
+                <artifactId>${quarkus.platform.artifact-id}</artifactId>
+                <version>${quarkus.platform.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
         </dependencies>
     </dependencyManagement>
     <dependencies>
@@ -223,7 +240,8 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
-                        <org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>1.44</org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>
+                        <org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>1.44
+                        </org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
