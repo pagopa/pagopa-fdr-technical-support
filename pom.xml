@@ -22,7 +22,7 @@
         <quarkus.platform.version>3.20.0</quarkus.platform.version>
         <skipITs>true</skipITs>
         <surefire-plugin.version>3.2.3</surefire-plugin.version>
-        <testcontainers.version>1.20.4</testcontainers.version>
+        <testcontainers.version>1.20.6</testcontainers.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -223,6 +223,7 @@
                     <systemPropertyVariables>
                         <java.util.logging.manager>org.jboss.logmanager.LogManager</java.util.logging.manager>
                         <maven.home>${maven.home}</maven.home>
+                        <org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>1.44</org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version>
                     </systemPropertyVariables>
                 </configuration>
             </plugin>
