@@ -1,70 +1,46 @@
 name: Code Review
 
+# Controls when the workflow will run
 on:
   pull_request:
-    branches: [main]
-    types: [opened, synchronize, reopened]
+    branches:
+      - main
+    types:
+      - opened
+      - synchronize
+      - reopened
   push:
-    branches: [main]
+    branches:
+      - main
+
+
+  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 env:
   PROJECT_KEY: pagopa_pagopa-fdr-technical-support
-  DOCKER_API_VERSION: "1.44"
-  DOCKER_HOST: "unix:///var/run/docker.sock"
 
+permissions:
+  id-token: write
+  contents: read
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   code-review:
     name: Code Review
-    runs-on: ubuntu-22.04
+    # The type of runner that the job will run on
+    runs-on: ubuntu-latest
 
+    # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up GraalVM JDK
-        uses: graalvm/setup-graalvm@v1
+      - name: Code Review
+        uses: pagopa/github-actions-template/maven-code-review@525266fb788f4da438e5919fcf660fe8637271ed # 2.2
         with:
-          java-version: '17.0.7'
-          distribution: 'graalvm'
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Set up Maven
-        uses: stCarolas/setup-maven@v4.5
-        with:
-          maven-version: 3.8.2
-
-      - name: Cache Maven packages
-        uses: actions/cache@v4
-        with:
-          path: ~/.m2
-          key: ${{ runner.os }}-m2-${{ hashFiles('**/pom.xml') }}
-          restore-keys: ${{ runner.os }}-m2
-
-      - name: Force Testcontainers Configuration
-        shell: bash
-        run: |
-          # Creiamo il file di properties globale che Testcontainers legge sempre
-          echo "docker.client.strategy=org.testcontainers.dockerclient.UnixSocketClientProviderStrategy" > $HOME/.testcontainers.properties
-          echo "docker.host=unix:///var/run/docker.sock" >> $HOME/.testcontainers.properties
-          echo "org.testcontainers.dockerclient.DockerClientProviderStrategy.api.version=1.44" >> $HOME/.testcontainers.properties
-          cat $HOME/.testcontainers.properties # Debug per verifica
-
-      - name: Build and analyze
-        shell: bash
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          # Ripetiamo le env anche qui per sicurezza dei fork
-          DOCKER_API_VERSION: "1.44"
-          DOCKER_HOST: "unix:///var/run/docker.sock"
-        run: |
-          mvn -B verify org.sonarsource.scanner.maven:sonar-maven-plugin:sonar \
-            -Dsonar.organization=pagopa \
-            -Dsonar.projectKey=${{ env.PROJECT_KEY }} \
-            -Dsonar.coverage.jacoco.xmlReportPaths=target/jacoco-report/jacoco.xml \
-            -Dsonar.coverage.exclusions="**/config/*,**/*Mock*,**/models/**,**/entities/*" \
-            -Dsonar.cpd.exclusions="**/models/**,**/entities/*" \
-            -Dsonar.host.url=https://sonarcloud.io \
-            -Dsonar.login=${{ secrets.SONAR_TOKEN }} \
-            ${{ github.event_name == 'pull_request' && format('-Dsonar.pullrequest.key={0} -Dsonar.pullrequest.branch={1} -Dsonar.pullrequest.base={2}', github.event.pull_request.number, github.head_ref, github.base_ref) || format('-Dsonar.branch.name={0}', github.head_ref) }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          sonar_token: ${{ secrets.SONAR_TOKEN }}
+          project_key: ${{env.PROJECT_KEY}}
+          coverage_exclusions: "**/config/*,**/*Mock*,**/models/**,**/entities/*"
+          coverage_report_path: "target/jacoco-report/jacoco.xml"
+          cpd_exclusions: "**/models/**,**/entities/*"
+          java_distribution: "graalvm"
+          java_version: "17.0.7"
