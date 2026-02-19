@@ -43,7 +43,7 @@ components:
       type: string
       format: date
       examples:
-        - 2022-03-10
+      - 2022-03-10
     MultipleFlowsOnSingleDateResponse:
       type: object
       properties:
@@ -93,8 +93,8 @@ components:
             httpStatusDescription: Bad Request
             appErrorCode: FDR-XXXX
             errors:
-              - path: <detail.path.if-exist>
-                message: <detail.message>
+            - path: <detail.path.if-exist>
+              message: <detail.message>
           schema:
             $ref: "#/components/schemas/ProblemJson"
     ErrorResponse404:
@@ -106,7 +106,7 @@ components:
             httpStatusDescription: Not Found
             appErrorCode: FDR-XXXX
             errors:
-              - message: <detail.message>
+            - message: <detail.message>
           schema:
             $ref: "#/components/schemas/ProblemJson"
     ErrorResponse500:
@@ -119,7 +119,7 @@ components:
             httpStatusDescription: Internal Server Error
             appErrorCode: FDR-0500
             errors:
-              - message: An unexpected error has occurred. Please contact support.
+            - message: An unexpected error has occurred. Please contact support.
           schema:
             $ref: "#/components/schemas/ProblemJson"
   securitySchemes:
@@ -151,25 +151,25 @@ info:
   title: Fdr technical support - Api
   version: 1.1.6
 servers:
-  - url: http://localhost:8080
-    description: Localhost base URL
-  - url: "https://{host}/technical-support/fdr/api/v1"
-    description: Base URL
-    variables:
-      host:
-        description: Environment host
-        enum:
-          - api.dev.platform.pagopa.it
-          - api.uat.platform.pagopa.it
-          - api.platform.pagopa.it
-        default: api.dev.platform.pagopa.it
+- url: http://localhost:8080
+  description: Localhost base URL
+- url: "https://{host}/technical-support/fdr/api/v1"
+  description: Base URL
+  variables:
+    host:
+      description: Environment host
+      enum:
+      - api.dev.platform.pagopa.it
+      - api.uat.platform.pagopa.it
+      - api.platform.pagopa.it
+      default: api.dev.platform.pagopa.it
 tags:
-  - name: Info
-    description: Info operations
-  - name: Organization
-    description: APIs for inspecting creditor institution usage of flows
-  - name: PSP
-    description: APIs for inspecting PSP usage of flows
+- name: Info
+  description: Info operations
+- name: Organization
+  description: APIs for inspecting creditor institution usage of flows
+- name: PSP
+  description: APIs for inspecting PSP usage of flows
 paths:
   /info:
     get:
@@ -179,7 +179,7 @@ paths:
         Get health check and deployment-related information
       operationId: IInfoController_healthCheck
       tags:
-        - Info
+      - Info
       responses:
         "200":
           description: Success
@@ -218,34 +218,34 @@ paths:
         ***Cacheable*** | Y
       operationId: IOrganizationController_getRevisions
       tags:
-        - Organization
+      - Organization
       parameters:
-        - description: "The flow name, used as a search filter"
-          example: 2025-01-0188888888888-0001
-          required: true
-          name: flowId
-          in: path
-          schema:
-            type: string
-        - description: "The organization fiscal code, used as a search filter"
-          example: "99999999999"
-          required: true
-          name: organizationId
-          in: path
-          schema:
-            type: string
-        - description: The starting date for retrieving flows
-          example: 2025-03-10
-          name: dateFrom
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ending date for retrieving flows
-          example: 2025-03-10
-          name: dateTo
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
+      - description: "The flow name, used as a search filter"
+        example: 2025-01-0188888888888-0001
+        required: true
+        name: flowId
+        in: path
+        schema:
+          type: string
+      - description: "The organization fiscal code, used as a search filter"
+        example: "99999999999"
+        required: true
+        name: organizationId
+        in: path
+        schema:
+          type: string
+      - description: The starting date for retrieving flows
+        example: 2025-03-10
+        name: dateFrom
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ending date for retrieving flows
+        example: 2025-03-10
+        name: dateTo
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
       responses:
         "200":
           description: Success
@@ -289,34 +289,34 @@ paths:
         ***Cacheable*** | Y
       operationId: IOrganizationController_getDownloads
       tags:
-        - Organization
+      - Organization
       parameters:
-        - description: "The organization fiscal code, used as a search filter"
-          example: "99999999999"
-          required: true
-          name: organizationId
-          in: path
-          schema:
-            type: string
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: The date for retrieving FdR download tentative
-          example: 2025-03-10
-          name: date
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: "The flow name, used as a search filter"
-          example: 2025-01-0188888888888-0001
-          name: flowName
-          in: query
-          schema:
-            type: string
+      - description: "The organization fiscal code, used as a search filter"
+        example: "99999999999"
+        required: true
+        name: organizationId
+        in: path
+        schema:
+          type: string
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: The date for retrieving FdR download tentative
+        example: 2025-03-10
+        name: date
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: "The flow name, used as a search filter"
+        example: 2025-01-0188888888888-0001
+        name: flowName
+        in: query
+        schema:
+          type: string
       responses:
         "200":
           description: Success
@@ -361,56 +361,56 @@ paths:
         ***Cacheable*** | Y
       operationId: IOrganizationController_getFlow
       tags:
-        - Organization
+      - Organization
       parameters:
-        - description: "The flow name, used as a search filter"
-          example: 2025-01-0188888888888-0001
-          required: true
-          name: flowId
-          in: path
-          schema:
-            type: string
-        - description: "The organization fiscal code, used as a search filter"
-          example: "99999999999"
-          required: true
-          name: organizationId
-          in: path
-          schema:
-            type: string
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: "The FdR revision, used as a search filter"
-          example: "1"
-          required: true
-          name: revision
-          in: path
-          schema:
-            type: string
-        - description: The starting date for retrieving flows
-          example: 2025-03-10
-          name: dateFrom
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ending date for retrieving flows
-          example: 2025-03-10
-          name: dateTo
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: "The expected FdR format, based of this parameter the flow is\
+      - description: "The flow name, used as a search filter"
+        example: 2025-01-0188888888888-0001
+        required: true
+        name: flowId
+        in: path
+        schema:
+          type: string
+      - description: "The organization fiscal code, used as a search filter"
+        example: "99999999999"
+        required: true
+        name: organizationId
+        in: path
+        schema:
+          type: string
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: "The FdR revision, used as a search filter"
+        example: "1"
+        required: true
+        name: revision
+        in: path
+        schema:
+          type: string
+      - description: The starting date for retrieving flows
+        example: 2025-03-10
+        name: dateFrom
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ending date for retrieving flows
+        example: 2025-03-10
+        name: dateTo
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: "The expected FdR format, based of this parameter the flow is\
           \ retrieved from FdR-1 (xml) or FdR-3 (json)"
-          example: xml
-          name: fileType
-          in: query
-          schema:
-            type: string
-            default: json
+        example: xml
+        name: fileType
+        in: query
+        schema:
+          type: string
+          default: json
       responses:
         "200":
           description: Success
@@ -454,34 +454,34 @@ paths:
         ***Cacheable*** | Y
       operationId: IOrganizationController_getUploads
       tags:
-        - Organization
+      - Organization
       parameters:
-        - description: "The organization fiscal code, used as a search filter"
-          example: "99999999999"
-          required: true
-          name: organizationId
-          in: path
-          schema:
-            type: string
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: The date for retrieving FdR upload tentative
-          example: 2025-03-10
-          name: date
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: "The flow name, used as a search filter"
-          example: 2025-01-0188888888888-0001
-          name: flowName
-          in: query
-          schema:
-            type: string
+      - description: "The organization fiscal code, used as a search filter"
+        example: "99999999999"
+        required: true
+        name: organizationId
+        in: path
+        schema:
+          type: string
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: The date for retrieving FdR upload tentative
+        example: 2025-03-10
+        name: date
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: "The flow name, used as a search filter"
+        example: 2025-01-0188888888888-0001
+        name: flowName
+        in: query
+        schema:
+          type: string
       responses:
         "200":
           description: Success
@@ -523,39 +523,39 @@ paths:
         ***Cacheable*** | Y
       operationId: IPSPController_searchFlowByPsp
       tags:
-        - PSP
+      - PSP
       parameters:
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: The starting date for retrieving flows
-          example: 2025-03-10
-          name: dateFrom
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ending date for retrieving flows
-          example: 2025-03-10
-          name: dateTo
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: "The flow name, used as a search filter"
-          example: 2025-01-0188888888888-0001
-          name: flowId
-          in: query
-          schema:
-            type: string
-        - description: "The organization fiscal code, used as a search filter"
-          example: "99999999999"
-          name: organizationId
-          in: query
-          schema:
-            type: string
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: The starting date for retrieving flows
+        example: 2025-03-10
+        name: dateFrom
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ending date for retrieving flows
+        example: 2025-03-10
+        name: dateTo
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: "The flow name, used as a search filter"
+        example: 2025-01-0188888888888-0001
+        name: flowId
+        in: query
+        schema:
+          type: string
+      - description: "The organization fiscal code, used as a search filter"
+        example: "99999999999"
+        name: organizationId
+        in: query
+        schema:
+          type: string
       responses:
         "200":
           description: Success
@@ -596,35 +596,35 @@ paths:
         ***Cacheable*** | Y
       operationId: IPSPController_searchFlowByPspAndIur
       tags:
-        - PSP
+      - PSP
       parameters:
-        - description: "The payment's IUR code, used as a search filter"
-          example: "17854456582215"
-          name: iur
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: "^(.{1,35})$"
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: The starting date for retrieving flows
-          example: 2025-03-10
-          name: dateFrom
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ending date for retrieving flows
-          example: 2025-03-10
-          name: dateTo
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
+      - description: "The payment's IUR code, used as a search filter"
+        example: "17854456582215"
+        name: iur
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: "^(.{1,35})$"
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: The starting date for retrieving flows
+        example: 2025-03-10
+        name: dateFrom
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ending date for retrieving flows
+        example: 2025-03-10
+        name: dateTo
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
       responses:
         "200":
           description: Success
@@ -665,40 +665,40 @@ paths:
         ***Cacheable*** | Y
       operationId: IPSPController_searchFlowByPspAndIuv
       tags:
-        - PSP
+      - PSP
       parameters:
-        - description: "The payment's IUV code, used as a search filter"
-          example: "17854456582215"
-          name: iuv
-          in: path
-          required: true
-          schema:
-            type: string
-            pattern: "^(.{1,35})$"
-        - description: "The PSP identifier, used as a search filter"
-          example: "88888888888"
-          required: true
-          name: pspId
-          in: path
-          schema:
-            type: string
-        - description: The starting date for retrieving flows
-          example: 2025-03-10
-          name: dateFrom
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ending date for retrieving flows
-          example: 2025-03-10
-          name: dateTo
-          in: query
-          schema:
-            $ref: "#/components/schemas/LocalDate"
-        - description: The ID of an EC
-          name: organizationId
-          in: query
-          schema:
-            type: string
+      - description: "The payment's IUV code, used as a search filter"
+        example: "17854456582215"
+        name: iuv
+        in: path
+        required: true
+        schema:
+          type: string
+          pattern: "^(.{1,35})$"
+      - description: "The PSP identifier, used as a search filter"
+        example: "88888888888"
+        required: true
+        name: pspId
+        in: path
+        schema:
+          type: string
+      - description: The starting date for retrieving flows
+        example: 2025-03-10
+        name: dateFrom
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ending date for retrieving flows
+        example: 2025-03-10
+        name: dateTo
+        in: query
+        schema:
+          $ref: "#/components/schemas/LocalDate"
+      - description: The ID of an EC
+        name: organizationId
+        in: query
+        schema:
+          type: string
       responses:
         "200":
           description: Success
