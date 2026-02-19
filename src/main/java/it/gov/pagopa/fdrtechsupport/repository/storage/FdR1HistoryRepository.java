@@ -13,7 +13,6 @@ import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -21,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 public class FdR1HistoryRepository {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   private String blobConnectionString;
 
   @ConfigProperty(name = "blob-storage.fdr1.container-name")
@@ -81,11 +80,7 @@ public class FdR1HistoryRepository {
       Integer revision) {
 
     List<FdR1MetadataEntity> entities =
-        fdr1MetadataRepository.find(
-            dateRequest,
-            Optional.ofNullable(flowName),
-            Optional.ofNullable(pspId),
-            Optional.ofNullable(organizationId));
+        fdr1MetadataRepository.find(dateRequest, flowName, pspId, organizationId);
 
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 
