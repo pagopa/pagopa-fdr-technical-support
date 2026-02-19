@@ -6,7 +6,7 @@
 
     <groupId>it.gov.pagopa</groupId>
     <artifactId>fdr-techical-support</artifactId>
-    <version>1.1.6</version>
+    <version>1.1.6-1-PIDM-1502-fix-xml-flow-retrieve</version>
 
     <properties>
         <compiler-plugin.version>3.12.1</compiler-plugin.version>
