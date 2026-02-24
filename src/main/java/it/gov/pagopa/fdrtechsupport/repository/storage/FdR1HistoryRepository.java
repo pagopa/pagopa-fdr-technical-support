@@ -59,19 +59,22 @@ public class FdR1HistoryRepository {
     }
 
     try {
-    	log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
-    	byte[] byteArray =
-    			getBlobServiceClient()
-    			.getBlobContainerClient(blobContainerName)
-    			.getBlobClient(fileName)
-    			.downloadContent()
-    			.toBytes();
-    	String decompressed = StringUtil.decompressGZip(byteArray);
-    	if (decompressed == null || decompressed.isBlank()) {
-    		log.error("Invalid or not-gzip content for file [{}] in container [{}]", fileName, blobContainerName);
-    		throw new AppException(AppErrorCodeMessageEnum.INVALID_BLOB_CONTENT);
-    	}
-    	return decompressed;
+      log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
+      byte[] byteArray =
+          getBlobServiceClient()
+              .getBlobContainerClient(blobContainerName)
+              .getBlobClient(fileName)
+              .downloadContent()
+              .toBytes();
+      String decompressed = StringUtil.decompressGZip(byteArray);
+      if (decompressed == null || decompressed.isBlank()) {
+        log.error(
+            "Invalid or not-gzip content for file [{}] in container [{}]",
+            fileName,
+            blobContainerName);
+        throw new AppException(AppErrorCodeMessageEnum.INVALID_BLOB_CONTENT);
+      }
+      return decompressed;
     } catch (BlobStorageException e) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
@@ -89,7 +92,7 @@ public class FdR1HistoryRepository {
 
     // flowdate = null guard
     entities.removeIf(e -> e.getFlowDate() == null || e.getFlowDate().isBlank());
-    
+
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 
     String fileName = null;

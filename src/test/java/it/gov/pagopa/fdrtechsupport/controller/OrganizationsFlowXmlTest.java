@@ -13,7 +13,6 @@ import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
-import io.quarkiverse.mockserver.test.MockServerTestResource;
 import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
@@ -22,11 +21,11 @@ import it.gov.pagopa.fdrtechsupport.controller.model.flow.response.FlowContentRe
 import it.gov.pagopa.fdrtechsupport.repository.model.BlobRefEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdR1MetadataEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.FdR1MetadataRepository;
+import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
 import lombok.SneakyThrows;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
@@ -34,21 +33,17 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
-
 @QuarkusTest
-@QuarkusTestResource(MockServerTestResource.class)
-@QuarkusTestResource(AzuriteResource.class)
+@QuarkusTestResource(ContainersTestResource.class)
 class OrganizationsFlowXmlTest {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   String blobConnString;
 
   @ConfigProperty(name = "blob-storage.fdr1.container-name")
   String fdr1ContainerName;
 
-  @InjectMock
-  FdR1MetadataRepository fdr1MetadataRepository;
+  @InjectMock FdR1MetadataRepository fdr1MetadataRepository;
 
   private BlobContainerClient container;
 
@@ -73,18 +68,20 @@ class OrganizationsFlowXmlTest {
     String file2 = flowName + "_rev2.xml.zip";
     String file3 = flowName + "_rev3.xml.zip";
 
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
-        .thenReturn(new ArrayList<>(List.of(
-            meta("2025-10-06T07:53:27Z", file2),
-            meta("2025-10-06T08:17:09Z", file3),
-            meta("2025-10-06T06:34:31Z", file1)
-        )));
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
+        .thenReturn(
+            new ArrayList<>(
+                List.of(
+                    meta("2025-10-06T07:53:27Z", file2),
+                    meta("2025-10-06T08:17:09Z", file3),
+                    meta("2025-10-06T06:34:31Z", file1))));
 
     String soap = "<soapenv:Envelope>OK-XML</soapenv:Envelope>";
     container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip(soap)), true);
 
-    String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s"
-        .formatted(orgId, pspId, flowName, revision);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s"
+            .formatted(orgId, pspId, flowName, revision);
 
     FlowContentResponse res =
         given()
@@ -115,17 +112,19 @@ class OrganizationsFlowXmlTest {
     String file2 = flowName + "_rev2.xml.zip";
     String file3 = flowName + "_rev3.xml.zip";
 
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
-        .thenReturn(new ArrayList<>(List.of(
-            meta("2025-10-06T06:34:31Z", file1),
-            meta("2025-10-06T07:53:27Z", file2),
-            meta("2025-10-06T08:17:09Z", file3)
-        )));
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
+        .thenReturn(
+            new ArrayList<>(
+                List.of(
+                    meta("2025-10-06T06:34:31Z", file1),
+                    meta("2025-10-06T07:53:27Z", file2),
+                    meta("2025-10-06T08:17:09Z", file3))));
 
     container.getBlobClient(file3).upload(BinaryData.fromString("<xml>NOT_GZIP</xml>"), true);
 
-    String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s"
-        .formatted(orgId, pspId, flowName, revision);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s"
+            .formatted(orgId, pspId, flowName, revision);
 
     given()
         .param("dateFrom", "2025-10-05")
@@ -137,7 +136,7 @@ class OrganizationsFlowXmlTest {
         // error handled as INVALID_BLOB_CONTENT
         .statusCode(anyOf(is(404), is(500)));
   }
-  
+
   @SneakyThrows
   @Test
   @DisplayName("getFlow xml - all flowDate equal - revision 3 correctly selected")
@@ -154,18 +153,18 @@ class OrganizationsFlowXmlTest {
     String file2 = flowName + "_rev2.xml.zip";
     String file3 = flowName + "_rev3.xml.zip";
 
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
-        .thenReturn(new ArrayList<>(List.of(
-            meta(sameDate, file1),
-            meta(sameDate, file2),
-            meta(sameDate, file3) // rev3
-        )));
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
+        .thenReturn(
+            new ArrayList<>(
+                List.of(
+                    meta(sameDate, file1), meta(sameDate, file2), meta(sameDate, file3) // rev3
+                    )));
 
-    container.getBlobClient(file3)
-        .upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
+    container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
 
-    String url = "/organizations/%s/psps/%s/flows/%s/revisions/%s"
-        .formatted(orgId, pspId, flowName, revision);
+    String url =
+        "/organizations/%s/psps/%s/flows/%s/revisions/%s"
+            .formatted(orgId, pspId, flowName, revision);
 
     FlowContentResponse res =
         given()

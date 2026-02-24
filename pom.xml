@@ -147,19 +147,16 @@
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>mongodb</artifactId>
-            <version>1.18.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testcontainers</groupId>
             <artifactId>azure</artifactId>
-            <version>1.18.3</version>
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>io.quarkiverse.mockserver</groupId>
-            <artifactId>quarkus-mockserver-test</artifactId>
-            <version>1.13.0</version>
+            <groupId>org.testcontainers</groupId>
+            <artifactId>mockserver</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
