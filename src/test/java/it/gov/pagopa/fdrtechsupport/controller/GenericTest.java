@@ -10,7 +10,7 @@ import org.junit.jupiter.api.Test;
 class GenericTest {
 
   @Test
-  public void info() {
+  void info() {
     given().when().get("/info").then().statusCode(200).contentType(MediaType.APPLICATION_JSON);
   }
 }
