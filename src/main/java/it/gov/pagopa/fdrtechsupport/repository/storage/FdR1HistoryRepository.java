@@ -13,7 +13,6 @@ import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
 import jakarta.enterprise.context.ApplicationScoped;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 
@@ -21,7 +20,7 @@ import org.eclipse.microprofile.config.inject.ConfigProperty;
 @Slf4j
 public class FdR1HistoryRepository {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   private String blobConnectionString;
 
   @ConfigProperty(name = "blob-storage.fdr1.container-name")
@@ -60,19 +59,22 @@ public class FdR1HistoryRepository {
     }
 
     try {
-    	log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
-    	byte[] byteArray =
-    			getBlobServiceClient()
-    			.getBlobContainerClient(blobContainerName)
-    			.getBlobClient(fileName)
-    			.downloadContent()
-    			.toBytes();
-    	String decompressed = StringUtil.decompressGZip(byteArray);
-    	if (decompressed == null || decompressed.isBlank()) {
-    		log.error("Invalid or not-gzip content for file [{}] in container [{}]", fileName, blobContainerName);
-    		throw new AppException(AppErrorCodeMessageEnum.INVALID_BLOB_CONTENT);
-    	}
-    	return decompressed;
+      log.debug("Executing query on [{}] BLOB storage for file [{}]", blobContainerName, fileName);
+      byte[] byteArray =
+          getBlobServiceClient()
+              .getBlobContainerClient(blobContainerName)
+              .getBlobClient(fileName)
+              .downloadContent()
+              .toBytes();
+      String decompressed = StringUtil.decompressGZip(byteArray);
+      if (decompressed == null || decompressed.isBlank()) {
+        log.error(
+            "Invalid or not-gzip content for file [{}] in container [{}]",
+            fileName,
+            blobContainerName);
+        throw new AppException(AppErrorCodeMessageEnum.INVALID_BLOB_CONTENT);
+      }
+      return decompressed;
     } catch (BlobStorageException e) {
       throw new AppException(AppErrorCodeMessageEnum.FLOW_NOT_FOUND);
     }
@@ -86,15 +88,11 @@ public class FdR1HistoryRepository {
       Integer revision) {
 
     List<FdR1MetadataEntity> entities =
-        fdr1MetadataRepository.find(
-            dateRequest,
-            Optional.ofNullable(flowName),
-            Optional.ofNullable(pspId),
-            Optional.ofNullable(organizationId));
+        fdr1MetadataRepository.find(dateRequest, flowName, pspId, organizationId);
 
     // flowdate = null guard
     entities.removeIf(e -> e.getFlowDate() == null || e.getFlowDate().isBlank());
-    
+
     entities.sort(Comparator.comparing(FdR1MetadataEntity::getFlowDate));
 
     String fileName = null;

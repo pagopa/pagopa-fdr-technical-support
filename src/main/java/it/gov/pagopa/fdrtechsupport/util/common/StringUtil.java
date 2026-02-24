@@ -50,4 +50,7 @@ public class StringUtil {
     }
     return result.toString();
   }
+
+  private StringUtil() {
+  }
 }

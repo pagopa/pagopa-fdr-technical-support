@@ -8,36 +8,35 @@ import com.azure.core.util.BinaryData;
 import com.azure.storage.blob.BlobContainerClient;
 import com.azure.storage.blob.BlobServiceClient;
 import com.azure.storage.blob.BlobServiceClientBuilder;
+import io.quarkus.test.InjectMock;
 import io.quarkus.test.common.QuarkusTestResource;
 import io.quarkus.test.junit.QuarkusTest;
-import io.quarkus.test.InjectMock;
 import it.gov.pagopa.fdrtechsupport.repository.model.BlobRefEntity;
 import it.gov.pagopa.fdrtechsupport.repository.model.FdR1MetadataEntity;
 import it.gov.pagopa.fdrtechsupport.repository.nosql.FdR1MetadataRepository;
 import it.gov.pagopa.fdrtechsupport.service.model.DateRequest;
-import it.gov.pagopa.fdrtechsupport.util.AzuriteResource;
+import it.gov.pagopa.fdrtechsupport.util.ContainersTestResource;
 import it.gov.pagopa.fdrtechsupport.util.common.DateUtil;
 import it.gov.pagopa.fdrtechsupport.util.error.enums.AppErrorCodeMessageEnum;
 import it.gov.pagopa.fdrtechsupport.util.error.exception.AppException;
+import jakarta.inject.Inject;
 import java.io.ByteArrayOutputStream;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
-import java.util.Optional;
 import java.util.zip.GZIPOutputStream;
-import jakarta.inject.Inject;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 @QuarkusTest
-@QuarkusTestResource(AzuriteResource.class)
+@QuarkusTestResource(ContainersTestResource.class)
 class FdR1HistoryRepositoryTest {
 
-  @ConfigProperty(name = "blob-storage.fdr1.connection-string")
+  @ConfigProperty(name = "blob-storage.fdr.connection-string")
   String blobConnString;
 
   @ConfigProperty(name = "blob-storage.fdr1.container-name")
@@ -82,9 +81,9 @@ class FdR1HistoryRepositoryTest {
 
     when(fdr1MetadataRepository.find(
         any(DateRequest.class),
-        eq(Optional.of(flowName)),
-        eq(Optional.of(pspId)),
-        eq(Optional.of(orgId))
+        eq(flowName),
+        eq(pspId),
+        eq(orgId)
     )).thenReturn(new ArrayList<>(List.of(
         meta("2025-10-06T06:34:31Z", file1),
         meta("2025-10-06T07:53:27Z", file2),
@@ -123,9 +122,9 @@ class FdR1HistoryRepositoryTest {
 
     when(fdr1MetadataRepository.find(
         any(DateRequest.class),
-        eq(Optional.of(flowName)),
-        eq(Optional.of(pspId)),
-        eq(Optional.of(orgId))
+        eq(flowName),
+        eq(pspId),
+        eq(orgId)
     )).thenReturn(new ArrayList<>(List.of(
         meta("2025-10-06T06:34:31Z", file1),
         meta("2025-10-06T07:53:27Z", file2),
@@ -151,7 +150,7 @@ class FdR1HistoryRepositoryTest {
 
     DateRequest dr = DateUtil.getValidDateRequest(LocalDate.now().minusDays(2), LocalDate.now(), 30);
 
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
         .thenReturn(new ArrayList<>(List.of(
             meta("2025-10-06T06:34:31Z", "a.xml.zip"),
             meta("2025-10-06T07:53:27Z", "b.xml.zip")
@@ -178,7 +177,7 @@ class FdR1HistoryRepositoryTest {
     container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
 
     // deliberately disordered list
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
         .thenReturn(new ArrayList<>(List.of(
             meta("2025-10-06T07:53:27Z", file2),
             meta("2025-10-06T08:17:09Z", file3),
@@ -204,7 +203,7 @@ class FdR1HistoryRepositoryTest {
 
     container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
 
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
         .thenReturn(new ArrayList<>(List.of(
             meta(null, file1), // record sporco
             meta("2025-10-06T07:53:27Z", file2),
@@ -238,9 +237,9 @@ class FdR1HistoryRepositoryTest {
     // - two valid records → therefore there are only 2 valid revisions
     when(fdr1MetadataRepository.find(
         any(DateRequest.class),
-        eq(Optional.of(flowName)),
-        eq(Optional.of(pspId)),
-        eq(Optional.of(orgId))
+        eq(flowName),
+        eq(pspId),
+        eq(orgId)
     )).thenReturn(new ArrayList<>(List.of(
         meta(null, file1), // corrupt record → ignored
         meta("2025-10-06T07:53:27Z", file2),
@@ -283,9 +282,9 @@ class FdR1HistoryRepositoryTest {
     // all flowDates are the same, but the order of the list defines the revision
     when(fdr1MetadataRepository.find(
         any(DateRequest.class),
-        eq(Optional.of(flowName)),
-        eq(Optional.of(pspId)),
-        eq(Optional.of(orgId))
+        eq(flowName),
+        eq(pspId),
+        eq(orgId)
     )).thenReturn(new ArrayList<>(List.of(
         meta(sameDate, file1), // rev1
         meta(sameDate, file2), // rev2
@@ -317,7 +316,7 @@ class FdR1HistoryRepositoryTest {
     container.getBlobClient(file3).upload(BinaryData.fromBytes(gzip("<soap>REV3</soap>")), true);
 
     // order A -> revision=3 returns REV3
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
         .thenReturn(new ArrayList<>(List.of(
             meta(sameDate, file1),
             meta(sameDate, file2),
@@ -327,7 +326,7 @@ class FdR1HistoryRepositoryTest {
     assertTrue(outA.contains("REV3"));
 
     // order B -> revision=3 returns REV1 (because null discrimination and stable sort preserve order)
-    when(fdr1MetadataRepository.find(any(), eq(Optional.of(flowName)), eq(Optional.of(pspId)), eq(Optional.of(orgId))))
+    when(fdr1MetadataRepository.find(any(), eq(flowName), eq(pspId), eq(orgId)))
         .thenReturn(new ArrayList<>(List.of(
             meta(sameDate, file3),
             meta(sameDate, file2),

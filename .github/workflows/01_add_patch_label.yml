@@ -41,7 +41,7 @@ jobs:
 
       - name: Add PATCH label
         if: ${{ steps.check_user_labels.outputs.result == 'true' }}
-        uses: pagopa/github-actions-template/default-label@main
+        uses: pagopa/github-actions-template/default-label@525266fb788f4da438e5919fcf660fe8637271ed # 2.2
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           label: 'patch'

@@ -11,23 +11,28 @@ on:
         required: false
         default: ${{ github.ref_name }}
         type: string
+    secrets:
+      CLIENT_ID:
+        required: true
+      SUBSCRIPTION_ID:
+        required: true
+      TENANT_ID:
+        required: true
 
 env:
   APP_NAME: fdr-technicalsupport
-
-
-permissions:
-  id-token: write
-  contents: read
 
 jobs:
   deploy:
     runs-on: [ self-hosted-job, "${{ inputs.environment }}" ]
     name: Deploy on AKS
     environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Deploy
-        uses: pagopa/github-actions-template/aks-deploy@main
+        uses: pagopa/github-actions-template/aks-deploy@525266fb788f4da438e5919fcf660fe8637271ed # 2.2
         with:
           branch: ${{ inputs.branch }}
           client_id: ${{ secrets.CLIENT_ID }}
@@ -46,6 +51,9 @@ jobs:
     runs-on: ubuntu-latest
     name: Update OpenAPI
     environment: ${{ inputs.environment }}
+    permissions:
+      id-token: write
+      contents: read
     steps:
       - name: Checkout
         id: checkout
@@ -71,9 +79,10 @@ jobs:
 
       - name: Terraform Apply
         shell: bash
+        env:
+          ARM_CLIENT_ID: ${{ secrets.CLIENT_ID }}
         run: |
           cd ./infra
-          export ARM_CLIENT_ID="${{ secrets.CLIENT_ID }}"
           export ARM_SUBSCRIPTION_ID=$(az account show --query id --output tsv)
           export ARM_TENANT_ID=$(az account show --query tenantId --output tsv)
           export ARM_USE_OIDC=true
