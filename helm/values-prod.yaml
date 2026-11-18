@@ -2,7 +2,7 @@ microservice-chart:
   namespace: "fdr"
   image:
     repository: ghcr.io/pagopa/pagopa-fdr-technical-support
-    tag: '1.1.9'
+    tag: '1.1.9-1-PIDM-2620'
   readinessProbe:
     httpGet:
       path: /q/health/ready
@@ -63,6 +63,7 @@ microservice-chart:
   autoscaling:
     enabled: false
   envConfig:
+    JAVA_OPTS: "-XX:-UseBASE64Intrinsics"
     APP_ENVIRONMENT: "prod"
     TZ: "Europe/Rome"
     OTEL_ENDPOINT: "http://otel-collector.elastic-system.svc.cluster.local:4317"
